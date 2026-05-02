@@ -86,6 +86,11 @@ Each capability gets its own file. Status reflects how nailed-down it is.
 - `03-interactive-view.md` — recipe view, unit toggle, serving scaler. **Drafted.**
 - `04-llm-integration.md` — BYO Anthropic key storage, server-side proxy, model selection. **Drafted.**
 - `05-auth-and-onboarding.md` — Supabase magic-link flow, first-run setup, key onboarding. **Drafted.**
+- `06-cooking-mode.md` — immersive cooking view, voice nav, AI chat, timers. **Drafted (MVP).**
+- `07-grocery-list.md` — ingredient aggregation, checklist, Apple Reminders sync. **Drafted (post-MVP).**
+- `08-shop-integration.md` — Amazon Fresh / Instacart deep linking. **Drafted (post-MVP).**
+
+See also: `docs/design-direction.md` — typography, color palette, animation principles.
 
 ## Remaining open questions
 
@@ -101,3 +106,4 @@ These cut across feature PRDs and will be resolved as each is drafted.
 - 2026-04-30 — initial draft based on conversation kickoff. Captured problem, goals, non-goals, MVP capability set, success metrics, and open questions.
 - 2026-04-30 — locked decisions: server-backed storage with accounts; photo-only MVP ingestion; folders + tags (no nesting); dimensional-only unit conversion; linear ingredient scaling for servings.
 - 2026-04-30 — locked decisions (round 2): Supabase as backend platform; magic-link auth; server-side encrypted LLM key with proxied calls; Anthropic-only providers; PWA-first.
+- 2026-05-02 — added cooking mode (MVP), grocery list (post-MVP), shop integration (post-MVP). Established design direction: "The Seasons" serif, forest/cream/coral/mustard palette, spring-based animations inspired by Airbnb/Apple/Stripe.

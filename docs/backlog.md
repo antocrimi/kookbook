@@ -39,6 +39,9 @@ Bare minimum to ship a useful product:
 
 Everything else is post-MVP polish.
 
+6. **`COOK-1`–`COOK-8`** cooking mode (immersive view + voice + AI + timers)
+7. **`DES-1`–`DES-3`** design system (typography, palette, animations)
+
 ---
 
 ## Epic: Foundations (`INF`)
@@ -276,16 +279,84 @@ PRD: [`01-data-model.md`](./prd/01-data-model.md)
 
 ---
 
+## Epic: Cooking Mode (`COOK`)
+
+PRD: [`06-cooking-mode.md`](./prd/06-cooking-mode.md)
+
+### COOK-1 · Cooking mode shell (full-screen step carousel)
+- **Size:** M · **PRD:** [06 §Must have](./prd/06-cooking-mode.md#requirements) · **Status:** backlog
+- Full-screen view with high-contrast forest/cream palette. One step at a time, swipe to navigate. Step counter, group labels, close button.
+- AC: Entering cooking mode shows step 1 full-screen; swiping navigates; "×" exits.
+
+### COOK-2 · Voice navigation (Web Speech API)
+- **Size:** M · **Deps:** COOK-1 · **Status:** backlog
+- `SpeechRecognition` listener for "next step," "previous step," "repeat," "exit." Mic indicator. Graceful degradation on unsupported browsers.
+- AC: Voice commands navigate steps on Chrome Android and Safari iOS. Hidden where unsupported.
+
+### COOK-3 · Tap-to-read (browser TTS)
+- **Size:** S · **Deps:** COOK-1 · **Status:** backlog
+- Tapping step text reads it aloud via `SpeechSynthesis`. Speaker icon affordance. Stops on navigation.
+- AC: Tapping reads the step; navigating away stops playback.
+
+### COOK-4 · Inline timer detection + countdown
+- **Size:** M · **Deps:** COOK-1 · **Status:** backlog
+- Regex detects time expressions in step text. Renders tappable timer badges. Countdown overlay with audio alert on completion. Multiple concurrent timers in a floating strip.
+- AC: "Simmer for 20 minutes" renders a badge; tapping starts a 20:00 countdown; alert sounds at 0:00.
+
+### COOK-5 · AI chat overlay (`/api/cooking-chat`)
+- **Size:** M · **Deps:** COOK-1, AUT-4 · **PRD:** [06 §AI chat](./prd/06-cooking-mode.md#ai-chat-call-shape) · **Status:** backlog
+- "Ask AI" CTA opens slide-up overlay. Voice (Web Speech) or text input. Claude call via server proxy with full recipe context. Response as text on screen.
+- AC: Asking "how much garlic?" returns the correct quantity from the ingredient list at current scale.
+
+### COOK-6 · Ingredient reference panel
+- **Size:** S · **Deps:** COOK-1, VIE-1 · **Status:** backlog
+- Collapsible bottom panel showing all ingredients at current serving scale and unit preference.
+- AC: Tap "Ingredients" chip → panel slides up with the full list. Tap to dismiss.
+
+### COOK-7 · Wake lock + step progress dots
+- **Size:** XS · **Deps:** COOK-1 · **Status:** backlog
+- `navigator.wakeLock` on entry, release on exit. Dot indicators for step progress.
+- AC: Screen doesn't dim during idle. Dots reflect position.
+
+### COOK-8 · "Cook" CTA on recipe view
+- **Size:** XS · **Deps:** COOK-1, VIE-4 · **Status:** backlog
+- Bottom-anchored "Cook" button on the recipe view page. Enters cooking mode for that recipe.
+- AC: Button is visible and thumb-reachable on mobile. Tap enters cooking mode at step 1.
+
+---
+
+## Epic: Design System (`DES`)
+
+PRD: [`docs/design-direction.md`](./design-direction.md)
+
+### DES-1 · Typography: integrate "The Seasons" + update theme
+- **Size:** S · **Status:** backlog
+- Add Adobe Fonts `<link>` to `app/layout.tsx`. Add `the-seasons` as the serif token in `@cuckoobook/ui` theme. Define usage rules (headings: serif, body: sans).
+- AC: Recipe titles render in "The Seasons." Body text remains in system sans. Storybook reflects the change.
+
+### DES-2 · Color palette: forest/cream/coral/mustard tokens
+- **Size:** S · **Deps:** DES-1 · **Status:** backlog
+- Add new color tokens to `_themes.scss` / `_variables.scss`. `theme-cooking` variant for dark forest-green mode. Update existing components that reference old colors.
+- AC: `data-theme="theme-cooking"` applies forest bg + cream text. Coral and mustard available as accent tokens.
+
+### DES-3 · Animation foundations: Framer Motion + spring config
+- **Size:** M · **Status:** backlog
+- Add `framer-motion` to `apps/web`. Define shared spring configs (standard, snappy, dramatic). Card press animation. Ingredient check-off line-draw. Serving scaler odometer.
+- AC: Recipe list cards have press feedback. At least 3 micro-interactions implemented per design-direction.md.
+
+---
+
 ## Out-of-MVP backlog (parking lot)
 
 Things from PRDs explicitly deferred or surfaced as post-MVP:
 
+- **Grocery list:** in-app checklist with ingredient aggregation, Apple Reminders sync via Capacitor (PRD 07).
+- **Shop integration:** Amazon Fresh / Instacart deep linking for ingredient ordering (PRD 08).
 - **Sharing:** read-only public link per recipe (PRD 00).
 - **Paste-URL ingestion:** scrape recipe from a blog URL (PRD 00).
 - **Paste-text ingestion:** ingest raw text from notes app (PRD 00).
 - **Volume↔weight conversion** with ingredient density (PRD 00 / 03).
-- **Cook mode:** full-screen step-by-step with timers / voice (PRD 03).
-- **Native shell** via Capacitor (PRD 00).
+- **Native shell** via Capacitor (PRD 00) — prerequisite for grocery list Reminders sync.
 - **OAuth providers** (Google, Apple) for sign-in (PRD 05).
 - **Soft-delete grace period** for accounts (PRD 05).
 - **Multi-provider LLM** abstraction (PRD 04).
