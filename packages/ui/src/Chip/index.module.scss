@@ -1,0 +1,84 @@
+@use '../../styles/themes' as theme;
+@use '../../styles/mixins' as mixins;
+
+@include theme.themify(theme.$themes) {
+  .chip {
+    --chip-radius: calc(#{theme.get('float-radii-selection-chips')} * 1px);
+    --chip-border-width: calc(#{theme.get('float-stroke-width-selection-chips')} * 1px);
+    --chip-border-color: #{theme.get('color-selection-chips-border-primary-selected')};
+    --chip-text-color: #{theme.get('color-text-icon-common-high-emphesis')};
+    --chip-fill: transparent;
+    --chip-hover-opacity: #{theme.get('float-opacity-background-hover') * 1%};
+    --chip-pressed-opacity: #{theme.get('float-opacity-background-pressed') * 1%};
+    --chip-focus-color: #{theme.get('color-generic-focused')};
+    --chip-focus-stroke: calc(#{theme.get('float-stroke-width-selection-focused')} * 1px);
+  }
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 32px;
+  padding: 4px 12px;
+  border-radius: var(--chip-radius);
+  border: var(--chip-border-width) solid transparent;
+  background-color: var(--chip-fill);
+  color: var(--chip-text-color);
+
+  @include mixins.text-body-regular;
+
+  .icon,
+  .action {
+    width: 16px;
+    height: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: inherit;
+
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .label {
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+  }
+
+  .remove {
+    all: unset;
+    cursor: pointer;
+    display: flex;
+    border-radius: 50%;
+
+    &:focus-visible {
+      outline: var(--chip-focus-stroke) solid var(--chip-focus-color);
+      outline-offset: 1px;
+    }
+  }
+
+  &.variant-outline {
+    border-color: var(--chip-border-color);
+  }
+
+  &.variant-ghost {
+    border-color: transparent;
+  }
+
+  &:hover {
+    background-color: color-mix(in srgb, currentColor var(--chip-hover-opacity), transparent);
+  }
+
+  &:active {
+    background-color: color-mix(in srgb, currentColor var(--chip-pressed-opacity), transparent);
+  }
+
+  &:focus-within {
+    outline: var(--chip-focus-stroke) solid var(--chip-focus-color);
+    outline-offset: 1px;
+  }
+}

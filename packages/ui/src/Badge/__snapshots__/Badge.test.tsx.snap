@@ -1,0 +1,9 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Badge > captures appended variant rendering > variant-appended 1`] = `"<span class="_badge_60cb69 _variant-appended_60cb69">New</span>"`;
+
+exports[`Badge > captures custom class rendering > custom-class 1`] = `"<span class="_badge_60cb69 _variant-standalone_60cb69 custom-badge">8</span>"`;
+
+exports[`Badge > captures empty rendering > empty 1`] = `"<span class="_badge_60cb69 _variant-standalone_60cb69 _empty_60cb69"></span>"`;
+
+exports[`Badge > captures standalone variant rendering > variant-standalone 1`] = `"<span class="_badge_60cb69 _variant-standalone_60cb69">New</span>"`;

@@ -1,0 +1,94 @@
+@use '../../styles/themes' as theme;
+@use '../../styles/mixins' as mixins;
+
+@include theme.themify(theme.$themes) {
+  .tabs {
+    display: flex;
+    flex-direction: column;
+    gap: calc(#{theme.get('float-proportion-2')} * 1px);
+  }
+
+  .list {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: calc(#{theme.get('float-proportion-2')} * 1px);
+    width: fit-content;
+  }
+
+  .item {
+    all: unset;
+    box-sizing: border-box;
+    min-width: calc(#{theme.get('float-proportion-6')} * 1px);
+    min-height: calc(#{theme.get('float-proportion-6')} * 1px);
+    padding: calc(#{theme.get('float-proportion-75')} * 2px) calc(#{theme.get('float-proportion-1-default-unit')} * 2px);
+    border-radius: calc(#{theme.get('float-radii-selection-chips')} * 1px);
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: calc(#{theme.get('float-proportion-25')} * 1px);
+    cursor: pointer;
+    color: #{theme.get('color-text-icon-common-medium-emphasis')};
+    background-color: transparent;
+
+    @include mixins.text-body-regular;
+
+    &[data-state='active'] {
+      @include mixins.text-body-strong;
+
+      color: #{theme.get('color-text-icon-common-high-emphesis')};
+    }
+
+    &:hover:not([data-disabled]) {
+      color: #{theme.get('color-text-icon-common-high-emphesis')};
+      background-color: color-mix(
+        in srgb,
+        #{theme.get('color-selection-switch-knob-fill-enabled')} 8%,
+        transparent
+      );
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 2px #{theme.get('color-generic-focused')};
+    }
+
+    &[data-disabled] {
+      cursor: not-allowed;
+      color: #{theme.get('color-generic-disabled-text-icon')};
+    }
+  }
+
+  .indicator {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: calc(#{theme.get('float-stroke-width-selection-focused')} * 1px);
+    border-radius: calc(#{theme.get('float-radii-communication-tag')} * 1px);
+    background-color: #{theme.get('color-text-icon-common-high-emphesis')};
+    pointer-events: none;
+    transition: transform 220ms ease, width 220ms ease, opacity 120ms ease;
+    transform-origin: left center;
+  }
+
+  .icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 0;
+  }
+
+  .label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .content {
+    color: #{theme.get('color-text-icon-common-high-emphesis')};
+
+    @include mixins.text-body-regular;
+  }
+}

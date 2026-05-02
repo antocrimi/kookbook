@@ -1,0 +1,79 @@
+@use '../../styles/themes' as theme;
+@use '../../styles/mixins' as mixins;
+
+@include theme.themify(theme.$themes) {
+  .root {
+    --pagination-gap: calc(#{theme.get('float-proportion-50')} * 1px);
+    --pagination-item-size: calc(#{theme.get('float-proportion-5')} * 1px);
+    --pagination-idle-color: #{theme.get('color-text-icon-common-medium-emphasis')};
+    --pagination-active-color: #{theme.get('color-text-icon-common-high-emphesis')};
+    --pagination-hover-fill: color-mix(
+      in srgb,
+      #{theme.get('color-selection-switch-knob-fill-enabled')} 8%,
+      transparent
+    );
+    --pagination-selected-fill: color-mix(
+      in srgb,
+      #{theme.get('color-selection-switch-knob-fill-enabled')} 12%,
+      transparent
+    );
+    --pagination-disabled-color: #{theme.get('color-generic-disabled-text-icon')};
+    --pagination-focus-ring: #{theme.get('color-generic-focused')};
+    --pagination-border-disabled: transparent;
+  }
+}
+
+.root {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--pagination-gap);
+
+  .button,
+  .ellipsis {
+    width: var(--pagination-item-size);
+    height: var(--pagination-item-size);
+    border-radius: 999px;
+
+    @include mixins.text-body-regular;
+  }
+
+  .button {
+    --button-fill-enabled: transparent;
+    --button-fill-hover: var(--pagination-hover-fill);
+    --button-fill-pressed: var(--pagination-selected-fill);
+    --button-fill-disabled: transparent;
+
+    --button-border-enabled: transparent;
+    --button-border-hover: transparent;
+    --button-border-pressed: transparent;
+    --button-border-disabled: var(--pagination-border-disabled);
+
+    --button-text-enabled: var(--pagination-idle-color);
+    --button-text-hover: var(--pagination-active-color);
+    --button-text-pressed: var(--pagination-active-color);
+    --button-text-disabled: var(--pagination-disabled-color);
+
+    --button-stroke-width: 0px;
+
+    min-width: var(--pagination-item-size);
+    padding: 0;
+
+    &[aria-current='page'],
+    &.active {
+      --button-fill-enabled: var(--pagination-selected-fill);
+      --button-text-enabled: var(--pagination-active-color);
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 2px var(--pagination-focus-ring);
+    }
+  }
+
+  .ellipsis {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--pagination-idle-color);
+  }
+}

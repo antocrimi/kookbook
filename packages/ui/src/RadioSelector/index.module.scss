@@ -1,0 +1,141 @@
+@use '../../styles/themes' as theme;
+@use '../../styles/mixins' as mixins;
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--radio-selector-group-gap, 8px);
+
+  &.group-error {
+    .item {
+      --radio-border-color: var(--radio-border-color-error);
+      --radio-label-color: var(--radio-label-color-error);
+    }
+  }
+}
+
+.item {
+  --radio-border-color: var(--radio-border-color-default);
+  --radio-indicator-color: var(--radio-indicator-color-default);
+  --radio-label-color: var(--radio-label-color-default);
+  --radio-message-color: var(--radio-message-color-default);
+
+  display: flex;
+  flex-direction: column;
+  gap: var(--radio-selector-item-gap, 4px);
+
+  &.item-disabled {
+    .label {
+      color: var(--radio-label-color-disabled);
+      cursor: not-allowed;
+    }
+  }
+
+  &.item-error {
+    --radio-border-color: var(--radio-border-color-error);
+    --radio-indicator-color: var(--radio-indicator-color-error);
+    --radio-label-color: var(--radio-label-color-error);
+    --radio-message-color: var(--radio-message-color-error);
+  }
+}
+
+.controlRow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--radio-selector-control-gap, 8px);
+}
+
+.radio {
+  all: unset;
+  box-sizing: border-box;
+  width: var(--radio-control-size, 26px);
+  height: var(--radio-control-size, 26px);
+  border-radius: 50%;
+  border: var(--radio-border-width, 1px) solid var(--radio-border-color);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: var(--radio-focus-width, 2px) solid var(--radio-focus-color);
+    outline-offset: 2px;
+  }
+
+  &[data-disabled] {
+    cursor: not-allowed;
+    --radio-border-color: var(--radio-border-color-disabled);
+    --radio-indicator-color: var(--radio-indicator-color-disabled);
+  }
+}
+
+.indicator {
+  width: var(--radio-indicator-size, 8px);
+  height: var(--radio-indicator-size, 8px);
+  border-radius: 50%;
+  background-color: var(--radio-indicator-color);
+}
+
+.label {
+  color: var(--radio-label-color);
+  cursor: pointer;
+  @include mixins.text-body-regular;
+}
+
+.message {
+  margin-left: var(--radio-message-offset-left, 32px);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--radio-message-gap, 4px);
+  color: var(--radio-message-color);
+  @include mixins.text-interface-legal-regular;
+
+  &.message-error {
+    --radio-message-color: var(--radio-message-color-error);
+  }
+
+  &.message-warning {
+    --radio-message-color: var(--radio-message-color-warning);
+  }
+
+  &.message-info {
+    --radio-message-color: var(--radio-message-color-info);
+  }
+}
+
+@include theme.themify(theme.$themes) {
+  .group {
+    --radio-selector-group-gap: calc(#{theme.get('float-proportion-2')} * 1px);
+    --radio-selector-control-gap: calc(#{theme.get('float-proportion-2')} * 1px);
+    --radio-selector-item-gap: calc(#{theme.get('float-proportion-1-default-unit')} * 1px);
+  }
+
+  .item {
+    --radio-border-color-default: #{theme.get('color-selection-checkbox-radio-border-enabled')};
+    --radio-border-color-error: #{theme.get('color-communication-notifications-border-error')};
+    --radio-border-color-disabled: #{theme.get('color-generic-disabled-border')};
+
+    --radio-indicator-color-default: #{theme.get('color-selection-checkbox-radio-fill-selected')};
+    --radio-indicator-color-error: #{theme.get('color-communication-notifications-fill-error')};
+    --radio-indicator-color-disabled: #{theme.get('color-generic-disabled-fill')};
+
+    --radio-label-color-default: #{theme.get('color-text-icon-common-high-emphesis')};
+    --radio-label-color-error: #{theme.get('color-communication-notifications-text-icon-error')};
+    --radio-label-color-disabled: #{theme.get('color-generic-disabled-text-icon')};
+
+    --radio-message-color-default: #{theme.get('color-text-icon-common-medium-emphasis')};
+    --radio-message-color-error: #{theme.get('color-communication-notifications-text-icon-error')};
+    --radio-message-color-warning: #{theme.get('color-communication-notifications-text-icon-alert')};
+    --radio-message-color-info: #{theme.get('color-communication-notifications-text-icon-info')};
+
+    --radio-focus-color: #{theme.get('color-generic-focused')};
+    --radio-focus-width: calc(#{theme.get('float-stroke-width-selection-focused')} * 1px);
+
+    --radio-control-size: calc(#{theme.get('float-proportion-3')} * 1px);
+    --radio-indicator-size: calc(#{theme.get('float-proportion-2')} * 1px);
+    --radio-border-width: calc(#{theme.get('float-stroke-width-selection-checkbox')} * 1px);
+
+    --radio-message-offset-left: calc(#{theme.get('float-proportion-8')} * 1px);
+    --radio-message-gap: calc(#{theme.get('float-proportion-1-default-unit')} * 1px);
+  }
+}

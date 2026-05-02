@@ -1,0 +1,40 @@
+@use '../../styles/themes' as theme;
+@use '../../styles/mixins' as mixins;
+
+@include theme.themify(theme.$themes) {
+  .badge {
+    --badge-fill: #{theme.get('color-communication-badge-fill')};
+    --badge-text: #{theme.get('color-text-icon-common-high-emphesis')};
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 16px;
+    min-width: 16px;
+    // padding: 0 6px;
+    border-radius: calc(#{theme.get('float-radii-communication-badge')} * 1px);
+    background-color: var(--badge-fill);
+    color: var(--badge-text);
+    white-space: nowrap;
+    user-select: none;
+
+    @include mixins.text-interface-legal-bold;
+  }
+
+  .variant-standalone {
+    position: relative;
+  }
+
+  .variant-appended {
+    position: absolute;
+    top: 0;
+    right: 0;
+    transform: translate(50%, -50%);
+  }
+
+  .empty {
+    min-width: 8px;
+    min-height: 8px;
+    padding: 0;
+  }
+}

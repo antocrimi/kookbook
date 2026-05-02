@@ -1,0 +1,201 @@
+@use '../../styles/themes' as theme;
+@use '../../styles/mixins' as mixins;
+
+// ─── Theme-scoped custom properties ───────────────────────────────────────
+// Everything inside themify shares [data-theme="x"] context, so source order
+// (not specificity fights) determines which vars win.
+
+@include theme.themify(theme.$themes) {
+
+  // ── Base (solid / primary) ──────────────────────────────────────────────
+  .button {
+    --button-fill-enabled:  #{theme.get('color-action-button-fill-primary-enabled')};
+    --button-fill-hover:    #{theme.get('color-action-button-fill-primary-hover')};
+    --button-fill-pressed:  #{theme.get('color-action-button-fill-primary-pressed')};
+    --button-fill-disabled: #{theme.get('color-generic-disabled-fill')};
+
+    --button-border-enabled:  transparent;
+    --button-border-hover:    transparent;
+    --button-border-pressed:  transparent;
+    --button-border-disabled: #{theme.get('color-generic-disabled-border')};
+
+    --button-text-enabled:  #{theme.get('color-text-icon-common-inverse-high-emphasis')};
+    --button-text-hover:    #{theme.get('color-text-icon-common-inverse-high-emphasis')};
+    --button-text-pressed:  #{theme.get('color-text-icon-common-inverse-high-emphasis')};
+    --button-text-disabled: #{theme.get('color-generic-disabled-text-icon-inverse')};
+
+    --button-radius:       #{theme.get('float-radii-action-button')}px;
+    --button-stroke-width: #{theme.get('float-stroke-width-action-button-outline')}px;
+  }
+
+  // ── Outline variant ─────────────────────────────────────────────────────
+  .button.variant-outline {
+    --button-fill-enabled:  transparent;
+    --button-fill-hover:    color-mix(in srgb, #{theme.get('color-action-button-border-primary-enabled')} 10%, transparent);
+    --button-fill-pressed:  color-mix(in srgb, #{theme.get('color-action-button-border-primary-enabled')} 16%, transparent);
+    --button-fill-disabled: transparent;
+
+    --button-border-enabled:  #{theme.get('color-action-button-border-primary-enabled')};
+    --button-border-hover:    #{theme.get('color-action-button-border-primary-enabled')};
+    --button-border-pressed:  #{theme.get('color-action-button-border-primary-enabled')};
+
+    --button-text-enabled:  #{theme.get('color-action-button-text-icon-primary-enabled')};
+    --button-text-hover:    #{theme.get('color-action-button-text-icon-primary-hover')};
+    --button-text-pressed:  #{theme.get('color-action-button-text-icon-primary-pressed')};
+    --button-text-disabled: #{theme.get('color-generic-disabled-text-icon')};
+  }
+
+  // ── Ghost variant ───────────────────────────────────────────────────────
+  .button.variant-ghost {
+    --button-fill-enabled:  transparent;
+    --button-fill-hover:    color-mix(in srgb, #{theme.get('color-action-button-text-icon-primary-enabled')} 10%, transparent);
+    --button-fill-pressed:  color-mix(in srgb, #{theme.get('color-action-button-text-icon-primary-enabled')} 16%, transparent);
+    --button-fill-disabled: transparent;
+
+    --button-border-enabled:  transparent;
+    --button-border-hover:    transparent;
+    --button-border-pressed:  transparent;
+    --button-border-disabled: transparent;
+
+    --button-text-enabled:  #{theme.get('color-action-button-text-icon-primary-enabled')};
+    --button-text-hover:    #{theme.get('color-action-button-text-icon-primary-hover')};
+    --button-text-pressed:  #{theme.get('color-action-button-text-icon-primary-pressed')};
+    --button-text-disabled: #{theme.get('color-generic-disabled-text-icon')};
+  }
+
+  // ── Critical tone (solid) ───────────────────────────────────────────────
+  .button.tone-critical {
+    --button-fill-enabled:  #{theme.get('color-action-button-fill-critical-enabled')};
+    --button-fill-hover:    #{theme.get('color-action-button-fill-critical-hover')};
+    --button-fill-pressed:  #{theme.get('color-action-button-fill-critical-pressed')};
+
+    --button-border-enabled:  #{theme.get('color-action-button-border-error-enabled')};
+    --button-border-hover:    #{theme.get('color-action-button-border-error-enabled')};
+    --button-border-pressed:  #{theme.get('color-action-button-border-error-enabled')};
+
+    --button-text-enabled:  #{theme.get('color-text-icon-common-inverse-high-emphasis')};
+    --button-text-hover:    #{theme.get('color-text-icon-common-inverse-high-emphasis')};
+    --button-text-pressed:  #{theme.get('color-text-icon-common-inverse-high-emphasis')};
+  }
+
+  // ── Critical + Outline ──────────────────────────────────────────────────
+  .button.tone-critical.variant-outline {
+    --button-fill-enabled:  transparent;
+    --button-fill-hover:    color-mix(in srgb, #{theme.get('color-action-button-fill-critical-enabled')} 10%, transparent);
+    --button-fill-pressed:  color-mix(in srgb, #{theme.get('color-action-button-fill-critical-enabled')} 16%, transparent);
+
+    --button-border-enabled:  #{theme.get('color-action-button-border-error-enabled')};
+    --button-border-hover:    #{theme.get('color-action-button-border-error-enabled')};
+    --button-border-pressed:  #{theme.get('color-action-button-border-error-enabled')};
+
+    --button-text-enabled:  #{theme.get('color-action-button-fill-critical-enabled')};
+    --button-text-hover:    #{theme.get('color-action-button-fill-critical-hover')};
+    --button-text-pressed:  #{theme.get('color-action-button-fill-critical-pressed')};
+  }
+
+  // ── Critical + Ghost ────────────────────────────────────────────────────
+  .button.tone-critical.variant-ghost {
+    --button-fill-enabled:  transparent;
+    --button-fill-hover:    color-mix(in srgb, #{theme.get('color-action-button-fill-critical-enabled')} 10%, transparent);
+    --button-fill-pressed:  color-mix(in srgb, #{theme.get('color-action-button-fill-critical-enabled')} 16%, transparent);
+
+    --button-border-enabled:  transparent;
+    --button-border-hover:    transparent;
+    --button-border-pressed:  transparent;
+
+    --button-text-enabled:  #{theme.get('color-action-button-fill-critical-enabled')};
+    --button-text-hover:    #{theme.get('color-action-button-fill-critical-hover')};
+    --button-text-pressed:  #{theme.get('color-action-button-fill-critical-pressed')};
+  }
+}
+
+// ─── Static component styles (no theme dependency) ────────────────────────
+
+.button {
+  @include mixins.text-interface-button;
+
+  align-items: center;
+  border: var(--button-stroke-width, 1px) solid var(--button-border-enabled);
+  border-radius: 999px;
+  cursor: pointer;
+  display: inline-flex;
+  gap: 0.5rem;
+  justify-content: center;
+  min-width: max-content;
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease,
+    color 120ms ease,
+    box-shadow 120ms ease,
+    opacity 120ms ease;
+
+  background-color: var(--button-fill-enabled);
+  color: var(--button-text-enabled);
+
+  &:hover:not(:disabled):not([aria-disabled="true"]):not([data-loading="true"]) {
+    background-color: var(--button-fill-hover);
+    border-color: var(--button-border-hover);
+    color: var(--button-text-hover);
+  }
+
+  &:active:not(:disabled):not([aria-disabled="true"]):not([data-loading="true"]) {
+    background-color: var(--button-fill-pressed);
+    border-color: var(--button-border-pressed);
+    color: var(--button-text-pressed);
+  }
+
+  &:focus-visible {
+    box-shadow: 0 0 0 2px var(--color-generic-focused);
+    outline: none;
+  }
+
+  &:disabled,
+  &[aria-disabled="true"],
+  &[data-loading="true"] {
+    background-color: var(--button-fill-disabled);
+    border-color: var(--button-border-disabled);
+    color: var(--button-text-disabled);
+    cursor: not-allowed;
+  }
+}
+
+// ─── Sizes ─────────────────────────────────────────────────────────────────
+
+.size-xs {
+  @include mixins.text-interface-button-sm;
+  height: 1.75rem;
+  padding: 0 0.625rem;
+}
+
+.size-sm {
+  @include mixins.text-interface-button-sm;
+  height: 2rem;
+  padding: 0 0.75rem;
+}
+
+.size-md {
+  height: 2.5rem;
+  padding: 0 1rem;
+}
+
+.size-lg {
+  height: 3rem;
+  padding: 0 1.25rem;
+}
+
+// ─── Icon only ─────────────────────────────────────────────────────────────
+
+.icon-only {
+  gap: 0;
+  padding-inline: 0;
+
+  &.size-xs { width: 1.75rem; }
+  &.size-sm { width: 2rem; }
+  &.size-md { width: 2.5rem; }
+  &.size-lg { width: 3rem; }
+}
+
+// ─── Misc ──────────────────────────────────────────────────────────────────
+
+.full-width { width: 100%; }
+.loading    { pointer-events: none; }

@@ -1,0 +1,275 @@
+@use '../../styles/themes' as theme;
+@use '../../styles/mixins' as mixins;
+
+@include theme.themify(theme.$themes) {
+  .root {
+    --select-label-color: #{theme.get('color-text-icon-common-high-emphesis')};
+    --select-label-color-disabled: #{theme.get('color-generic-disabled-text-icon')};
+    --select-input-color: #{theme.get('color-text-icon-common-high-emphesis')};
+    --select-input-color-disabled: #{theme.get('color-generic-disabled-text-icon')};
+    --select-placeholder-color: #{theme.get('color-text-icon-common-medium-emphasis')};
+    --select-icon-color: #{theme.get('color-text-icon-common-medium-emphasis')};
+    --select-icon-color-disabled: #{theme.get('color-generic-disabled-text-icon')};
+
+    --select-border-color: #{theme.get('color-text-inputs-border-enabled')};
+    --select-border-color-error: #{theme.get('color-communication-notifications-border-error')};
+    --select-border-color-disabled: #{theme.get('color-generic-disabled-border')};
+
+    --select-surface-color: transparent;
+    --select-surface-color-hover: var(--select-surface-color);
+    --select-surface-color-active: var(--select-surface-color);
+    --select-surface-color-disabled: #{theme.get('color-generic-disabled-bg')};
+    --select-focus-outline-color: #{theme.get('color-generic-focused')};
+
+    --select-message-color: #{theme.get('color-text-icon-common-medium-emphasis')};
+    --select-message-color-error: #{theme.get('color-communication-notifications-text-icon-error')};
+    --select-message-color-warning: #{theme.get('color-communication-notifications-text-icon-alert')};
+    --select-message-color-info: #{theme.get('color-communication-notifications-text-icon-info')};
+
+    --select-content-border-color: #{theme.get('color-text-inputs-border-enabled')};
+    --select-content-surface-color: #{theme.get('color-containment-surface-fill-raised-2')};
+    --select-content-shadow-color: #{theme.get('color-generic-brand-primary-enabled')};
+
+    // if solid, the surface color is the background color
+    &.variant-solid {
+      --select-surface-color: #{theme.get('color-containment-surface-fill-raised-2')};
+
+      &.variant-ghost {
+      --select-border-color: transparent;
+      --select-surface-color: transparent;
+    }
+
+    &.state-error {
+        --select-surface-color: #{theme.get('color-communication-notifications-fill-error')};
+      }
+    }
+
+    &.variant-ghost {
+      --select-border-color: transparent;
+      --select-surface-color: transparent;
+      --select-input-color: #{theme.get('color-action-button-text-icon-primary-enabled')};
+      --select-placeholder-color: #{theme.get('color-action-button-text-icon-primary-enabled')};
+      --select-icon-color: #{theme.get('color-action-button-text-icon-primary-enabled')};
+
+      --select-surface-color-hover: color-mix(in srgb, #{theme.get('color-action-button-text-icon-primary-enabled')} 10%, transparent);
+      --select-surface-color-active: color-mix(in srgb, #{theme.get('color-action-button-text-icon-primary-enabled')} 16%, transparent);
+    }
+
+    &.state-error {
+      --select-border-color: #{theme.get('color-communication-notifications-border-error')};
+      --select-input-color: #{theme.get('color-communication-notifications-text-icon-error')};
+      --select-label-color: #{theme.get('color-communication-notifications-text-icon-error')};
+    }
+    
+    .content {
+      @include mixins.effect-elevation-containment-menu;
+    }
+  }
+  .viewport {
+    --select-viewport-background-color: #{theme.get('color-containment-surface-fill-raised-2')};
+  }
+
+  .item {
+    --select-item-color: #{theme.get('color-text-icon-common-high-emphesis')};
+    --select-item-selected-color: #{theme.get('color-generic-brand-primary-enabled')};
+    --select-item-disabled-color: #{theme.get('color-generic-disabled-text-icon')};
+    --select-item-highlighted-surface-color: #{theme.get('color-selection-switch-knob-fill-enabled')};
+    --select-item-highlighted-surface-color-opacity: #{theme.get('float-opacity-background-enabled')}%;
+    // --select-item-highlighted-surface-color-opacity-hover: #{theme.get('float-opacity-background-hover')}%;
+    // --select-item-highlighted-surface-color-opacity-pressed: #{theme.get('float-opacity-background-pressed')}%;
+
+    &[data-highlighted] {
+      --select-item-highlighted-surface-color-opacity: #{theme.get('float-opacity-background-hover')}%;
+    }
+
+    &[data-state='checked'] {
+      --select-item-highlighted-surface-color-opacity: #{theme.get('float-opacity-background-selected')}%;
+    }
+  }
+}
+
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  &.size-fixed {
+    width: var(--select-fixed-width, 360px);
+  }
+
+  &.size-full {
+    width: 100%;
+  }
+}
+
+.label {
+  @include mixins.text-interface-legal-regular;
+  color: var(--select-label-color);
+}
+
+.trigger {
+  all: unset;
+  @include mixins.text-body-regular;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 52px;
+  padding: 0 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-color: var(--select-border-color);
+  color: var(--select-input-color);
+  background-color: var(--select-surface-color);
+  cursor: pointer;
+  transition: border-color 120ms ease, outline-color 120ms ease;
+  outline: 2px solid transparent;
+  outline-offset: 1px;
+  border-radius: 8px 8px 0 0;
+
+  &[data-placeholder] {
+    color: var(--select-placeholder-color);
+  }
+
+  &:focus-visible {
+    outline-color: var(--select-focus-outline-color);
+  }
+
+  &:hover:not([data-disabled]) {
+    background-color: var(--select-surface-color-hover);
+  }
+
+  &:active:not([data-disabled]) {
+    background-color: var(--select-surface-color-active);
+  }
+
+  &[data-disabled] {
+    cursor: not-allowed;
+  }
+}
+
+.icon {
+  color: var(--select-icon-color);
+}
+
+.message {
+  @include mixins.text-interface-legal-regular;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--select-message-color);
+
+  &.message-error {
+    color: var(--select-message-color-error);
+  }
+
+  &.message-warning {
+    color: var(--select-message-color-warning);
+  }
+
+  &.message-info {
+    color: var(--select-message-color-info);
+  }
+}
+
+.content {
+  min-width: var(--radix-select-trigger-width);
+  max-height: 320px;
+  border: 1px solid var(--select-content-border-color);
+  border-radius: 8px;
+  background-color: var(--select-content-surface-color);
+  overflow: hidden;
+  z-index: 30;
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--select-content-shadow-color) 16%, transparent);
+}
+
+.viewport {
+  padding: 4px;
+  @include mixins.text-body-regular;
+  background-color: var(--select-viewport-background-color);
+}
+
+.item {
+  all: unset;
+  box-sizing: border-box;
+  min-height: 40px;
+  border-radius: 6px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--select-item-color);
+  cursor: pointer;
+  transition: background-color 120ms ease;
+  background-color: color-mix(in srgb, var(--select-item-highlighted-surface-color) var(--select-item-highlighted-surface-color-opacity), transparent);
+
+  &[data-state='checked'] {
+    color: var(--select-item-selected-color);
+  }
+
+  &[data-disabled] {
+    cursor: not-allowed;
+    color: var(--select-item-disabled-color);
+  }
+}
+
+.itemIndicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.root.variant-outline {
+  .trigger {
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 8px;
+  }
+}
+
+
+.root.variant-solid,
+.root.variant-ghost {
+  .trigger {
+    border-radius: 8px;
+  }
+}
+
+.root.state-error {
+  .trigger {
+    border-color: var(--select-border-color-error);
+  }
+}
+
+.root.state-disabled {
+  .label {
+    color: var(--select-label-color-disabled);
+  }
+
+  .trigger {
+    border-color: var(--select-border-color-disabled);
+    // background-color: var(--select-surface-color-disabled);
+    color: var(--select-input-color-disabled);
+  }
+
+  .icon {
+    color: var(--select-icon-color-disabled);
+  }
+}
+
+
+.root.variant-ghost {
+  .trigger {
+    min-height: 32px;
+    padding: 0 10px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+  }
+
+  .trigger:hover {
+    background-color: color-mix(in srgb, var(--select-icon-color) 10%, transparent);
+  }
+}

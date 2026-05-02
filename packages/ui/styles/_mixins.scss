@@ -1,0 +1,194 @@
+// Do not edit directly, this file was auto-generated.
+
+@use 'themes' as theme;
+@use 'variables' as *;
+
+@mixin text-display-01 {
+  font-family: "DM Serif Display";
+  font-weight: 400;
+  font-style: normal;
+  font-size: 48px;
+  line-height: 56px;
+  letter-spacing: 0px;
+  text-transform: none;
+  text-decoration: none;
+}
+
+@mixin text-display-02 {
+  font-family: "DM Serif Display";
+  font-weight: 400;
+  font-style: normal;
+  font-size: 40px;
+  line-height: 48px;
+  letter-spacing: 0px;
+  text-transform: none;
+  text-decoration: none;
+}
+
+@mixin text-headline-01 {
+  font-family: "DM Serif Display";
+  font-weight: 400;
+  font-style: normal;
+  font-size: 32px;
+  line-height: 40px;
+  letter-spacing: 0px;
+  text-transform: none;
+  text-decoration: none;
+}
+
+@mixin text-headline-02 {
+  font-family: "DM Serif Display";
+  font-weight: 400;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 32px;
+  letter-spacing: 0px;
+  text-transform: none;
+  text-decoration: none;
+}
+
+@mixin text-headline-03 {
+  font-family: "DM Serif Display";
+  font-weight: 400;
+  font-style: normal;
+  font-size: 20px;
+  line-height: 24px;
+  letter-spacing: 0px;
+  text-transform: none;
+  text-decoration: none;
+}
+
+@mixin text-subtitle-01 {
+  font-family: Montserrat;
+  font-weight: 600;
+  font-style: normal;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0px;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+@mixin text-body-regular {
+  font-family: Montserrat;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0px;
+  text-transform: none;
+  text-decoration: none;
+}
+
+@mixin text-body-strong {
+  font-family: Montserrat;
+  font-weight: 700;
+  font-style: normal;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0px;
+  text-transform: none;
+  text-decoration: none;
+}
+
+@mixin text-body-text-link {
+  font-family: Montserrat;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0px;
+  text-transform: none;
+  text-decoration: underline;
+}
+
+@mixin text-interface-eyebrow {
+  font-family: Montserrat;
+  font-weight: 500;
+  font-style: normal;
+  font-size: 10px;
+  line-height: 16px;
+  letter-spacing: 0px;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+@mixin text-interface-button {
+  font-family: Montserrat;
+  font-weight: 700;
+  font-style: normal;
+  font-size: 14px;
+  line-height: 16px;
+  letter-spacing: 0px;
+  text-transform: none;
+  text-decoration: none;
+}
+
+@mixin text-interface-button-sm {
+  font-family: Montserrat;
+  font-weight: 700;
+  font-style: normal;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0px;
+  text-transform: none;
+  text-decoration: none;
+}
+
+@mixin text-interface-legal-regular {
+  font-family: Montserrat;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0px;
+  text-transform: none;
+  text-decoration: none;
+}
+
+@mixin text-interface-legal-bold {
+  font-family: Montserrat;
+  font-weight: 700;
+  font-style: normal;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0px;
+  text-transform: none;
+  text-decoration: none;
+}
+
+@mixin effect-elevation-action-fab {
+  box-shadow: calc(theme.get("float-elevation-action-fab-potision-x") * 1px) calc(theme.get("float-elevation-action-fab-potision-y") * 1px) calc(theme.get("float-elevation-action-fab-blur") * 1px) calc(theme.get("float-elevation-action-fab-spread") * 1px) $primitive-color-transparencies-black-10-percent;
+}
+
+@mixin effect-elevation-comunication-snack-bar {
+  box-shadow: calc(theme.get("float-elevation-communication-snack-bar-potision-x") * 1px) calc(theme.get("float-elevation-communication-snack-bar-potision-y") * 1px) calc(theme.get("float-elevation-communication-snack-bar-blur") * 1px) calc(theme.get("float-elevation-communication-snack-bar-spread") * 1px) $primitive-color-transparencies-black-10-percent;
+}
+
+@mixin effect-elevation-comunication-toast {
+  box-shadow: calc(theme.get("float-elevation-communication-toast-potision-x") * 1px) calc(theme.get("float-elevation-communication-toast-potision-y") * 1px) calc(theme.get("float-elevation-communication-toast-blur") * 1px) calc(theme.get("float-elevation-communication-toast-spread") * 1px) $primitive-color-transparencies-black-10-percent;
+}
+
+@mixin effect-elevation-containment-dialog {
+  box-shadow: calc(theme.get("float-elevation-containment-dialog-potision-x") * 1px) calc(theme.get("float-elevation-containment-dialog-potision-y") * 1px) calc(theme.get("float-elevation-containment-dialog-blur") * 1px) calc(theme.get("float-elevation-containment-dialog-spread") * 1px) $primitive-color-transparencies-black-5-percent;
+}
+
+@mixin effect-elevation-containment-menu {
+  box-shadow: calc(theme.get("float-elevation-containment-menu-potision-x") * 1px) calc(theme.get("float-elevation-containment-menu-potision-y") * 1px) calc(theme.get("float-elevation-containment-menu-blur") * 1px) calc(theme.get("float-elevation-containment-menu-spread") * 1px) $primitive-color-transparencies-black-5-percent;
+}
+
+@mixin effect-elevation-containment-card-default {
+  box-shadow: calc(theme.get("float-elevation-containment-card-enabled-potision-x") * 1px) calc(theme.get("float-elevation-containment-card-enabled-potision-y") * 1px) calc(theme.get("float-elevation-containment-card-enabled-blur") * 1px) calc(theme.get("float-elevation-containment-card-enabled-spread") * 1px) $primitive-color-transparencies-black-5-percent;
+}
+
+@mixin effect-elevation-containment-card-hover {
+  box-shadow: calc(theme.get("float-elevation-containment-card-hover-potision-x") * 1px) calc(theme.get("float-elevation-containment-card-hover-potision-y") * 1px) calc(theme.get("float-elevation-containment-card-hover-blur") * 1px) calc(theme.get("float-elevation-containment-card-hover-spread") * 1px) $primitive-color-transparencies-black-10-percent;
+}
+
+@mixin effect-elevation-containment-card-selected {
+  box-shadow: calc(theme.get("float-elevation-containment-card-selected-potision-x") * 1px) calc(theme.get("float-elevation-containment-card-selected-potision-y") * 1px) calc(theme.get("float-elevation-containment-card-hover-blur") * 1px) calc(theme.get("float-elevation-containment-card-selected-spread") * 1px) $primitive-color-transparencies-black-10-percent;
+}
+
+@mixin effect-elevation-containment-card-dragged {
+  box-shadow: calc(theme.get("float-elevation-containment-card-dragged-potision-x") * 1px) calc(theme.get("float-elevation-containment-card-dragged-potision-y") * 1px) calc(theme.get("float-elevation-containment-card-dragged-blur") * 1px) calc(theme.get("float-elevation-containment-card-dragged-spread") * 1px) $primitive-color-transparencies-black-10-percent;
+}

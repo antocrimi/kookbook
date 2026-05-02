@@ -1,0 +1,486 @@
+@use '../../styles/themes' as theme;
+@use '../../styles/mixins' as mixins;
+
+@include theme.themify(theme.$themes) {
+  .content {
+    --date-picker-content-border-color: #{theme.get('color-text-inputs-border-enabled')};
+    --date-picker-content-surface-color: #{theme.get('color-containment-surface-fill-raised-2')};
+    --date-picker-content-shadow-color: #{theme.get('color-generic-brand-primary-enabled')};
+    --date-picker-accent-color: #{theme.get('color-generic-brand-primary-enabled')};
+    --date-picker-input-color: #{theme.get('color-text-icon-common-high-emphesis')};
+    --date-picker-icon-color-disabled: #{theme.get('color-generic-disabled-text-icon')};
+    --date-picker-focus-outline-color: #{theme.get('color-generic-focused')};
+    --date-picker-ghost-text: #{theme.get('color-action-button-text-icon-primary-enabled')};
+    --date-picker-ghost-surface-hover: color-mix(in srgb, #{theme.get('color-action-button-text-icon-primary-enabled')} 10%, transparent);
+    --date-picker-ghost-surface-active: color-mix(in srgb, #{theme.get('color-action-button-text-icon-primary-enabled')} 16%, transparent);
+    --date-picker-inverse-text: #{theme.get('color-text-icon-common-inverse-high-emphasis')};
+    --date-picker-muted-color: #{theme.get('color-text-icon-common-medium-emphasis')};
+
+    @include mixins.effect-elevation-containment-menu;
+  }
+
+  .root {
+    --date-picker-label-color: #{theme.get('color-text-icon-common-high-emphesis')};
+    --date-picker-label-color-disabled: #{theme.get('color-generic-disabled-text-icon')};
+    --date-picker-input-color: #{theme.get('color-text-icon-common-high-emphesis')};
+    --date-picker-input-color-disabled: #{theme.get('color-generic-disabled-text-icon')};
+    --date-picker-placeholder-color: #{theme.get('color-text-icon-common-medium-emphasis')};
+    --date-picker-icon-color: #{theme.get('color-text-icon-common-medium-emphasis')};
+    --date-picker-icon-color-disabled: #{theme.get('color-generic-disabled-text-icon')};
+
+    --date-picker-border-color: #{theme.get('color-text-inputs-border-enabled')};
+    --date-picker-border-color-error: #{theme.get('color-communication-notifications-border-error')};
+    --date-picker-border-color-disabled: #{theme.get('color-generic-disabled-border')};
+
+    --date-picker-surface-color: transparent;
+    --date-picker-surface-color-hover: var(--date-picker-surface-color);
+    --date-picker-surface-color-active: var(--date-picker-surface-color);
+    --date-picker-surface-color-disabled: #{theme.get('color-generic-disabled-bg')};
+    --date-picker-focus-outline-color: #{theme.get('color-generic-focused')};
+
+    --date-picker-message-color: #{theme.get('color-text-icon-common-medium-emphasis')};
+    --date-picker-message-color-error: #{theme.get('color-communication-notifications-text-icon-error')};
+    --date-picker-message-color-warning: #{theme.get('color-communication-notifications-text-icon-alert')};
+    --date-picker-message-color-info: #{theme.get('color-communication-notifications-text-icon-info')};
+
+    --date-picker-content-border-color: #{theme.get('color-text-inputs-border-enabled')};
+    --date-picker-content-surface-color: #{theme.get('color-containment-surface-fill-raised-2')};
+    --date-picker-content-shadow-color: #{theme.get('color-generic-brand-primary-enabled')};
+
+    --date-picker-accent-color: #{theme.get('color-generic-brand-primary-enabled')};
+    --date-picker-ghost-text: #{theme.get('color-action-button-text-icon-primary-enabled')};
+    --date-picker-ghost-surface-hover: color-mix(in srgb, #{theme.get('color-action-button-text-icon-primary-enabled')} 10%, transparent);
+    --date-picker-ghost-surface-active: color-mix(in srgb, #{theme.get('color-action-button-text-icon-primary-enabled')} 16%, transparent);
+    --date-picker-inverse-text: #{theme.get('color-text-icon-common-inverse-high-emphasis')};
+    --date-picker-muted-color: #{theme.get('color-text-icon-common-medium-emphasis')};
+
+    &.variant-solid {
+      --date-picker-surface-color: #{theme.get('color-containment-surface-fill-raised-2')};
+
+      &.state-error {
+        --date-picker-surface-color: #{theme.get('color-communication-notifications-fill-error')};
+      }
+    }
+
+    &.variant-ghost {
+      --date-picker-border-color: transparent;
+      --date-picker-surface-color: transparent;
+      --date-picker-input-color: var(--date-picker-ghost-text);
+      --date-picker-placeholder-color: var(--date-picker-ghost-text);
+      --date-picker-icon-color: var(--date-picker-ghost-text);
+    }
+
+    &.state-error {
+      --date-picker-border-color: #{theme.get('color-communication-notifications-border-error')};
+      --date-picker-input-color: #{theme.get('color-communication-notifications-text-icon-error')};
+      --date-picker-label-color: #{theme.get('color-communication-notifications-text-icon-error')};
+    }
+
+  }
+}
+
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  &.size-fixed {
+    width: var(--date-picker-fixed-width, 360px);
+  }
+
+  &.size-full {
+    width: 100%;
+  }
+}
+
+.label {
+  @include mixins.text-interface-legal-regular;
+  color: var(--date-picker-label-color);
+}
+
+.trigger {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 52px;
+  padding: 0 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-color: var(--date-picker-border-color);
+  background-color: var(--date-picker-surface-color);
+  border-radius: 8px 8px 0 0;
+  transition: border-color 120ms ease;
+
+  &:focus-within {
+    border-color: var(--date-picker-focus-outline-color);
+  }
+}
+
+.input {
+  @include mixins.text-body-regular;
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--date-picker-input-color);
+  padding: 0;
+
+  &::placeholder {
+    color: var(--date-picker-placeholder-color);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    color: var(--date-picker-input-color-disabled);
+  }
+}
+
+.clearButton,
+.calendarButton {
+  all: unset;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  color: var(--date-picker-icon-color);
+  cursor: pointer;
+  transition: background-color 120ms ease, color 120ms ease;
+
+  &:hover:not(:disabled) {
+    background-color: var(--date-picker-ghost-surface-hover);
+    color: var(--date-picker-ghost-text);
+  }
+
+  &:active:not(:disabled) {
+    background-color: var(--date-picker-ghost-surface-active);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--date-picker-focus-outline-color);
+    outline-offset: 1px;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    color: var(--date-picker-icon-color-disabled);
+  }
+}
+
+.message {
+  @include mixins.text-interface-legal-regular;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--date-picker-message-color);
+
+  &.message-error {
+    color: var(--date-picker-message-color-error);
+  }
+
+  &.message-warning {
+    color: var(--date-picker-message-color-warning);
+  }
+
+  &.message-info {
+    color: var(--date-picker-message-color-info);
+  }
+}
+
+.content {
+  width: max-content;
+  border: none;
+  border-radius: 8px;
+  background-color: var(--date-picker-content-surface-color, #fff);
+  padding: 12px;
+  z-index: 30;
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--date-picker-content-shadow-color, rgba(0, 0, 0, 0.2)) 24%, transparent);
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 260px;
+}
+
+.panelHeader {
+  display: grid;
+  grid-template-columns: 28px 1fr 28px;
+  align-items: center;
+  gap: 4px;
+  height: 32px;
+}
+
+.navButton {
+  all: unset;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  color: var(--date-picker-ghost-text);
+  cursor: pointer;
+  transition: background-color 120ms ease;
+
+  &:hover:not(:disabled) {
+    background-color: var(--date-picker-ghost-surface-hover);
+  }
+
+  &:active:not(:disabled) {
+    background-color: var(--date-picker-ghost-surface-active);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--date-picker-focus-outline-color);
+    outline-offset: 1px;
+  }
+
+  &:disabled {
+    color: var(--date-picker-icon-color-disabled);
+    cursor: not-allowed;
+  }
+
+  svg {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+.headerLabel {
+  all: unset;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 28px;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: center;
+  color: var(--date-picker-input-color);
+  @include mixins.text-interface-button-sm;
+  transition: background-color 120ms ease, color 120ms ease;
+
+  &:hover {
+    background-color: var(--date-picker-ghost-surface-hover);
+    color: var(--date-picker-ghost-text);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--date-picker-focus-outline-color);
+    outline-offset: 1px;
+  }
+}
+
+.headerLabelStatic {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 28px;
+  color: var(--date-picker-input-color);
+  @include mixins.text-interface-button-sm;
+}
+
+.pickerGrid {
+  display: grid;
+  gap: 6px;
+}
+
+.pickerGridMonths {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.pickerGridYears {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.pickerCell {
+  all: unset;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+  border-radius: 6px;
+  color: var(--date-picker-input-color);
+  cursor: pointer;
+  text-align: center;
+  @include mixins.text-body-regular;
+  transition: background-color 120ms ease, color 120ms ease;
+
+  &:hover:not(:disabled) {
+    background-color: var(--date-picker-ghost-surface-hover);
+    color: var(--date-picker-ghost-text);
+  }
+
+  &:active:not(:disabled) {
+    background-color: var(--date-picker-ghost-surface-active);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--date-picker-focus-outline-color);
+    outline-offset: -2px;
+  }
+
+  &:disabled {
+    color: var(--date-picker-icon-color-disabled);
+    cursor: not-allowed;
+  }
+}
+
+.pickerCellSelected {
+  background-color: var(--date-picker-accent-color);
+  color: var(--date-picker-inverse-text);
+
+  &:hover:not(:disabled) {
+    background-color: var(--date-picker-accent-color);
+    color: var(--date-picker-inverse-text);
+  }
+}
+
+.calendar {
+  @include mixins.text-body-regular;
+  color: var(--date-picker-input-color);
+
+  :global(.rdp-root) {
+    --rdp-accent-color: var(--date-picker-accent-color);
+  }
+
+  :global(.rdp-months) {
+    display: flex;
+    flex-direction: column;
+  }
+
+  :global(.rdp-month_grid) {
+    border-collapse: separate;
+    border-spacing: 2px;
+  }
+
+  :global(.rdp-weekday) {
+    @include mixins.text-interface-legal-regular;
+    width: 36px;
+    height: 28px;
+    color: var(--date-picker-muted-color);
+    text-transform: uppercase;
+    font-weight: 600;
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  :global(.rdp-day) {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  :global(.rdp-day_button) {
+    all: unset;
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    color: var(--date-picker-input-color);
+    cursor: pointer;
+    transition: background-color 120ms ease, color 120ms ease;
+
+    &:hover:not(:disabled) {
+      background-color: var(--date-picker-ghost-surface-hover);
+      color: var(--date-picker-ghost-text);
+    }
+
+    &:active:not(:disabled) {
+      background-color: var(--date-picker-ghost-surface-active);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--date-picker-focus-outline-color);
+      outline-offset: -2px;
+    }
+
+    &:disabled {
+      color: var(--date-picker-icon-color-disabled);
+      cursor: not-allowed;
+      background-color: transparent;
+    }
+  }
+
+  :global(.rdp-today) :global(.rdp-day_button) {
+    color: var(--date-picker-accent-color);
+    font-weight: 600;
+  }
+
+  :global(.rdp-outside) :global(.rdp-day_button) {
+    color: var(--date-picker-muted-color);
+    opacity: 0.55;
+  }
+
+  :global(.rdp-selected) :global(.rdp-day_button) {
+    background-color: var(--date-picker-accent-color);
+    color: var(--date-picker-inverse-text);
+
+    &:hover:not(:disabled) {
+      background-color: var(--date-picker-accent-color);
+      color: var(--date-picker-inverse-text);
+    }
+  }
+
+  :global(.rdp-disabled) :global(.rdp-day_button) {
+    color: var(--date-picker-icon-color-disabled);
+    cursor: not-allowed;
+  }
+}
+
+.root.variant-outline {
+  .trigger {
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 8px;
+  }
+}
+
+.root.variant-solid,
+.root.variant-ghost {
+  .trigger {
+    border-radius: 8px;
+  }
+}
+
+.root.variant-ghost {
+  .trigger {
+    min-height: 40px;
+    padding: 0 8px;
+    border: 1px solid transparent;
+  }
+}
+
+.root.state-error {
+  .trigger {
+    border-color: var(--date-picker-border-color-error);
+  }
+}
+
+.root.state-disabled {
+  .label {
+    color: var(--date-picker-label-color-disabled);
+  }
+
+  .trigger {
+    border-color: var(--date-picker-border-color-disabled);
+  }
+
+  .input {
+    color: var(--date-picker-input-color-disabled);
+  }
+}

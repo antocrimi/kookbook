@@ -1,0 +1,206 @@
+@use '../../styles/themes' as theme;
+@use '../../styles/mixins' as mixins;
+
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  &.size-fixed {
+    width: var(--text-field-fixed-width, 360px);
+  }
+
+  &.size-full {
+    width: 100%;
+  }
+
+  .label {
+    @include mixins.text-interface-legal-regular;
+  }
+
+  .control {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-height: 52px;
+    padding: 0 12px;
+    border-radius: 8px 8px 0 0;
+    border-bottom-style: solid;
+    transition: border-color 120ms ease;
+    outline: 2px solid transparent;
+    outline-offset: 1px;
+
+    transition: outline-color 120ms ease;
+    outline: 2px solid transparent;
+
+    &:focus-within {
+      outline: 2px solid var(--text-field-focus-outline-color);
+    }
+  }
+
+  .input {
+    all: unset;
+    @include mixins.text-body-regular;
+    box-sizing: border-box;
+    width: 100%;
+    padding-right: 28px;
+
+    &:disabled {
+      cursor: not-allowed;
+    }
+  }
+
+  .clearButton {
+    all: unset;
+    width: 20px;
+    height: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .message {
+    @include mixins.text-interface-legal-regular;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &.variant-outline {
+    .control {
+      border-style: solid;
+      border-radius: 8px;
+    }
+  }
+
+  &.variant-exposed {
+    .control {
+      border-radius: 0;
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    .input {
+      padding-right: 24px;
+    }
+
+    .clearButton {
+      margin-right: 2px;
+    }
+  }
+}
+
+@include theme.themify(theme.$themes) {
+  .root {
+    --text-field-label-color: #{theme.get('color-text-icon-common-high-emphesis')};
+    --text-field-input-color: #{theme.get('color-text-icon-common-high-emphesis')};
+    --text-field-placeholder-color: #{theme.get('color-text-icon-common-medium-emphasis')};
+    --text-field-border-color: #{theme.get('color-text-inputs-border-enabled')};
+    --text-field-surface-color: transparent;
+    --text-field-message-color: #{theme.get('color-text-icon-common-medium-emphasis')};
+    --text-field-focus-outline-color: #{theme.get('color-generic-focused')};
+
+    .label {
+      color: var(--text-field-label-color);
+    }
+
+    .control {
+      border-bottom-width: calc(#{theme.get('float-stroke-width-text-inputs-field')} * 1px);
+      border-bottom-color: var(--text-field-border-color);
+      background-color: var(--text-field-surface-color);
+
+      &:focus-within {
+        --text-field-border-color: #{theme.get('color-text-inputs-border-active')};
+      }
+
+      // &:has(.input:focus-visible) {
+      //   --text-field-border-color: #{theme.get('color-generic-focused')};
+      // }
+    }
+
+    .input {
+      color: var(--text-field-input-color);
+
+      &::placeholder {
+        color: var(--text-field-placeholder-color);
+      }
+    }
+
+    .clearButton {
+      color: var(--text-field-placeholder-color);
+
+      &:hover {
+        color: var(--text-field-input-color);
+      }
+    }
+
+    .message {
+      color: var(--text-field-message-color);
+    }
+
+
+    &.variant-outline {
+      .control {
+        border-width: calc(#{theme.get('float-stroke-width-text-inputs-field')} * 1px);
+        border-color: var(--text-field-border-color);
+      }
+    }
+
+    &.variant-solid {
+      .control {
+        --text-field-surface-color: #{theme.get('color-containment-surface-fill-raised-2')};
+        --text-field-border-color: #{theme.get('color-text-inputs-border-active')};
+      }
+    }
+
+    &.state-error {
+      --text-field-label-color: #{theme.get('color-communication-notifications-text-icon-error')};
+      --text-field-input-color: #{theme.get('color-communication-notifications-text-icon-error')};
+      --text-field-placeholder-color: #{theme.get('color-communication-notifications-text-icon-error')};
+      --text-field-message-color: #{theme.get('color-communication-notifications-text-icon-error')};
+      --text-field-border-color: #{theme.get('color-communication-notifications-border-error')};
+
+      .control:focus-within,
+      .control:has(.input:focus-visible) {
+        --text-field-border-color: #{theme.get('color-communication-notifications-border-error')};
+      }
+
+      &.variant-solid {
+        .control {
+          --text-field-surface-color: #{theme.get('color-communication-notifications-fill-error')};
+          --text-field-border-color: #{theme.get('color-communication-notifications-border-error')};
+        }
+      }
+    }
+
+    &.state-disabled {
+      --text-field-input-color: #{theme.get('color-generic-disabled-text-icon')};
+      --text-field-placeholder-color: #{theme.get('color-generic-disabled-text-icon')};
+      --text-field-border-color: #{theme.get('color-generic-disabled-border')};
+
+      .label {
+        color: #{theme.get('color-generic-disabled-text-icon')};
+      }
+
+      &.variant-solid {
+        .control {
+          --text-field-border-color: #{theme.get('color-generic-disabled-border')};
+        }
+      }
+    }
+  }
+
+  .message-error {
+    --text-field-message-color: #{theme.get('color-communication-notifications-text-icon-error')};
+  }
+
+  .message-warning {
+    --text-field-message-color: #{theme.get('color-communication-notifications-text-icon-alert')};
+  }
+
+  .message-info {
+    --text-field-message-color: #{theme.get('color-communication-notifications-text-icon-info')};
+  }
+}

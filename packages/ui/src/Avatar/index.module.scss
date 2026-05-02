@@ -1,0 +1,49 @@
+@use '../../styles/themes' as theme;
+@use '../../styles/mixins' as mixins;
+
+@include theme.themify(theme.$themes) {
+  .avatar {
+    --avatar-text: #{theme.get('color-text-icon-common-inverse-high-emphasis')};
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    user-select: none;
+    vertical-align: middle;
+    border-radius: 999px;
+    color: var(--avatar-text);
+  }
+
+  .size-sm {
+    width: 16px;
+    height: 16px;
+  }
+
+  .size-md {
+    width: 32px;
+    height: 32px;
+  }
+
+  .size-lg {
+    width: 48px;
+    height: 48px;
+  }
+
+  .image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .fallback {
+    width: 100%;
+    height: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-transform: uppercase;
+
+    @include mixins.text-body-strong;
+  }
+}

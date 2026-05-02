@@ -1,0 +1,77 @@
+@use '../../styles/themes' as theme;
+@use '../../styles/mixins' as mixins;
+
+@include theme.themify(theme.$themes) {
+  .toggle {
+    --toggle-fill-enabled: transparent;
+    --toggle-fill-hover: color-mix(in srgb, #{theme.get('color-action-button-text-icon-primary-enabled')} 10%, transparent);
+    --toggle-fill-pressed: color-mix(in srgb, #{theme.get('color-action-button-text-icon-primary-enabled')} 16%, transparent);
+    --toggle-fill-active: color-mix(in srgb, #{theme.get('color-action-button-fill-primary-enabled')} 14%, transparent);
+
+    --toggle-text-enabled: #{theme.get('color-action-button-text-icon-primary-enabled')};
+    --toggle-text-hover: #{theme.get('color-action-button-text-icon-primary-hover')};
+    --toggle-text-pressed: #{theme.get('color-action-button-text-icon-primary-pressed')};
+    --toggle-text-active: #{theme.get('color-action-button-text-icon-primary-enabled')};
+
+    all: unset;
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    gap: calc(#{theme.get('float-proportion-75')} * 1px);
+    border-radius: calc(#{theme.get('float-radii-containment-menu')} * 1px);
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 120ms ease, color 120ms ease, box-shadow 120ms ease;
+
+    color: var(--toggle-text-enabled);
+    background-color: var(--toggle-fill-enabled);
+
+    @include mixins.text-interface-button-sm;
+
+    &[data-state='on'] {
+      color: var(--toggle-text-active);
+      background-color: var(--toggle-fill-active);
+    }
+
+    &:hover:not([data-disabled]) {
+      color: var(--toggle-text-hover);
+      background-color: var(--toggle-fill-hover);
+    }
+
+    &:active:not([data-disabled]) {
+      color: var(--toggle-text-pressed);
+      background-color: var(--toggle-fill-pressed);
+    }
+
+    &:focus-visible {
+      box-shadow: 0 0 0 2px #{theme.get('color-generic-focused')};
+      outline: none;
+    }
+
+    &[data-disabled] {
+      cursor: not-allowed;
+      background-color: transparent;
+      color: #{theme.get('color-generic-disabled-text-icon')};
+    }
+  }
+
+  .size-sm {
+    width: calc(#{theme.get('float-proportion-4')} * 1px);
+    height: calc(#{theme.get('float-proportion-4')} * 1px);
+    padding: calc(#{theme.get('float-proportion-75')} * 1px);
+  }
+
+  .size-md {
+    width: calc(#{theme.get('float-proportion-5')} * 1px);
+    height: calc(#{theme.get('float-proportion-5')} * 1px);
+    padding: calc(#{theme.get('float-proportion-1-50')} * 1px);
+  }
+
+  .size-lg {
+    width: calc(#{theme.get('float-proportion-6')} * 1px);
+    height: calc(#{theme.get('float-proportion-6')} * 1px);
+    padding: calc(#{theme.get('float-proportion-2')} * 1px);
+  }
+}

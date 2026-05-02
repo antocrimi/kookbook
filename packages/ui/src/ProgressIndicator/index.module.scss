@@ -1,0 +1,101 @@
+@use '../../styles/themes' as theme;
+
+.progress {
+  --progress-size: 360px;
+  --progress-track-fill: var(--color-generic-disabled-fill);
+  --progress-track-border: var(--color-generic-disabled-border);
+  --progress-indicator-fill: var(--color-generic-brand-primary-enabled);
+
+  position: relative;
+  overflow: hidden;
+
+}
+
+.variant-linear {
+  width: var(--progress-size);
+  height: 8px;
+  border-radius: 999px;
+  border: 1px solid var(--progress-track-border);
+  background-color: var(--progress-track-fill);
+
+  .linear-indicator {
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+    background-color: var(--progress-indicator-fill);
+    transition: transform 160ms ease;
+
+    &[data-state='indeterminate'] {
+      width: 40%;
+      animation: linear-indeterminate 1200ms ease-in-out infinite;
+    }
+  }
+}
+
+.variant-circle {
+  width: var(--progress-size);
+  height: var(--progress-size);
+  border-radius: 50%;
+
+  .circle-svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+  }
+
+  .circle-track,
+  .circle-indicator {
+    fill: none;
+  }
+
+  .circle-track {
+    stroke: var(--progress-track-fill);
+  }
+
+  .circle-indicator {
+    stroke: var(--progress-indicator-fill);
+    stroke-linecap: round;
+    transition: stroke-dashoffset 200ms ease;
+
+    &[data-state='indeterminate'] {
+      animation: circle-indeterminate 1200ms linear infinite;
+    }
+  }
+}
+
+.size-full-width {
+  width: 100%;
+}
+
+@include theme.themify(theme.$themes) {
+  .progress {
+    --progress-track-fill: #{theme.get('color-generic-disabled-fill')};
+    --progress-track-border: #{theme.get('color-generic-disabled-border')};
+    --progress-indicator-fill: #{theme.get('color-generic-brand-primary-enabled')};
+
+  }
+}
+
+@keyframes linear-indeterminate {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  50% {
+    transform: translateX(20%);
+  }
+
+  100% {
+    transform: translateX(250%);
+  }
+}
+
+@keyframes circle-indeterminate {
+  0% {
+    stroke-dashoffset: 0;
+  }
+
+  100% {
+    stroke-dashoffset: -220;
+  }
+}

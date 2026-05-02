@@ -1,0 +1,159 @@
+@use '../../styles/themes' as theme;
+@use '../../styles/mixins' as mixins;
+
+.root {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  &.size-fixed {
+    width: var(--text-area-fixed-width, 360px);
+  }
+
+  &.size-full {
+    width: 100%;
+  }
+
+  .label {
+    @include mixins.text-interface-legal-regular;
+  }
+
+  .control {
+    position: relative;
+    display: flex;
+    border-radius: 8px 8px 0 0;
+    border-bottom-style: solid;
+    transition: border-color 120ms ease;
+    outline: 2px solid transparent;
+    outline-offset: 1px;
+
+    &:focus-within {
+      outline: 2px solid var(--text-area-focus-outline-color);
+    }
+  }
+
+  .textArea {
+    all: unset;
+    @include mixins.text-body-regular;
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 88px;
+    padding: 12px;
+    resize: vertical;
+
+    &:disabled {
+      cursor: not-allowed;
+    }
+  }
+
+  .message {
+    @include mixins.text-interface-legal-regular;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &.variant-outline {
+    .control {
+      border-style: solid;
+      border-radius: 8px;
+    }
+  }
+}
+
+@include theme.themify(theme.$themes) {
+  .root {
+    --text-area-label-color: #{theme.get('color-text-icon-common-high-emphesis')};
+    --text-area-input-color: #{theme.get('color-text-icon-common-high-emphesis')};
+    --text-area-placeholder-color: #{theme.get('color-text-icon-common-medium-emphasis')};
+    --text-area-border-color: #{theme.get('color-text-inputs-border-enabled')};
+    --text-area-surface-color: transparent;
+    --text-area-message-color: #{theme.get('color-text-icon-common-medium-emphasis')};
+    --text-area-focus-outline-color: #{theme.get('color-generic-focused')};
+
+    .label {
+      color: var(--text-area-label-color);
+    }
+
+    .control {
+      border-bottom-width: calc(#{theme.get('float-stroke-width-text-inputs-field')} * 1px);
+      border-bottom-color: var(--text-area-border-color);
+      background-color: var(--text-area-surface-color);
+
+      &:focus-within {
+        --text-area-border-color: #{theme.get('color-text-inputs-border-active')};
+      }
+    }
+
+    .textArea {
+      color: var(--text-area-input-color);
+
+      &::placeholder {
+        color: var(--text-area-placeholder-color);
+      }
+    }
+
+    .message {
+      color: var(--text-area-message-color);
+    }
+
+    &.variant-outline {
+      .control {
+        border-width: calc(#{theme.get('float-stroke-width-text-inputs-field')} * 1px);
+        border-color: var(--text-area-border-color);
+      }
+    }
+
+    &.variant-solid {
+      .control {
+        --text-area-surface-color: #{theme.get('color-containment-surface-fill-raised-2')};
+        --text-area-border-color: #{theme.get('color-text-inputs-border-active')};
+      }
+    }
+
+    &.state-error {
+      --text-area-label-color: #{theme.get('color-communication-notifications-text-icon-error')};
+      --text-area-input-color: #{theme.get('color-communication-notifications-text-icon-error')};
+      --text-area-placeholder-color: #{theme.get('color-communication-notifications-text-icon-error')};
+      --text-area-message-color: #{theme.get('color-communication-notifications-text-icon-error')};
+      --text-area-border-color: #{theme.get('color-communication-notifications-border-error')};
+
+      .control:focus-within {
+        --text-area-border-color: #{theme.get('color-communication-notifications-border-error')};
+      }
+
+      &.variant-solid {
+        .control {
+          --text-area-surface-color: #{theme.get('color-communication-notifications-fill-error')};
+          --text-area-border-color: #{theme.get('color-communication-notifications-border-error')};
+        }
+      }
+    }
+
+    &.state-disabled {
+      --text-area-label-color: #{theme.get('color-generic-disabled-text-icon')};
+      --text-area-input-color: #{theme.get('color-generic-disabled-text-icon')};
+      --text-area-placeholder-color: #{theme.get('color-generic-disabled-text-icon')};
+      --text-area-border-color: #{theme.get('color-generic-disabled-border')};
+
+      &.variant-solid {
+        .control {
+          --text-area-border-color: #{theme.get('color-generic-disabled-border')};
+        }
+      }
+    }
+  }
+
+  .message-error {
+    --text-area-message-color: #{theme.get('color-communication-notifications-text-icon-error')};
+  }
+
+  .message-warning {
+    --text-area-message-color: #{theme.get('color-communication-notifications-text-icon-alert')};
+  }
+
+  .message-info {
+    --text-area-message-color: #{theme.get('color-communication-notifications-text-icon-info')};
+  }
+}

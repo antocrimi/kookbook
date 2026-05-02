@@ -1,0 +1,9 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Switch > captures checked state rendering > state-checked 1`] = `"<button type="button" role="switch" aria-checked="true" data-state="checked" value="on" class="_switch_3251e9" id="switch-state-checked" aria-label="State checked"><span data-state="checked" class="_thumb_3251e9"></span></button>"`;
+
+exports[`Switch > captures custom class rendering > custom-classes 1`] = `"<button type="button" role="switch" aria-checked="false" data-state="unchecked" value="on" class="_switch_3251e9 switch-root" aria-label="Custom class switch"><span data-state="unchecked" class="_thumb_3251e9 switch-thumb"></span></button>"`;
+
+exports[`Switch > captures disabled rendering > disabled 1`] = `"<button type="button" role="switch" aria-checked="true" data-state="checked" data-disabled="" disabled="" value="on" class="_switch_3251e9" id="switch-disabled" aria-label="Disabled switch"><span data-state="checked" data-disabled="" class="_thumb_3251e9"></span></button>"`;
+
+exports[`Switch > captures unchecked state rendering > state-unchecked 1`] = `"<button type="button" role="switch" aria-checked="false" data-state="unchecked" value="on" class="_switch_3251e9" id="switch-state-unchecked" aria-label="State unchecked"><span data-state="unchecked" class="_thumb_3251e9"></span></button>"`;

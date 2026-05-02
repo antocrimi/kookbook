@@ -1,0 +1,30 @@
+@use '../../styles/themes' as theme;
+@use '../../styles/mixins' as mixins;
+
+@include theme.themify(theme.$themes) {
+  .tag {
+    --tag-fill: #{theme.get('color-action-button-fill-primary-enabled')};
+    --tag-border: transparent;
+    --tag-text: #{theme.get('color-text-icon-common-inverse-high-emphasis')};
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    min-height: 20px;
+    padding: 0 4px;
+    border-radius: calc(#{theme.get('float-radii-communication-tag')} * 1px);
+    border: calc(#{theme.get('float-stroke-width-communication-tag')} * 1px) solid var(--tag-border);
+    background-color: var(--tag-fill);
+    color: var(--tag-text);
+    white-space: nowrap;
+
+    @include mixins.text-subtitle-01;
+  }
+
+  .tag.variant-outline {
+    --tag-fill: transparent;
+    --tag-border: #{theme.get('color-action-button-fill-primary-enabled')};
+    --tag-text: #{theme.get('color-action-button-fill-primary-enabled')};
+  }
+}

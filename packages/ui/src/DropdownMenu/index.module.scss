@@ -1,0 +1,158 @@
+@use '../../styles/themes' as theme;
+@use '../../styles/mixins' as mixins;
+
+// Themed CSS variables. Mirrors the Select component's variable
+// scheme so the surfaces look identical when both are used in the
+// same UI (matters because the canvas nav has both side-by-side
+// after COL-108).
+@include theme.themify(theme.$themes) {
+  .content {
+    --dropdown-menu-surface: #{theme.get('color-containment-surface-fill-raised-2')};
+    --dropdown-menu-shadow: #{theme.get('color-generic-brand-primary-enabled')};
+    --dropdown-menu-text: #{theme.get('color-text-icon-common-high-emphesis')};
+    --dropdown-menu-text-muted: #{theme.get('color-text-icon-common-medium-emphasis')};
+    --dropdown-menu-text-destructive: #{theme.get('color-communication-notifications-text-icon-error')};
+    --dropdown-menu-hover-base: #{theme.get('color-selection-switch-knob-fill-enabled')};
+    --dropdown-menu-hover-opacity: #{theme.get('float-opacity-background-hover')}%;
+    --dropdown-menu-focus-outline: #{theme.get('color-generic-focused')};
+  }
+}
+
+.content {
+  // Top-level menu surface and submenu surface share styles.
+  // Matches the Select content surface (raised-2 fill, brand-tinted
+  // drop shadow, 8px radius) but intentionally has NO border —
+  // elevation alone provides enough visual separation from the page.
+  min-width: 200px;
+  max-height: 480px;
+  padding: 4px;
+  border-radius: 8px;
+  background-color: var(--dropdown-menu-surface);
+  color: var(--dropdown-menu-text);
+  overflow: hidden;
+  z-index: 50;
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--dropdown-menu-shadow) 16%, transparent);
+
+  @include mixins.text-body-regular;
+}
+
+.item {
+  all: unset;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 40px;
+  padding: 0 10px;
+  border-radius: 6px;
+  color: var(--dropdown-menu-text);
+  cursor: pointer;
+  user-select: none;
+  // Explicit text-decoration reset: when consumers wrap a Link via
+  // `asChild`, the underlying <a> element picks up the user-agent
+  // underline; the wrapping `all: unset` is not always enough to
+  // squash it (Radix's Slot merges props but doesn't strip <a>
+  // defaults). Belt-and-suspenders: kill the underline here.
+  text-decoration: none;
+  transition: background-color 120ms ease, color 120ms ease;
+
+  &[data-highlighted],
+  &:hover {
+    background-color: color-mix(
+      in srgb,
+      var(--dropdown-menu-hover-base) var(--dropdown-menu-hover-opacity),
+      transparent
+    );
+  }
+
+  &[data-disabled] {
+    cursor: not-allowed;
+    color: var(--dropdown-menu-text-muted);
+    opacity: 0.6;
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--dropdown-menu-focus-outline);
+  }
+}
+
+// Variants applied via styles[`variant-${variant}`] from the
+// DropdownMenuItem wrapper. Default variant is the no-op base case.
+.variant-default {
+  // No additional styles — inherits the .item base.
+}
+
+.variant-destructive {
+  color: var(--dropdown-menu-text-destructive);
+
+  &[data-highlighted],
+  &:hover {
+    color: var(--dropdown-menu-text-destructive);
+    // Hover background stays neutral (don't double the visual weight).
+  }
+}
+
+// SubTrigger renders the chevron alongside the label.
+.subTrigger {
+  // Inherits .item; only the layout for the chevron is added here.
+  &[data-state="open"] {
+    background-color: color-mix(
+      in srgb,
+      var(--dropdown-menu-hover-base) var(--dropdown-menu-hover-opacity),
+      transparent
+    );
+  }
+}
+
+.subTriggerLabel {
+  flex: 1;
+  text-align: left;
+}
+
+.subTriggerIcon {
+  color: var(--dropdown-menu-text-muted);
+  flex-shrink: 0;
+}
+
+// Section header label inside the menu.
+.label {
+  padding: 8px 10px 4px;
+  color: var(--dropdown-menu-text-muted);
+
+  @include mixins.text-interface-eyebrow;
+}
+
+// Visual separator between item groups. Intentionally subtle —
+// it's structural, not decorative. ~8% of the foreground text
+// colour produces a hairline that reads as a divider without
+// competing with item content.
+.separator {
+  height: 1px;
+  margin: 4px 6px;
+  background-color: color-mix(
+    in srgb,
+    var(--dropdown-menu-text) 8%,
+    transparent
+  );
+}
+
+// Checkbox / radio item slot for the indicator (checkmark or dot).
+.itemIndicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  color: var(--dropdown-menu-text-muted);
+}
+
+.itemLabel {
+  flex: 1;
+}
+
+.checkboxItem,
+.radioItem {
+  // Inherits .item; the indicator slot is positioned via flex inside.
+}

@@ -1,0 +1,23 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Button > captures critical tone rendering > tone-critical 1`] = `"<button class="_button_947730 _variant-solid_947730 _tone-critical_947730 _size-md_947730" type="button">Tone critical</button>"`;
+
+exports[`Button > captures ghost variant rendering > variant-ghost 1`] = `"<button class="_button_947730 _variant-ghost_947730 _tone-primary_947730 _size-md_947730" type="button">Variant ghost</button>"`;
+
+exports[`Button > captures icon-only and full width renderings > full-width 1`] = `"<button class="_button_947730 _variant-solid_947730 _tone-primary_947730 _size-md_947730 _full-width_947730" type="button">Grow</button>"`;
+
+exports[`Button > captures icon-only and full width renderings > icon-only 1`] = `"<button class="_button_947730 _variant-solid_947730 _tone-primary_947730 _size-md_947730 _icon-only_947730" type="button" aria-label="Add item"><span aria-hidden="true">+</span></button>"`;
+
+exports[`Button > captures lg size rendering > size-lg 1`] = `"<button class="_button_947730 _variant-solid_947730 _tone-primary_947730 _size-lg_947730" type="button">Size lg</button>"`;
+
+exports[`Button > captures md size rendering > size-md 1`] = `"<button class="_button_947730 _variant-solid_947730 _tone-primary_947730 _size-md_947730" type="button">Size md</button>"`;
+
+exports[`Button > captures outline variant rendering > variant-outline 1`] = `"<button class="_button_947730 _variant-outline_947730 _tone-primary_947730 _size-md_947730" type="button">Variant outline</button>"`;
+
+exports[`Button > captures primary tone rendering > tone-primary 1`] = `"<button class="_button_947730 _variant-solid_947730 _tone-primary_947730 _size-md_947730" type="button">Tone primary</button>"`;
+
+exports[`Button > captures sm size rendering > size-sm 1`] = `"<button class="_button_947730 _variant-solid_947730 _tone-primary_947730 _size-sm_947730" type="button">Size sm</button>"`;
+
+exports[`Button > captures solid variant rendering > variant-solid 1`] = `"<button class="_button_947730 _variant-solid_947730 _tone-primary_947730 _size-md_947730" type="button">Variant solid</button>"`;
+
+exports[`Button > captures xs size rendering > size-xs 1`] = `"<button class="_button_947730 _variant-solid_947730 _tone-primary_947730 _size-xs_947730" type="button">Size xs</button>"`;

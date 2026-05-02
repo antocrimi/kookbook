@@ -1,0 +1,137 @@
+@use '../../styles/themes' as theme;
+@use '../../styles/mixins' as mixins;
+
+@include theme.themify(theme.$themes) {
+  .field {
+    display: inline-flex;
+    align-items: center;
+    gap: calc(#{theme.get('float-proportion-25')} * 1px);
+    padding: calc(#{theme.get('float-proportion-1-default-unit')} * 1px);
+    border-radius: calc(#{theme.get('float-radii-selection-checkbox')} * 1px);
+  }
+
+  .label {
+    color: #{theme.get('color-text-icon-common-high-emphesis')};
+    cursor: pointer;
+    @include mixins.text-body-regular;
+  }
+
+  .checkbox {
+    --checkbox-fill: transparent;
+    --checkbox-border: #{theme.get('color-text-inputs-border-enabled')};
+    --checkbox-icon: #{theme.get('color-text-icon-common-inverse-high-emphasis')};
+
+    all: unset;
+    position: relative;
+    box-sizing: border-box;
+    width: calc(#{theme.get('float-proportion-6-50')} * 1px);
+    height: calc(#{theme.get('float-proportion-6-50')} * 1px);
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 120ms ease;
+    cursor: pointer;
+
+    &::before {
+      content: '';
+      position: absolute;
+      width: calc(#{theme.get('float-proportion-2-50')} * 1px);
+      height: calc(#{theme.get('float-proportion-2-50')} * 1px);
+      border-radius: calc(#{theme.get('float-radii-selection-checkbox')} * 1px);
+      border: calc(#{theme.get('float-stroke-width-selection-checkbox')} * 1px) solid var(--checkbox-border);
+      background-color: var(--checkbox-fill);
+      transition: background-color 120ms ease, border-color 120ms ease;
+    }
+
+    &[data-state='checked'],
+    &[data-state='indeterminate'] {
+      --checkbox-fill: #{theme.get('color-selection-checkbox-radio-fill-selected')};
+      --checkbox-border: #{theme.get('color-selection-checkbox-radio-fill-selected')};
+    }
+
+    &:hover:not([data-disabled]) {
+      background-color: color-mix(
+        in srgb,
+        #{theme.get('color-action-button-fill-primary-hover')} #{theme.get('float-opacity-background-hover') * 1%},
+        transparent
+      );
+    }
+
+    &:active:not([data-disabled]) {
+      background-color: color-mix(
+        in srgb,
+        #{theme.get('color-action-button-fill-primary-hover')} #{theme.get('float-opacity-background-pressed') * 1%},
+        transparent
+      );
+    }
+
+
+    &[data-disabled] {
+      cursor: not-allowed;
+      --checkbox-fill: #{theme.get('color-generic-disabled-fill')};
+      --checkbox-border: #{theme.get('color-generic-disabled-border')};
+      --checkbox-icon: #{theme.get('color-generic-disabled-text-icon-inverse')};
+    }
+  }
+
+
+  .field.field-tone-critical .label {
+    color: #{theme.get('color-communication-notifications-text-icon-error')};
+  }
+
+  .field.field-disabled .label {
+    color: #{theme.get('color-generic-disabled-text-icon')};
+    cursor: not-allowed;
+  }
+
+  .field:focus-within {
+    outline: calc(#{theme.get('float-stroke-width-selection-focused')} * 1px) solid #{theme.get('color-generic-focused')};
+    outline-offset: 0;
+  }
+
+  .checkbox.tone-critical {
+    --checkbox-border: #{theme.get('color-selection-checkbox-radio-border-enabled-critical')};
+
+    &[data-state='checked'],
+    &[data-state='indeterminate'] {
+      --checkbox-fill: #{theme.get('color-selection-checkbox-radio-fill-selected-critical')};
+      --checkbox-border: #{theme.get('color-selection-checkbox-radio-fill-selected-critical')};
+    }
+  }
+
+  .indicator {
+    position: relative;
+    z-index: 1;
+    width: calc(#{theme.get('float-proportion-2')} * 1px);
+    height: calc(#{theme.get('float-proportion-2')} * 1px);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--checkbox-icon);
+  }
+
+  .check {
+    width: calc(#{theme.get('float-proportion-1-50')} * 1px);
+    height: calc(#{theme.get('float-proportion-1-50')} * 1px);
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: calc(#{theme.get('float-proportion-25')} * 1px);
+  }
+
+  .indeterminate {
+    width: calc(#{theme.get('float-proportion-1-default-unit')} * 1px);
+    height: calc(#{theme.get('float-proportion-25')} * 1px);
+    border-radius: calc(#{theme.get('float-proportion-25')} * 1px);
+    background-color: currentColor;
+  }
+
+  .checkbox[data-state='checked'] .indeterminate,
+  .checkbox[data-state='unchecked'] .check,
+  .checkbox[data-state='unchecked'] .indeterminate,
+  .checkbox[data-state='indeterminate'] .check {
+    display: none;
+  }
+}

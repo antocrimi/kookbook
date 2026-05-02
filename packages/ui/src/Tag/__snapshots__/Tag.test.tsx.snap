@@ -1,0 +1,7 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Tag > captures custom class rendering > custom-class 1`] = `"<span class="_tag_965d32 _variant-solid_965d32 custom-tag">Custom class</span>"`;
+
+exports[`Tag > captures outline variant rendering > variant-outline 1`] = `"<span class="_tag_965d32 _variant-outline_965d32">Variant outline</span>"`;
+
+exports[`Tag > captures solid variant rendering > variant-solid 1`] = `"<span class="_tag_965d32 _variant-solid_965d32">Variant solid</span>"`;

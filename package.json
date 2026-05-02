@@ -1,0 +1,21 @@
+{
+  "name": "cuckoobook",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --filter web dev",
+    "build": "pnpm -r build",
+    "lint": "pnpm -r lint",
+    "test": "pnpm -r test",
+    "check-types": "pnpm -r check-types"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3"
+  },
+  "dependencies": {
+    "sass": "^1.97.3"
+  },
+  "packageManager": "pnpm@10.29.2",
+  "engines": {
+    "node": ">=20"
+  }
+}

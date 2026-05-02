@@ -1,0 +1,11 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Avatar > captures custom fallback rendering > fallback-custom 1`] = `"<span class="_avatar_4ce3ab _size-md_4ce3ab"><span class="_fallback_4ce3ab" style="background-color: rgb(249, 112, 102);">JD</span></span>"`;
+
+exports[`Avatar > captures default circle rendering > shape-circle 1`] = `"<span class="_avatar_4ce3ab _size-md_4ce3ab"><span class="_fallback_4ce3ab" style="background-color: rgb(228, 120, 250);">SS</span></span>"`;
+
+exports[`Avatar > captures lg size rendering > size-lg 1`] = `"<span class="_avatar_4ce3ab _size-lg_4ce3ab"><span class="_fallback_4ce3ab" style="background-color: rgb(46, 144, 250);">SU</span></span>"`;
+
+exports[`Avatar > captures md size rendering > size-md 1`] = `"<span class="_avatar_4ce3ab _size-md_4ce3ab"><span class="_fallback_4ce3ab" style="background-color: rgb(46, 144, 250);">SU</span></span>"`;
+
+exports[`Avatar > captures sm size rendering > size-sm 1`] = `"<span class="_avatar_4ce3ab _size-sm_4ce3ab"><span class="_fallback_4ce3ab" style="background-color: rgb(46, 144, 250);">SU</span></span>"`;

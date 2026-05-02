@@ -1,0 +1,28 @@
+@use '../../styles/themes' as theme;
+
+@include theme.themify(theme.$themes) {
+  .group {
+    display: inline-flex;
+    align-items: center;
+    gap: calc(#{theme.get('float-proportion-50')} * 1px);
+    border-radius: calc(#{theme.get('float-radii-containment-menu')} * 1px);
+    padding: calc(#{theme.get('float-proportion-50')} * 1px);
+    background-color: color-mix(
+      in srgb,
+      #{theme.get('color-action-button-fill-primary-enabled')} 8%,
+      transparent
+    );
+  }
+
+  .size-sm {
+    gap: calc(#{theme.get('float-proportion-25')} * 1px);
+  }
+
+  .size-md {
+    gap: calc(#{theme.get('float-proportion-50')} * 1px);
+  }
+
+  .size-lg {
+    gap: calc(#{theme.get('float-proportion-75')} * 1px);
+  }
+}
