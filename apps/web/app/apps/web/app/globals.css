@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+@theme {
+  /* Cuckoobook palette */
+  --color-forest: #1a3a2a;
+  --color-cream: #faf5ef;
+  --color-ink: #1c1c1c;
+  --color-stone: #6b6b6b;
+  --color-line: #e8e3dc;
+  --color-coral: #e07a5f;
+  --color-mustard: #d4a843;
+  --color-sage: #87a878;
+
+  /* Typography */
+  --font-serif: "the-seasons", Georgia, serif;
+  --font-sans: system-ui, -apple-system, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+:root {
+  --background: #faf5ef;
+  --foreground: #1c1c1c;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
