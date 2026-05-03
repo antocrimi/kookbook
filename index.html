@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>cuckoobook</title>
+  <link rel="stylesheet" href="https://use.typekit.net/usz6qzd.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --forest: #1a3a2a;
+      --cream: #faf5ef;
+      --ink: #1c1c1c;
+      --stone: #6b6b6b;
+      --line: #e8e3dc;
+      --coral: #e07a5f;
+      --mustard: #d4a843;
+      --sage: #87a878;
+      --serif: "the-seasons", Georgia, serif;
+      --sans: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    html, body {
+      height: 100%;
+      background: var(--cream);
+      color: var(--ink);
+      font-family: var(--sans);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── Page routing ─────────────────────────────────────────────────── */
+    .page { display: none; min-height: 100dvh; }
+    .page.active { display: flex; flex-direction: column; }
+
+    /* ═══════════════════════════════════════════════════════════════════
+       INDEX PAGE
+    ═══════════════════════════════════════════════════════════════════ */
+    #index { background: var(--cream); }
+
+    .idx-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 22px 20px 0;
+      max-width: 960px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .wordmark {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 22px;
+      color: var(--forest);
+      letter-spacing: -0.01em;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 18px;
+      border-radius: 40px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 120ms ease;
+      text-decoration: none;
+      border: none;
+      font-family: var(--sans);
+    }
+    .btn-solid { background: var(--coral); color: #fff; }
+    .btn-solid:hover { background: #cc6b51; }
+    .btn-solid:active { transform: scale(0.96); }
+    .btn-outline { background: transparent; color: var(--ink); border: 1.5px solid var(--line); }
+    .btn-outline:hover { border-color: var(--stone); }
+    .btn-ghost { background: transparent; color: var(--stone); border: none; font-size: 12px; padding: 6px 10px; }
+    .btn-ghost:hover { color: var(--ink); }
+
+    .idx-main {
+      flex: 1;
+      padding: 28px 20px 48px;
+      max-width: 960px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .count-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--stone);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+    @media (min-width: 540px) { .grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (min-width: 800px) { .grid { grid-template-columns: repeat(4, 1fr); } }
+
+    /* ─── Recipe Card ──────────────────────────────────────────────────── */
+    .card {
+      display: flex;
+      flex-direction: column;
+      border-radius: 16px;
+      overflow: hidden;
+      background: #fff;
+      cursor: pointer;
+      box-shadow: 0 1px 4px rgba(28,28,28,.07), 0 0 0 1px rgba(28,28,28,.04);
+      transition: transform 200ms ease, box-shadow 200ms ease;
+      text-decoration: none;
+    }
+    .card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(28,28,28,.1), 0 0 0 1px rgba(28,28,28,.04); }
+    .card:active { transform: scale(0.97); transition-duration: 80ms; }
+
+    .card-photo {
+      aspect-ratio: 4/3;
+      background: linear-gradient(145deg, #cdd8b8 0%, #b8c9a0 25%, #d4b896 60%, #c4a87a 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-photo-decoration {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 70% 60%, rgba(255,255,255,0.15) 0%, transparent 70%);
+    }
+
+    .card-info { padding: 12px 14px 14px; }
+
+    .card-title {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: 15px;
+      line-height: 1.35;
+      color: var(--ink);
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+      overflow: hidden;
+      margin-bottom: 4px;
+    }
+
+    .card-meta {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--stone);
+    }
+
+    /* ═══════════════════════════════════════════════════════════════════
+       RECIPE DETAIL PAGE
+    ═══════════════════════════════════════════════════════════════════ */
+    #recipe { background: var(--cream); }
+
+    .recipe-hero {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 4/3;
+      max-height: 340px;
+      overflow: hidden;
+      background: linear-gradient(145deg, #cdd8b8 0%, #b8c9a0 20%, #d4b896 60%, #c4a87a 100%);
+      flex-shrink: 0;
+    }
+
+    .recipe-hero-decoration {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 65% 55%, rgba(255,255,255,0.18) 0%, transparent 60%),
+        radial-gradient(ellipse at 20% 80%, rgba(180,200,160,0.3) 0%, transparent 50%);
+    }
+
+    .back-btn {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(250,245,239,.88);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--ink);
+      transition: background 120ms;
+    }
+    .back-btn:hover { background: rgba(250,245,239,.97); }
+
+    .recipe-content {
+      flex: 1;
+      max-width: 640px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 0 20px;
+      overflow-y: auto;
+    }
+
+    .title-block { padding: 28px 0 8px; }
+
+    .recipe-title {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: clamp(26px, 6vw, 38px);
+      line-height: 1.15;
+      color: var(--ink);
+      margin-bottom: 8px;
+    }
+
+    .recipe-source {
+      font-size: 13px;
+      color: var(--stone);
+      margin-bottom: 14px;
+    }
+
+    .recipe-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--stone);
+      margin-bottom: 18px;
+    }
+
+    .recipe-desc {
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--stone);
+      padding-bottom: 8px;
+    }
+
+    /* ─── Sections ─────────────────────────────────────────────────────── */
+    .section { padding-top: 44px; }
+    .section + .section { border-top: 1px solid var(--line); margin-top: 12px; }
+
+    .display-heading {
+      font-family: var(--serif);
+      font-weight: 700;
+      font-size: clamp(34px, 9vw, 50px);
+      line-height: 1;
+      letter-spacing: -0.01em;
+      text-transform: uppercase;
+      color: var(--ink);
+      margin-bottom: 24px;
+    }
+
+    /* ─── Controls ─────────────────────────────────────────────────────── */
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .serving-pill {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      border: 1.5px solid var(--line);
+      border-radius: 40px;
+      padding: 6px 10px;
+    }
+
+    .serving-btn {
+      width: 28px;
+      height: 28px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      font-size: 20px;
+      font-weight: 300;
+      color: var(--ink);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      transition: background 100ms;
+    }
+    .serving-btn:hover { background: rgba(28,28,28,.06); }
+
+    #serving-label {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--ink);
+      min-width: 60px;
+      text-align: center;
+    }
+
+    .unit-chip {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      border: 1.5px solid var(--line);
+      border-radius: 40px;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--stone);
+    }
+
+    /* ─── Ingredient list ──────────────────────────────────────────────── */
+    .ing-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .ing-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      cursor: pointer;
+      transition: opacity 200ms;
+    }
+    .ing-row.checked { opacity: 0.42; }
+    .ing-row.checked .ing-text { text-decoration: line-through; text-decoration-color: var(--stone); }
+
+    .ing-checkbox {
+      width: 18px;
+      height: 18px;
+      border: 1.5px solid var(--ink);
+      border-radius: 4px;
+      flex-shrink: 0;
+      margin-top: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 150ms, border-color 150ms;
+      background: transparent;
+    }
+    .ing-row.checked .ing-checkbox {
+      background: var(--ink);
+      border-color: var(--ink);
+    }
+    .ing-checkbox svg { display: none; }
+    .ing-row.checked .ing-checkbox svg { display: block; }
+
+    .ing-text { font-size: 15px; line-height: 1.55; color: var(--ink); }
+    .ing-qty { font-weight: 700; }
+
+    .shop-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid var(--line);
+    }
+
+    /* ─── Steps ────────────────────────────────────────────────────────── */
+    .step-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 36px;
+      padding-bottom: 8px;
+    }
+
+    .step-label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--stone);
+      margin-bottom: 8px;
+    }
+
+    .step-text {
+      font-size: 16px;
+      line-height: 1.7;
+      color: var(--ink);
+    }
+
+    /* ─── Floating cook bar ────────────────────────────────────────────── */
+    .cook-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      padding: 16px 20px 28px;
+      background: linear-gradient(to top, var(--cream) 55%, transparent);
+      pointer-events: none;
+    }
+    .cook-bar .btn { pointer-events: auto; min-width: 160px; justify-content: center; font-size: 15px; padding: 14px 32px; }
+
+    .spacer-cook { height: 110px; }
+
+    /* ═══════════════════════════════════════════════════════════════════
+       COOKING MODE PAGE
+    ═══════════════════════════════════════════════════════════════════ */
+    #cooking {
+      background: var(--forest);
+      color: var(--cream);
+    }
+
+    .cook-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 20px 0;
+      max-width: 640px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .cook-close {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(250,245,239,.12);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--cream);
+      font-size: 20px;
+      transition: background 120ms;
+    }
+    .cook-close:hover { background: rgba(250,245,239,.2); }
+
+    .cook-counter {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      color: rgba(250,245,239,.6);
+    }
+
+    .cook-mic {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(250,245,239,.12);
+      border: none;
+      cursor: default;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(250,245,239,.5);
+    }
+
+    .cook-step-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 40px 28px;
+      max-width: 640px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .cook-step-text {
+      font-family: var(--serif);
+      font-size: clamp(22px, 5vw, 30px);
+      line-height: 1.5;
+      color: var(--cream);
+      font-weight: 400;
+    }
+
+    .cook-step-text .timer-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--coral);
+      color: #fff;
+      border-radius: 20px;
+      padding: 2px 10px 2px 6px;
+      font-size: 0.75em;
+      font-family: var(--sans);
+      font-weight: 700;
+      vertical-align: middle;
+      cursor: pointer;
+      margin: 0 2px;
+    }
+
+    .cook-dots {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      padding: 20px;
+    }
+    .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(250,245,239,.3);
+      transition: background 200ms;
+    }
+    .dot.active { background: var(--cream); }
+
+    .cook-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px 32px;
+      max-width: 640px;
+      width: 100%;
+      margin: 0 auto;
+      gap: 12px;
+    }
+
+    .cook-nav-btn {
+      flex: 1;
+      padding: 14px;
+      border-radius: 40px;
+      border: 1.5px solid rgba(250,245,239,.2);
+      background: transparent;
+      color: var(--cream);
+      font-size: 14px;
+      font-weight: 600;
+      font-family: var(--sans);
+      cursor: pointer;
+      transition: background 120ms;
+    }
+    .cook-nav-btn:hover { background: rgba(250,245,239,.08); }
+    .cook-nav-btn.primary { background: var(--coral); border-color: var(--coral); }
+    .cook-nav-btn.primary:hover { background: #cc6b51; }
+
+    .cook-ask-ai {
+      display: flex;
+      justify-content: center;
+      padding: 0 20px 12px;
+      max-width: 640px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .ask-ai-btn {
+      background: rgba(250,245,239,.1);
+      border: 1.5px solid rgba(250,245,239,.2);
+      color: var(--cream);
+      border-radius: 40px;
+      padding: 10px 20px;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: var(--sans);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 120ms;
+    }
+    .ask-ai-btn:hover { background: rgba(250,245,239,.16); }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     INDEX PAGE
+═══════════════════════════════════════════════════════════════════════ -->
+<div class="page active" id="index">
+  <header class="idx-header">
+    <h1 class="wordmark">cuckoobook</h1>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <button class="btn btn-solid" onclick="alert('Capture flow coming soon — snap a photo of a recipe page and AI extracts it.')">+ Capture</button>
+    </div>
+  </header>
+
+  <main class="idx-main">
+    <div class="toolbar">
+      <span class="count-label">1 recipe</span>
+      <button class="btn btn-ghost" onclick="alert('Demo recipe already loaded!')">Seed demo recipe</button>
+    </div>
+
+    <div class="grid">
+      <!-- Lemony Orzo Card -->
+      <div class="card" onclick="showRecipe()">
+        <div class="card-photo">
+          <div class="card-photo-decoration"></div>
+        </div>
+        <div class="card-info">
+          <div class="card-title">Lemony Orzo With Asparagus and Garlic Bread Crumbs</div>
+          <div class="card-meta">4 servings</div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     RECIPE DETAIL PAGE
+═══════════════════════════════════════════════════════════════════════ -->
+<div class="page" id="recipe">
+  <!-- Hero -->
+  <div class="recipe-hero">
+    <div class="recipe-hero-decoration"></div>
+    <button class="back-btn" onclick="showIndex()" aria-label="Back">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <path d="M12 4L6 10L12 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Scrollable content -->
+  <div class="recipe-content" id="recipe-scroll">
+    <div class="title-block">
+      <h1 class="recipe-title">Lemony Orzo With Asparagus and Garlic Bread Crumbs</h1>
+      <p class="recipe-source">NYT Cooking</p>
+      <div class="recipe-meta">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.2"/>
+          <path d="M8 5V8.5L10.5 10" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+        </svg>
+        20 MIN
+      </div>
+      <p class="recipe-desc">Every spoonful of this pasta has a happy jumble of lemony orzo, grassy asparagus, garlicky bread crumbs, fresh herbs and salty Parmesan. The pasta and thinly sliced asparagus cook together in the same pot, then rest in a lemony dressing while the garlic bread crumbs are toasted, so the pasta has time to absorb as much flavor as possible.</p>
+    </div>
+
+    <!-- INGREDIENTS -->
+    <section class="section">
+      <h2 class="display-heading">Ingredients</h2>
+
+      <div class="controls">
+        <div class="serving-pill">
+          <button class="serving-btn" onclick="changeServings(-1)">−</button>
+          <span id="serving-label">4 SERV.</span>
+          <button class="serving-btn" onclick="changeServings(1)">+</button>
+        </div>
+        <div class="unit-chip">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M2 7c0 2.76 2.24 5 5 5s5-2.24 5-5-2.24-5-5-5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+            <path d="M2 7h3l1.5-2L8 9l1.5-2H12" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          METRIC
+        </div>
+      </div>
+
+      <ul class="ing-list" id="ing-list">
+        <!-- Rendered by JS -->
+      </ul>
+
+      <div class="shop-row">
+        <button class="btn btn-outline" onclick="alert('Grocery list — coming soon in a future update.')">+ Groceries</button>
+        <button class="btn btn-outline" onclick="alert('Shop integration — coming soon in a future update.')">🛒 Shop</button>
+      </div>
+    </section>
+
+    <!-- PREPARATION -->
+    <section class="section">
+      <h2 class="display-heading">Preparation</h2>
+
+      <ol class="step-list">
+        <li>
+          <span class="step-label">Step 1</span>
+          <p class="step-text">Bring a medium pot of salted water to a boil. Add the orzo and cook until al dente according to package directions. Two minutes before the orzo is done, add the asparagus. Drain the orzo and asparagus. Wipe out and reserve the pot.</p>
+        </li>
+        <li>
+          <span class="step-label">Step 2</span>
+          <p class="step-text">While the orzo and asparagus cook, make the dressing: In a large bowl, stir together 3 tablespoons oil and the lemon zest and juice; season to taste with salt and pepper. Add the drained orzo and asparagus and toss to coat. Set aside while you toast the bread crumbs.</p>
+        </li>
+        <li>
+          <span class="step-label">Step 3</span>
+          <p class="step-text">In the reserved pot, heat the remaining 2 tablespoons oil over medium. Add the panko and cook, stirring, until golden brown, 3 to 5 minutes. Remove from heat, then stir in the garlic and season with salt and pepper.</p>
+        </li>
+        <li>
+          <span class="step-label">Step 4</span>
+          <p class="step-text">Stir the Parmesan and herbs into the orzo, taste, then season with salt, pepper and additional lemon juice, if desired. Top with the toasted bread crumbs and more Parmesan if you like. Serve warm or at room temperature.</p>
+        </li>
+      </ol>
+
+      <div class="spacer-cook"></div>
+    </section>
+  </div>
+
+  <!-- Floating Cook button -->
+  <div class="cook-bar">
+    <button class="btn btn-solid" onclick="showCooking()">Cook</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════════════
+     COOKING MODE
+═══════════════════════════════════════════════════════════════════════ -->
+<div class="page" id="cooking">
+  <div class="cook-header">
+    <button class="cook-close" onclick="showRecipe()">×</button>
+    <span class="cook-counter" id="cook-counter">1 of 4</span>
+    <div class="cook-mic" title="Voice navigation — coming soon">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <rect x="5" y="1" width="6" height="9" rx="3" stroke="currentColor" stroke-width="1.3"/>
+        <path d="M2.5 8a5.5 5.5 0 0 0 11 0" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+        <line x1="8" y1="13.5" x2="8" y2="15.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="cook-step-area">
+    <p class="cook-step-text" id="cook-step-text"></p>
+  </div>
+
+  <div class="cook-dots" id="cook-dots"></div>
+
+  <div class="cook-ask-ai">
+    <button class="ask-ai-btn" onclick="alert('AI chat — powered by your Anthropic key. Ask anything: "what does fold in mean?" or "how much garlic?" (coming soon in the full app)')">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.2"/>
+        <path d="M5.5 6.5C5.5 5.12 6.62 4 8 4s2.5 1.12 2.5 2.5c0 1.5-2.5 2-2.5 3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+        <circle cx="8" cy="12" r="0.7" fill="currentColor"/>
+      </svg>
+      Ask AI
+    </button>
+  </div>
+
+  <div class="cook-bottom">
+    <button class="cook-nav-btn" id="prev-btn" onclick="cookNav(-1)">← Back</button>
+    <button class="cook-nav-btn primary" id="next-btn" onclick="cookNav(1)">Next →</button>
+  </div>
+</div>
+
+<script>
+  // ─── Data ───────────────────────────────────────────────────────────────
+  const DEFAULT_SERVINGS = 4;
+  let servings = 4;
+  let checked = new Set();
+
+  const ingredients = [
+    { qty: null,  unit: null,    text: 'Salt and black pepper' },
+    { qty: 1,     unit: 'cup',   text: 'orzo' },
+    { qty: 1,     unit: 'lb',    text: 'asparagus, trimmed and thinly sliced on a diagonal (about ¼-inch thick)' },
+    { qty: 5,     unit: 'tbsp',  text: 'extra-virgin olive oil' },
+    { qty: 1,     unit: 'tsp',   text: 'lemon zest, plus 3 tbsp lemon juice (from about 1 large lemon)' },
+    { qty: 0.5,   unit: 'cup',   text: 'panko or homemade bread crumbs' },
+    { qty: 1,     unit: 'clove', text: 'garlic, finely grated' },
+    { qty: 0.25,  unit: 'cup',   text: 'finely grated Parmesan, plus more for serving' },
+    { qty: 0.5,   unit: 'cup',   text: 'fresh dill, mint or parsley (or any combination), torn if large' },
+  ];
+
+  const steps = [
+    'Bring a medium pot of salted water to a boil. Add the orzo and cook until al dente according to package directions. Two minutes before the orzo is done, add the asparagus. Drain the orzo and asparagus. Wipe out and reserve the pot.',
+    'While the orzo and asparagus cook, make the dressing: In a large bowl, stir together 3 tablespoons oil and the lemon zest and juice; season to taste with salt and pepper. Add the drained orzo and asparagus and toss to coat. Set aside while you toast the bread crumbs.',
+    'In the reserved pot, heat the remaining 2 tablespoons oil over medium. Add the panko and cook, stirring, until golden brown, 3 to 5 minutes. Remove from heat, then stir in the garlic and season with salt and pepper.',
+    'Stir the Parmesan and herbs into the orzo, taste, then season with salt, pepper and additional lemon juice, if desired. Top with the toasted bread crumbs and more Parmesan if you like. Serve warm or at room temperature.',
+  ];
+
+  // ─── Fractions ─────────────────────────────────────────────────────────
+  const FRACS = [[7/8,'⅞'],[3/4,'¾'],[2/3,'⅔'],[5/8,'⅝'],[1/2,'½'],[3/8,'⅜'],[1/3,'⅓'],[1/4,'¼'],[1/8,'⅛']];
+
+  function fmt(value, unit) {
+    if (value === null) return null;
+    const scaled = value * servings / DEFAULT_SERVINGS;
+    const whole = Math.floor(scaled);
+    const frac = scaled - whole;
+    let fracStr = '';
+    for (const [v, sym] of FRACS) {
+      if (Math.abs(frac - v) < 0.06) { fracStr = sym; break; }
+    }
+    let numStr;
+    if (fracStr && whole > 0) numStr = `${whole} ${fracStr}`;
+    else if (fracStr) numStr = fracStr;
+    else if (Math.abs(frac) < 0.04) numStr = `${whole}`;
+    else numStr = scaled.toFixed(1);
+    return `${numStr} ${unit}`;
+  }
+
+  // ─── Render ingredients ─────────────────────────────────────────────────
+  function renderIngredients() {
+    const list = document.getElementById('ing-list');
+    list.innerHTML = '';
+    ingredients.forEach((ing, i) => {
+      const qtyStr = fmt(ing.qty, ing.unit);
+      const isChecked = checked.has(i);
+      const li = document.createElement('li');
+      li.className = 'ing-row' + (isChecked ? ' checked' : '');
+      li.onclick = () => toggleIngredient(i);
+      li.innerHTML = `
+        <div class="ing-checkbox">
+          <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+            <polyline points="1 4 3.5 6.5 9 1" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <span class="ing-text">
+          ${qtyStr ? `<span class="ing-qty">${qtyStr}</span> ` : ''}${ing.text}
+        </span>`;
+      list.appendChild(li);
+    });
+  }
+
+  function toggleIngredient(i) {
+    if (checked.has(i)) checked.delete(i);
+    else checked.add(i);
+    renderIngredients();
+  }
+
+  function changeServings(delta) {
+    servings = Math.max(1, Math.min(50, servings + delta));
+    document.getElementById('serving-label').textContent = `${servings} SERV.`;
+    renderIngredients();
+  }
+
+  // ─── Cooking mode ───────────────────────────────────────────────────────
+  let cookStep = 0;
+
+  function renderCooking() {
+    document.getElementById('cook-step-text').textContent = steps[cookStep];
+    document.getElementById('cook-counter').textContent = `${cookStep + 1} of ${steps.length}`;
+    const dots = document.getElementById('cook-dots');
+    dots.innerHTML = '';
+    steps.forEach((_, i) => {
+      const d = document.createElement('div');
+      d.className = 'dot' + (i === cookStep ? ' active' : '');
+      dots.appendChild(d);
+    });
+    document.getElementById('prev-btn').style.opacity = cookStep === 0 ? '0.35' : '1';
+    document.getElementById('next-btn').textContent = cookStep === steps.length - 1 ? 'Done ✓' : 'Next →';
+  }
+
+  function cookNav(dir) {
+    if (dir === 1 && cookStep === steps.length - 1) { showRecipe(); return; }
+    cookStep = Math.max(0, Math.min(steps.length - 1, cookStep + dir));
+    renderCooking();
+  }
+
+  // ─── Page routing ───────────────────────────────────────────────────────
+  function showIndex() {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('index').classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  function showRecipe() {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('recipe').classList.add('active');
+    document.getElementById('recipe-scroll').scrollTop = 0;
+    window.scrollTo(0, 0);
+  }
+
+  function showCooking() {
+    cookStep = 0;
+    renderCooking();
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('cooking').classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  // ─── Init ───────────────────────────────────────────────────────────────
+  renderIngredients();
+</script>
+</body>
+</html>
