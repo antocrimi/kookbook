@@ -104,6 +104,38 @@ The design direction means updating the theme layer:
 - Consider a `theme-cooking` variant for cooking-mode-specific overrides (dark green bg, cream text)
 - New components needed: `NumberStepper` (INF-5), `PhotoUpload` (INF-4), `TimerBadge`, `StepCarousel`
 
+## UI spec from design review (2026-05-03)
+
+Key decisions locked from reviewing the mobile mockup and competitor research images:
+
+### Typography hierarchy
+- **Recipe title:** The Seasons Bold, ~36px, multi-line, generous line-height — left-aligned, immediately below the hero photo
+- **Section headings ("INGREDIENTS", "PREPARATION"):** The Seasons, very large display treatment (~48–52px), all-caps — these are the dominant typographic moment on the page, like chapter openers in a cookbook
+- **Step labels ("STEP 1", "STEP 2"):** system sans-serif, bold, uppercase, small (12–14px), wide letter-spacing — a label prefix before the step text
+- **Step text:** system sans-serif, regular, 16–18px, comfortable line-height
+- **Ingredient text:** system sans-serif; **bold quantity** + regular item name (NYT Cooking pattern, e.g. "**2 cups** flour, sifted")
+- Never use The Seasons below 16px
+
+### Recipe view layout (locked from mockup)
+- **Hero photo:** full-bleed, `aspect-[4/3]`, no crop to thumbnail. Back arrow overlaid top-left.
+- **Serving scaler:** `— N SERV. +` as an outlined pill control, inline with a `⟳ METRIC` toggle chip. Both on the same row, below the section heading.
+- **Ingredient checkboxes:** square (not round). Left-aligned, ingredient text to the right.
+- **Ingredient quantity:** bold inline (e.g. **800 g** whole peeled tomatoes).
+- **Post-MVP CTA row:** `+ GROCERIES` (outline) + `🛒 SHOP` (outline) below the ingredient list. Reserve space in the layout even though they're post-MVP.
+- **Floating COOK CTA:** `⊙ COOK` centered at the bottom of the viewport, always visible while scrolling. Gradient fade behind it (cream → transparent) so content doesn't hard-stop.
+- **Steps:** generous vertical gap between steps (32–40px). "STEP N" label sits above the step text, not beside it.
+
+### Cooking mode additions (from research)
+- Voice nav is a hard requirement, not a nice-to-have — annotated as such in competitor research.
+- Flyover/drawer pattern: the food image can stay visible at top while the current step slides up from bottom (like the bottom-drawer design from research). Step text is the hero when open.
+- "Floating high-contrast nav, bigger animated highlighted selection" — the active step should visually dominate; inactive steps recede significantly.
+
+### Component implications
+- `IngredientRow` formatting: structured quantity in bold + item text regular. Checked state: line-through on the full row, opacity 60%.
+- `DisplayHeading` isn't a new component — it's a Tailwind composition (`font-serif text-5xl font-bold uppercase`) applied at the page level.
+- `ServingControl` inline pill (`—` / count / `+`) is a specialization of `NumberStepper` (INF-5) styled as an outlined pill.
+- `UnitToggle` chip (METRIC / IMPERIAL) is a `<Chip>` wrapping a toggle — no new component needed.
+
 ## Changelog
 
 - 2026-05-02 — initial draft. Captured typography (The Seasons), color palette (forest/cream/coral/mustard), animation principles (spring-based, Airbnb-inspired), layout rules, and cooking mode visual language.
