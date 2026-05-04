@@ -1,19 +1,25 @@
 @import "tailwindcss";
 
 @theme {
-  /* Cuckoobook palette */
+  /* Cuckoobook palette — sourced from the design prototype
+     at app/prototype/prototype.css. Keep these names in sync with the
+     design system tokens in packages/ui/styles/_themes.scss. */
   --color-forest: #1a3a2a;
   --color-cream: #faf5ef;
+  --color-cream-warm: #efe3d2; /* prototype --secondary (checkbox-checked fill) */
   --color-ink: #1c1c1c;
   --color-stone: #6b6b6b;
   --color-line: #e8e3dc;
-  --color-coral: #e07a5f;
+  --color-coral: #f4714f; /* prototype --primary (CTA fill) */
+  --color-coral-hover: #e05f3a;
+  --color-coral-pressed: #cc4f29;
+  --color-cook-bg: #0b2826; /* prototype --cook-bg (cooking-mode surface) */
   --color-mustard: #d4a843;
   --color-sage: #87a878;
 
   /* Typography */
   --font-serif: "the-seasons", Georgia, serif;
-  --font-sans: system-ui, -apple-system, sans-serif;
+  --font-sans: "42dot Sans", system-ui, -apple-system, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 }
 

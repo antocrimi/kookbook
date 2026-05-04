@@ -1,2 +1,12 @@
-@use "./styles/themes" as theme;
+@use "../styles/themes" as theme;
 
+// Expose the typography family tokens as CSS variables on every theme root
+// (`[data-theme="…"]`), so the typography mixins in `styles/_mixins.scss` can
+// resolve the active theme's font with `var(--typography-productive)` /
+// `var(--typography-expressive)`. This must live in a global (non-module)
+// stylesheet — emitting `[data-theme]` selectors from inside a CSS-module
+// file fails Next.js's "pure selector" check.
+@include theme.themify(theme.$themes) {
+  --typography-productive: #{theme.get('string-typography-productive')}, system-ui, -apple-system, sans-serif;
+  --typography-expressive: #{theme.get('string-typography-expressive')}, Georgia, serif;
+}

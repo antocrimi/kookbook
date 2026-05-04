@@ -1,10 +1,15 @@
-// Do not edit directly, this file was auto-generated.
+// Originally auto-generated; cuckoobook fork edits the typography mixins to
+// read the productive/expressive font-family from the active theme via CSS
+// variables, instead of hard-coding Montserrat / "DM Serif Display". The
+// `--typography-productive` / `--typography-expressive` vars these mixins
+// consume are emitted by `packages/ui/src/theme.scss`, which must be imported
+// once as a global stylesheet by every app/Storybook that uses these mixins.
 
 @use 'themes' as theme;
 @use 'variables' as *;
 
 @mixin text-display-01 {
-  font-family: "DM Serif Display";
+  font-family: var(--typography-expressive);
   font-weight: 400;
   font-style: normal;
   font-size: 48px;
@@ -15,7 +20,7 @@
 }
 
 @mixin text-display-02 {
-  font-family: "DM Serif Display";
+  font-family: var(--typography-expressive);
   font-weight: 400;
   font-style: normal;
   font-size: 40px;
@@ -26,7 +31,7 @@
 }
 
 @mixin text-headline-01 {
-  font-family: "DM Serif Display";
+  font-family: var(--typography-expressive);
   font-weight: 400;
   font-style: normal;
   font-size: 32px;
@@ -37,7 +42,7 @@
 }
 
 @mixin text-headline-02 {
-  font-family: "DM Serif Display";
+  font-family: var(--typography-expressive);
   font-weight: 400;
   font-style: normal;
   font-size: 24px;
@@ -48,7 +53,7 @@
 }
 
 @mixin text-headline-03 {
-  font-family: "DM Serif Display";
+  font-family: var(--typography-expressive);
   font-weight: 400;
   font-style: normal;
   font-size: 20px;
@@ -59,7 +64,7 @@
 }
 
 @mixin text-subtitle-01 {
-  font-family: Montserrat;
+  font-family: var(--typography-productive);
   font-weight: 600;
   font-style: normal;
   font-size: 14px;
@@ -70,7 +75,7 @@
 }
 
 @mixin text-body-regular {
-  font-family: Montserrat;
+  font-family: var(--typography-productive);
   font-weight: 400;
   font-style: normal;
   font-size: 14px;
@@ -81,7 +86,7 @@
 }
 
 @mixin text-body-strong {
-  font-family: Montserrat;
+  font-family: var(--typography-productive);
   font-weight: 700;
   font-style: normal;
   font-size: 14px;
@@ -92,7 +97,7 @@
 }
 
 @mixin text-body-text-link {
-  font-family: Montserrat;
+  font-family: var(--typography-productive);
   font-weight: 400;
   font-style: normal;
   font-size: 14px;
@@ -103,7 +108,7 @@
 }
 
 @mixin text-interface-eyebrow {
-  font-family: Montserrat;
+  font-family: var(--typography-productive);
   font-weight: 500;
   font-style: normal;
   font-size: 10px;
@@ -114,7 +119,7 @@
 }
 
 @mixin text-interface-button {
-  font-family: Montserrat;
+  font-family: var(--typography-productive);
   font-weight: 700;
   font-style: normal;
   font-size: 14px;
@@ -125,7 +130,7 @@
 }
 
 @mixin text-interface-button-sm {
-  font-family: Montserrat;
+  font-family: var(--typography-productive);
   font-weight: 700;
   font-style: normal;
   font-size: 12px;
@@ -136,7 +141,7 @@
 }
 
 @mixin text-interface-legal-regular {
-  font-family: Montserrat;
+  font-family: var(--typography-productive);
   font-weight: 400;
   font-style: normal;
   font-size: 12px;
@@ -147,7 +152,7 @@
 }
 
 @mixin text-interface-legal-bold {
-  font-family: Montserrat;
+  font-family: var(--typography-productive);
   font-weight: 700;
   font-style: normal;
   font-size: 12px;

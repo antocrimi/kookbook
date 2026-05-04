@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist_Mono } from "next/font/google";
+import "@cuckoobook/ui/theme.scss";
 import "./globals.css";
 
 const geistMono = Geist_Mono({
@@ -24,6 +25,12 @@ export default function RootLayout({
       className={`${geistMono.variable} h-full antialiased`}
     >
       <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=42dot+Sans:wght@300;400;600;700;800&display=swap"
+        />
         <link rel="stylesheet" href="https://use.typekit.net/usz6qzd.css" />
       </head>
       <body className="min-h-full flex flex-col bg-cream text-ink">{children}</body>
