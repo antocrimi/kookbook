@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist_Mono } from "next/font/google";
+import "@cuckoobook/ui/theme.scss";
 import "./globals.css";
 
 const geistMono = Geist_Mono({

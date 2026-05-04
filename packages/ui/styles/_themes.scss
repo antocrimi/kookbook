@@ -354,9 +354,13 @@ $themes: (
     color-action-button-fill-critical-pressed: #b42318,
     color-action-button-border-primary-enabled: #f4714f,
     color-action-button-border-error-enabled: #d92d20,
-    color-action-button-text-icon-primary-enabled: #ffffff,
-    color-action-button-text-icon-primary-hover: #ffffff,
-    color-action-button-text-icon-primary-pressed: #ffffff,
+    // Outline + ghost variants read these for text colour (solid uses
+    // color-text-icon-common-inverse-high-emphasis instead). Use ink so the
+    // label reads on the cream surface — matching the prototype's
+    // `.cta-tertiary { color: var(--ink); }`.
+    color-action-button-text-icon-primary-enabled: #1c1c1c,
+    color-action-button-text-icon-primary-hover: #1c1c1c,
+    color-action-button-text-icon-primary-pressed: #1c1c1c,
     color-communication-notifications-fill-success: #f6fef9,
     color-communication-notifications-fill-info: #f5faff,
     color-communication-notifications-fill-error: #fffbfa,
@@ -519,9 +523,10 @@ $themes: (
     color-action-button-fill-critical-pressed: #b42318,
     color-action-button-border-primary-enabled: #f4714f,
     color-action-button-border-error-enabled: #d92d20,
-    color-action-button-text-icon-primary-enabled: #ffffff,
-    color-action-button-text-icon-primary-hover: #ffffff,
-    color-action-button-text-icon-primary-pressed: #ffffff,
+    // Outline + ghost variants — readable on the dark cooking surface.
+    color-action-button-text-icon-primary-enabled: #faf5ef,
+    color-action-button-text-icon-primary-hover: #faf5ef,
+    color-action-button-text-icon-primary-pressed: #faf5ef,
     color-communication-notifications-fill-success: rgba(26, 58, 42, 0.8),
     color-communication-notifications-fill-info: rgba(26, 58, 42, 0.8),
     color-communication-notifications-fill-error: rgba(26, 58, 42, 0.8),
