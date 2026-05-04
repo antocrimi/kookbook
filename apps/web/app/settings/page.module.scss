@@ -1,0 +1,72 @@
+.page {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: #faf5ef;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 20px 0;
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.wordmark {
+  font-family: "the-seasons", Georgia, serif;
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: -0.01em;
+  color: #1a3a2a;
+  margin: 0;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.main {
+  flex: 1;
+  padding: 28px 20px 48px;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+.title {
+  font-family: "the-seasons", Georgia, serif;
+  font-weight: 700;
+  font-size: clamp(26px, 6vw, 32px);
+  color: #1c1c1c;
+  margin: 0 0 24px;
+}
+
+.section {
+  margin-bottom: 32px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.sectionTitle {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #6b6b6b;
+  margin: 0 0 12px;
+}
+
+.profileEmail {
+  font-size: 15px;
+  color: #1c1c1c;
+  margin: 0;
+}
