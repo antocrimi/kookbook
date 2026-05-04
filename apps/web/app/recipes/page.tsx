@@ -1,31 +1,58 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { Banner, Button } from "@cuckoobook/ui";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 import { RecipeCard } from "./RecipeCard";
 import { SeedRecipe } from "./SeedRecipe";
 import { SignOut } from "./SignOut";
 import styles from "./page.module.scss";
 
-export default async function RecipesPage() {
-  const supabase = await createSupabaseServerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+type RecipeRow = {
+  id: string;
+  title: string;
+  default_servings: number;
+  updated_at: string;
+  original_photo_path: string | null;
+  photoUrl: string | null;
+};
 
-  if (!user) redirect("/sign-in");
+export default function RecipesPage() {
+  const [recipes, setRecipes] = useState<RecipeRow[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  const { data: recipes, error } = await supabase
-    .from("recipes")
-    .select("id, title, default_servings, updated_at, original_photo_path")
-    .order("updated_at", { ascending: false });
+  useEffect(() => {
+    const supabase = createSupabaseBrowserClient();
+    let cancelled = false;
 
-  const recipesWithPhotos = (recipes ?? []).map((r) => ({
-    ...r,
-    photoUrl: r.original_photo_path
-      ? supabase.storage.from("recipe-photos").getPublicUrl(r.original_photo_path).data.publicUrl
-      : null,
-  }));
+    (async () => {
+      const { data, error } = await supabase
+        .from("recipes")
+        .select("id, title, default_servings, updated_at, original_photo_path")
+        .order("updated_at", { ascending: false });
+
+      if (cancelled) return;
+
+      if (error) {
+        setError(error.message);
+        setRecipes([]);
+        return;
+      }
+
+      const withPhotos = (data ?? []).map((r) => ({
+        ...r,
+        photoUrl: r.original_photo_path
+          ? supabase.storage.from("recipe-photos").getPublicUrl(r.original_photo_path).data.publicUrl
+          : null,
+      }));
+      setRecipes(withPhotos);
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   return (
     <div className={styles.page}>
@@ -44,19 +71,19 @@ export default async function RecipesPage() {
 
       <main className={styles.main}>
         {error && (
-          <Banner variant="error" heading="Couldn't load recipes" body={error.message} />
+          <Banner variant="error" heading="Couldn't load recipes" body={error} />
         )}
 
-        {recipesWithPhotos.length > 0 ? (
+        {recipes === null ? null : recipes.length > 0 ? (
           <>
             <div className={styles.toolbar}>
               <span className={styles.count}>
-                {recipesWithPhotos.length} recipe{recipesWithPhotos.length !== 1 ? "s" : ""}
+                {recipes.length} recipe{recipes.length !== 1 ? "s" : ""}
               </span>
               <SeedRecipe />
             </div>
             <div className={styles.grid}>
-              {recipesWithPhotos.map((r) => (
+              {recipes.map((r) => (
                 <RecipeCard
                   key={r.id}
                   id={r.id}

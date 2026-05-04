@@ -1,6 +1,10 @@
 import { notFound } from "next/navigation";
-import { getRecipeDetail } from "../../data";
+import { getRecipeDetail, recipes } from "../../data";
 import { RecipeView } from "./RecipeView";
+
+export function generateStaticParams() {
+  return recipes.map((r) => ({ id: r.slug }));
+}
 
 export default async function PrototypeRecipePage({
   params,

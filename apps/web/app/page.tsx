@@ -1,12 +1,23 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@cuckoobook/ui";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 
-export default async function Home() {
-  const supabase = await createSupabaseServerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+export default function Home() {
+  const [email, setEmail] = useState<string | null | undefined>(undefined);
+
+  useEffect(() => {
+    const supabase = createSupabaseBrowserClient();
+    supabase.auth.getUser().then(({ data }) => {
+      setEmail(data.user?.email ?? null);
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+      setEmail(session?.user.email ?? null);
+    });
+    return () => sub.subscription.unsubscribe();
+  }, []);
 
   return (
     <main className="flex flex-1 flex-col items-center justify-center gap-6 p-16">
@@ -14,17 +25,12 @@ export default async function Home() {
       <p className="text-zinc-600 dark:text-zinc-400">
         Personal recipe collection. Capture · Scale · Convert.
       </p>
-      {user ? (
+      {email === undefined ? null : email ? (
         <div className="flex flex-col items-center gap-3">
-          <p className="text-sm text-zinc-500">Signed in as {user.email}</p>
-          <div className="flex gap-3">
-            <Button asChild variant="outline">
-              <Link href="/recipes">My recipes</Link>
-            </Button>
-            <Button asChild variant="outline">
-              <Link href="/test-extract">Test extract</Link>
-            </Button>
-          </div>
+          <p className="text-sm text-zinc-500">Signed in as {email}</p>
+          <Button asChild variant="outline">
+            <Link href="/recipes">My recipes</Link>
+          </Button>
         </div>
       ) : (
         <Button asChild>

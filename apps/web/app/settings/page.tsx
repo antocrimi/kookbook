@@ -1,18 +1,22 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { Button } from "@cuckoobook/ui";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 import { ChangePasswordForm } from "./ChangePasswordForm";
 import { SignOut } from "../recipes/SignOut";
 import styles from "./page.module.scss";
 
-export default async function SettingsPage() {
-  const supabase = await createSupabaseServerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+export default function SettingsPage() {
+  const [email, setEmail] = useState<string | null>(null);
 
-  if (!user) redirect("/sign-in");
+  useEffect(() => {
+    const supabase = createSupabaseBrowserClient();
+    supabase.auth.getUser().then(({ data }) => {
+      setEmail(data.user?.email ?? null);
+    });
+  }, []);
 
   return (
     <div className={styles.page}>
@@ -31,7 +35,7 @@ export default async function SettingsPage() {
 
         <section className={styles.section}>
           <h3 className={styles.sectionTitle}>Profile</h3>
-          <p className={styles.profileEmail}>{user.email}</p>
+          <p className={styles.profileEmail}>{email ?? ""}</p>
         </section>
 
         <section className={styles.section}>
