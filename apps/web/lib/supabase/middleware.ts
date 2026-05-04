@@ -35,7 +35,8 @@ export async function updateSession(request: NextRequest) {
   const isPublic =
     PUBLIC_ROUTES.includes(path) ||
     path.startsWith("/_next") ||
-    path.startsWith("/api");
+    path.startsWith("/api") ||
+    path.startsWith("/prototype");
 
   if (!user && !isPublic) {
     const url = request.nextUrl.clone();
