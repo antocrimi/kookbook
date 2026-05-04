@@ -1,44 +1,43 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Banner, Button, TextField } from "@cuckoobook/ui";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 
 export default function SignInPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
-  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">(
-    "idle",
-  );
+  const [password, setPassword] = useState("");
+  const [status, setStatus] = useState<"idle" | "submitting" | "error">("idle");
   const [error, setError] = useState<string | null>(null);
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setStatus("sending");
+    setStatus("submitting");
     setError(null);
     const supabase = createSupabaseBrowserClient();
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback?next=/recipes`,
-      },
-    });
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
       setError(error.message);
       setStatus("error");
-    } else {
-      setStatus("sent");
+      return;
     }
+    router.push("/recipes");
+    router.refresh();
   }
 
   return (
     <main className="flex flex-1 flex-col items-center justify-center gap-6 p-16">
       <h1 className="text-2xl font-semibold tracking-tight">Sign in</h1>
       <p className="text-sm text-zinc-600 dark:text-zinc-400">
-        We&apos;ll email you a magic link.
+        cuckoobook is invite-only — sign in with your existing account.
       </p>
       <form onSubmit={onSubmit} className="flex w-full max-w-sm flex-col gap-3">
         <TextField
           type="email"
+          name="email"
+          autoComplete="email"
           required
           autoFocus
           label="Email"
@@ -47,33 +46,27 @@ export default function SignInPage() {
           onChange={(e) => setEmail(e.target.value)}
           size="full"
         />
-        <Button type="submit" loading={status === "sending"} fullWidth>
-          Send magic link
+        <TextField
+          type="password"
+          name="password"
+          autoComplete="current-password"
+          required
+          label="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          size="full"
+        />
+        <Button type="submit" loading={status === "submitting"} fullWidth>
+          Sign in
         </Button>
       </form>
-      {status === "sent" && (
+      {status === "error" && error && (
         <Banner
-          variant="success"
-          heading={`Check your inbox at ${email}`}
-          body={
-            <>
-              In local dev, view it at{" "}
-              <a
-                className="underline"
-                href="http://127.0.0.1:54524"
-                target="_blank"
-                rel="noreferrer"
-              >
-                127.0.0.1:54524
-              </a>
-              .
-            </>
-          }
+          variant="error"
+          heading="Could not sign in"
+          body={error}
           dismissible={false}
         />
-      )}
-      {status === "error" && error && (
-        <Banner variant="error" heading="Could not send magic link" body={error} dismissible={false} />
       )}
     </main>
   );

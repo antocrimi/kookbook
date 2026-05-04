@@ -35,6 +35,9 @@ export default async function RecipesPage() {
           <Button asChild size="sm">
             <Link href="/capture">+ Capture</Link>
           </Button>
+          <Button asChild size="sm" variant="ghost">
+            <Link href="/settings">Settings</Link>
+          </Button>
           <SignOut />
         </div>
       </header>
