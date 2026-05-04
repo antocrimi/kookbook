@@ -15,6 +15,6 @@ static_sites:
       - key: NEXT_PUBLIC_SUPABASE_URL
         scope: BUILD_TIME
         type: GENERAL
-      - key: NEXT_PUBLIC_SUPABASE_ANON_KEY
+      - key: NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
         scope: BUILD_TIME
         type: GENERAL
