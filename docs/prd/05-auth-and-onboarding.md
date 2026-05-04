@@ -1,7 +1,7 @@
 # Auth & onboarding
 
 **Status:** draft
-**Last updated:** 2026-05-03
+**Last updated:** 2026-05-04
 **Owner:** Kaz
 
 ## Summary
@@ -40,7 +40,7 @@ Settings page → "Change password" form (`new password` + `confirm`). Calls `su
 - **Closed account list.** Supabase `auth.enable_signup` and `auth.email.enable_signup` are both `false`. New accounts are seeded directly into the database (see `supabase/seed.sql`); the app exposes no signup UI.
 - **Default values seeded on signup.** When a new row is inserted into `auth.users` (whether by seed or future admin tooling), an "Inbox" folder and default `user_preferences` row are created automatically by the `handle_new_user()` trigger.
 - **Settings page** with: profile (email, sign out), password change. Future additions (units preference, Anthropic key, default model, usage summary) live here too.
-- **Route protection.** All app routes outside `/` and `/sign-in` require an authenticated session. Server-rendered redirect, not client-only.
+- **Route protection.** All app routes outside `/` and `/sign-in` require an authenticated session. Enforcement is a **client-side guard** (`<AuthGate>` wrapping the root layout) plus **Supabase Row Level Security** on every user-owned table. The guard renders a sign-in redirect before any data fetch fires; RLS guarantees that even if the guard is bypassed, no other user's rows are accessible. Earlier drafts specified a server-rendered redirect via Next.js middleware; that was dropped when the app moved to a static export hosted on DigitalOcean App Platform's free Static Site tier (no server runtime available).
 - **Password change.** Authenticated users can set a new password from `/settings`. Validation: minimum 6 characters (Supabase's `minimum_password_length`), confirm-field must match.
 - **Inbox folder is permanent.** Cannot be renamed or deleted.
 
@@ -97,7 +97,8 @@ Single page, sectioned. MVP only ships profile + password; preference / key / us
 
 ## Acceptance criteria
 
-- [ ] An unauthenticated user hitting any app route is redirected to `/sign-in` (server-side).
+- [ ] An unauthenticated user hitting any app route outside `/` and `/sign-in` is redirected to `/sign-in` by the client-side `<AuthGate>` before any protected content renders.
+- [ ] Even without the client guard, RLS prevents an unauthenticated browser from reading any row from `recipes`, `folders`, `user_preferences`, etc.
 - [ ] A user submits valid email + password and lands on `/recipes`. Invalid credentials show an inline error and stay on the page.
 - [ ] The seeded users (`anto@cuckoobook.com`, `kaz@cuckoobook.com`) can sign in immediately after `supabase db reset`.
 - [ ] Each seeded user has an "Inbox" folder and a default `user_preferences` row.
@@ -113,5 +114,6 @@ Single page, sectioned. MVP only ships profile + password; preference / key / us
 
 ## Changelog
 
+- 2026-05-04 — route protection moved from Next.js middleware (server-rendered redirect) to a client-side `<AuthGate>` + RLS, in service of hosting on DO App Platform's free Static Site tier (no server runtime). Acceptance criteria updated accordingly.
 - 2026-05-03 — switched from magic-link to email + password. Closed the signup path; users are seeded via `supabase/seed.sql`. Removed onboarding wizard from MVP scope. Added settings page with password-change form.
 - 2026-04-30 — initial draft. Captured magic-link flow, three-step onboarding wizard, settings layout, acceptance criteria, and open questions.

@@ -207,7 +207,7 @@ export function RecipeView({ recipe, photoUrl }: RecipeViewProps) {
       {/* Floating Cook CTA */}
       <div className={styles.cookBar}>
         <Button asChild size="lg">
-          <Link href={`/recipes/${recipe.id}/cook`}>Cook</Link>
+          <Link href={`/recipe/cook?id=${recipe.id}`}>Cook</Link>
         </Button>
       </div>
     </div>

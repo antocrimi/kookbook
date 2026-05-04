@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist_Mono } from "next/font/google";
 import "@cuckoobook/ui/theme.scss";
 import "./globals.css";
+import { AuthGate } from "@/lib/supabase/AuthGate";
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
@@ -33,7 +34,9 @@ export default function RootLayout({
         />
         <link rel="stylesheet" href="https://use.typekit.net/usz6qzd.css" />
       </head>
-      <body className="min-h-full flex flex-col bg-cream text-ink">{children}</body>
+      <body className="min-h-full flex flex-col bg-cream text-ink">
+        <AuthGate>{children}</AuthGate>
+      </body>
     </html>
   );
 }

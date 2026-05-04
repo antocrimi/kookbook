@@ -11,7 +11,7 @@ interface RecipeCardProps {
 
 export function RecipeCard({ id, title, servings, photoUrl }: RecipeCardProps) {
   return (
-    <Link href={`/recipes/${id}`} className={styles.card}>
+    <Link href={`/recipe?id=${id}`} className={styles.card}>
       <div className={styles.photo}>
         {photoUrl ? (
           <Image src={photoUrl} alt={title} fill className="object-cover" sizes="(max-width: 600px) 50vw, 33vw" />
