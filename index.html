@@ -245,12 +245,19 @@
     .dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(250,245,239,0.25); transition: background 200ms; }
     .dot.active { background: var(--cream); }
 
-    /* ASK KOOKU — 10px from browser bar, gradient fades to cook-bg */
+    /* ASK KOOKU — 10px from browser bar */
     .cook-cta-row {
       position: relative; z-index: 10; flex-shrink: 0;
       display: flex; justify-content: center;
-      padding: 48px 20px calc(10px + env(safe-area-inset-bottom, 0px));
-      background: linear-gradient(to top, var(--cook-bg) 60%, transparent);
+      padding: 16px 20px calc(10px + env(safe-area-inset-bottom, 0px));
+    }
+    /* Gentle gradient fade above the CTA — doesn't block any list content */
+    .cook-cta-row::before {
+      content: '';
+      position: absolute; bottom: 100%; left: 0; right: 0;
+      height: 60px;
+      background: linear-gradient(to top, var(--cook-bg), transparent);
+      pointer-events: none;
     }
 
     /* Ingredients panel — 20px horizontal padding, dividers are inset to match text */
