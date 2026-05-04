@@ -2,8 +2,10 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Banner, Button } from "@cuckoobook/ui";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { AddTestRecipe } from "./AddTestRecipe";
+import { RecipeCard } from "./RecipeCard";
+import { SeedRecipe } from "./SeedRecipe";
 import { SignOut } from "./SignOut";
+import styles from "./page.module.scss";
 
 export default async function RecipesPage() {
   const supabase = await createSupabaseServerClient();
@@ -15,68 +17,68 @@ export default async function RecipesPage() {
 
   const { data: recipes, error } = await supabase
     .from("recipes")
-    .select("id, title, default_servings, created_at, folder_id")
+    .select("id, title, default_servings, updated_at, original_photo_path")
     .order("updated_at", { ascending: false });
 
-  const { data: folders } = await supabase
-    .from("folders")
-    .select("id, name, is_inbox");
+  const recipesWithPhotos = (recipes ?? []).map((r) => ({
+    ...r,
+    photoUrl: r.original_photo_path
+      ? supabase.storage.from("recipe-photos").getPublicUrl(r.original_photo_path).data.publicUrl
+      : null,
+  }));
 
   return (
-    <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 p-8">
-      <header className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold tracking-tight">Recipes</h1>
-        <div className="flex items-center gap-3 text-sm">
-          <span className="text-zinc-500">{user.email}</span>
+    <div className={styles.page}>
+      <header className={styles.header}>
+        <h1 className={styles.wordmark}>cuckoobook</h1>
+        <div className={styles.headerRight}>
+          <Button asChild size="sm">
+            <Link href="/capture">+ Capture</Link>
+          </Button>
           <SignOut />
         </div>
       </header>
 
-      <section className="rounded-md border border-zinc-200 p-4 dark:border-zinc-800">
-        <h2 className="mb-2 text-sm font-medium">Folders</h2>
-        <ul className="text-sm text-zinc-600 dark:text-zinc-400">
-          {folders?.map((f) => (
-            <li key={f.id}>
-              {f.name}
-              {f.is_inbox && (
-                <span className="ml-2 text-xs text-zinc-400">(default)</span>
-              )}
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <section className="flex flex-col gap-3">
-        <div className="flex items-center justify-between">
-          <h2 className="text-sm font-medium">Your recipes</h2>
-          <AddTestRecipe />
-        </div>
+      <main className={styles.main}>
         {error && (
           <Banner variant="error" heading="Couldn't load recipes" body={error.message} />
         )}
-        {recipes && recipes.length > 0 ? (
-          <ul className="divide-y divide-zinc-200 rounded-md border border-zinc-200 dark:divide-zinc-800 dark:border-zinc-800">
-            {recipes.map((r) => (
-              <li key={r.id} className="px-4 py-3">
-                <div className="font-medium">{r.title}</div>
-                <div className="text-xs text-zinc-500">
-                  {r.default_servings} servings ·{" "}
-                  {new Date(r.created_at).toLocaleString()}
-                </div>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-sm text-zinc-500">
-            No recipes yet. Click &quot;Add test recipe&quot; to insert one
-            (verifies auth + RLS + write).
-          </p>
-        )}
-      </section>
 
-      <Button asChild variant="ghost" size="sm" className="self-start">
-        <Link href="/test-extract">→ Test the Anthropic extract route</Link>
-      </Button>
-    </main>
+        {recipesWithPhotos.length > 0 ? (
+          <>
+            <div className={styles.toolbar}>
+              <span className={styles.count}>
+                {recipesWithPhotos.length} recipe{recipesWithPhotos.length !== 1 ? "s" : ""}
+              </span>
+              <SeedRecipe />
+            </div>
+            <div className={styles.grid}>
+              {recipesWithPhotos.map((r) => (
+                <RecipeCard
+                  key={r.id}
+                  id={r.id}
+                  title={r.title}
+                  servings={r.default_servings}
+                  photoUrl={r.photoUrl}
+                />
+              ))}
+            </div>
+          </>
+        ) : (
+          <div className={styles.empty}>
+            <h2 className={styles.emptyHeading}>Your recipe collection starts here.</h2>
+            <p className={styles.emptyBody}>
+              Snap a photo of a cookbook page and let AI extract the recipe. Or seed a demo recipe to explore the design.
+            </p>
+            <div className={styles.emptyActions}>
+              <Button asChild size="lg">
+                <Link href="/capture">Capture a recipe</Link>
+              </Button>
+              <SeedRecipe />
+            </div>
+          </div>
+        )}
+      </main>
+    </div>
   );
 }
