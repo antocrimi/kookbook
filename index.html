@@ -6,500 +6,426 @@
   <title>cuckoobook</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=42dot+Sans:wght@400;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=42dot+Sans:wght@300;400;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://use.typekit.net/usz6qzd.css">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --cream:   #faf5ef;
-      --ink:     #1c1c1c;
-      --stone:   #6b6b6b;
-      --forest:  #1a3a2a;
-      --line:    rgba(0,0,0,0.08);
-      --primary: #F4714F;
+      --cream:     #faf5ef;
+      --ink:       #1c1c1c;
+      --stone:     #6b6b6b;
+      --forest:    #1a3a2a;
+      --line:      rgba(0,0,0,0.09);
+      --primary:   #F4714F;
       --secondary: #EFE3D2;
-      --tertiary-border: rgba(0,0,0,0.2);
-      --cook-bg: #0B2826;
-      --serif: "the-seasons", Georgia, serif;
-      --sans: "42dot Sans", "42dot", system-ui, -apple-system, sans-serif;
+      --cook-bg:   #0B2826;
+      --serif:     "the-seasons", Georgia, serif;
+      --sans:      "42dot Sans", "42dot", system-ui, -apple-system, sans-serif;
     }
-
     html, body { height: 100%; background: var(--cream); color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; }
 
     /* ─── Pages ─────────────────────────────────────────────── */
-    .page { display: none; flex-direction: column; min-height: 100dvh; }
-    .page.active { display: flex; }
+    .page { display: none; min-height: 100dvh; background: var(--cream); }
+    .page.active { display: block; }
+    #recipe { display: none; }
+    #recipe.active { display: block; height: 100dvh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+    #cooking { display: none; }
+    #cooking.active { display: flex; flex-direction: column; height: 100dvh; overflow: hidden; }
 
     /* ─── CTAs ──────────────────────────────────────────────── */
     .cta {
-      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      display: inline-flex; align-items: center; justify-content: center; gap: 7px;
       font-family: var(--sans); font-weight: 800; font-size: 14px;
       letter-spacing: 0.05em; text-transform: uppercase;
       border-radius: 100px; cursor: pointer; border: none;
-      transition: all 120ms ease; white-space: nowrap;
+      transition: all 100ms ease; white-space: nowrap;
     }
-    .cta:active { transform: scale(0.96); }
-
-    .cta-primary  { background: var(--primary); color: #fff; padding: 14px 32px; }
+    .cta:active { transform: scale(0.95); }
+    .cta-primary  { background: var(--primary); color: #fff; padding: 12px 20px; }
     .cta-primary:hover { background: #e05f3a; }
-
-    .cta-secondary { background: var(--secondary); color: var(--cook-bg); padding: 12px 24px; }
-    .cta-secondary:hover { background: #e5d8c6; }
-
-    .cta-tertiary {
-      background: transparent; color: var(--ink);
-      border: 1.5px solid var(--tertiary-border); padding: 11px 20px;
-    }
-    .cta-tertiary:hover { border-color: rgba(0,0,0,0.35); }
-
-    .cta-ghost {
-      background: transparent; color: var(--stone); border: none;
-      font-size: 12px; padding: 8px 12px;
-    }
-    .cta-ghost:hover { color: var(--ink); }
+    .cta-tertiary { background: transparent; color: var(--ink); border: 1.5px solid rgba(0,0,0,0.2); padding: 11px 18px; }
+    .cta-tertiary:hover { border-color: rgba(0,0,0,0.4); }
 
     /* ═══════════════════════════════════════════════════════════
-       INDEX
+       HOME PAGE
     ═══════════════════════════════════════════════════════════ */
-    #index { background: var(--cream); }
+    .home-header { display: flex; align-items: center; justify-content: space-between; padding: 18px 16px 16px; }
+    .menu-btn { width: 44px; height: 44px; background: none; border: none; cursor: pointer; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 5px; padding: 8px; }
+    .menu-btn span { display: block; width: 22px; height: 1.5px; background: var(--ink); border-radius: 2px; }
+    .home-logo { height: 26px; display: block; }
+    .add-btn { width: 44px; height: 44px; border-radius: 50%; background: var(--primary); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 100ms; flex-shrink: 0; }
+    .add-btn:hover { background: #e05f3a; }
+    .add-btn:active { transform: scale(0.93); }
 
-    .idx-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 22px 20px 0; max-width: 960px; width: 100%; margin: 0 auto;
-    }
-    .wordmark {
-      font-family: var(--serif); font-weight: 700; font-size: 22px;
-      color: var(--forest); letter-spacing: -0.01em;
-      font-feature-settings: 'dlig' 1, 'liga' 1;
-    }
-    .idx-main {
-      flex: 1; padding: 28px 20px 48px;
-      max-width: 960px; width: 100%; margin: 0 auto;
-    }
-    .toolbar {
-      display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;
-    }
-    .count-label {
-      font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
-      text-transform: uppercase; color: var(--stone);
-    }
-    .grid {
-      display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px;
-    }
-    @media (min-width: 540px) { .grid { grid-template-columns: repeat(3, 1fr); } }
-    @media (min-width: 800px) { .grid { grid-template-columns: repeat(4, 1fr); } }
+    .saved-section { padding: 4px 16px 0; }
+    .saved-header { display: flex; align-items: baseline; justify-content: space-between; padding-bottom: 12px; }
+    .saved-title { font-family: var(--serif); font-weight: 700; font-size: 30px; line-height: 1; text-transform: uppercase; letter-spacing: -0.01em; color: var(--ink); font-feature-settings: 'dlig' 1, 'liga' 1; }
+    .saved-chevron { background: none; border: none; cursor: pointer; color: var(--ink); padding: 4px 0 4px 12px; }
+    .saved-divider { border: none; border-top: 1px solid rgba(0,0,0,0.12); margin-bottom: 16px; }
 
-    .card {
-      display: flex; flex-direction: column; border-radius: 16px; overflow: hidden;
-      background: #fff; cursor: pointer;
-      box-shadow: 0 1px 4px rgba(28,28,28,.07), 0 0 0 1px rgba(28,28,28,.04);
-      transition: transform 200ms ease, box-shadow 200ms ease;
-    }
-    .card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(28,28,28,.1); }
-    .card:active { transform: scale(0.97); transition-duration: 80ms; }
-
-    .card-photo {
-      aspect-ratio: 4/3; position: relative; overflow: hidden;
-      background: linear-gradient(145deg, #cdd8b8 0%, #b8c9a0 25%, #d4b896 60%, #c4a87a 100%);
-    }
-    .card-photo::after {
-      content: ''; position: absolute; inset: 0;
-      background: radial-gradient(ellipse at 70% 60%, rgba(255,255,255,.15) 0%, transparent 70%);
-    }
-    .card-info { padding: 12px 14px 14px; }
-    .card-title {
-      font-family: var(--serif); font-weight: 400; font-size: 15px; line-height: 1.35;
-      color: var(--ink); margin-bottom: 5px;
-      display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden;
-    }
-    .card-meta {
-      font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
-      text-transform: uppercase; color: var(--stone);
-    }
+    .recipe-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px 12px; padding: 0 16px 48px; }
+    .r-card { cursor: pointer; }
+    .r-card:active { opacity: 0.78; }
+    .r-card-photo { width: 100%; aspect-ratio: 3/2; object-fit: cover; display: block; }
+    .r-card-info { padding: 8px 0 0; }
+    .r-card-title { font-family: var(--sans); font-weight: 400; font-size: 15px; line-height: 1.35; color: var(--ink); margin-bottom: 4px; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+    .r-card-time { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--stone); }
 
     /* ═══════════════════════════════════════════════════════════
-       RECIPE DETAIL
+       RECIPE PAGE
     ═══════════════════════════════════════════════════════════ */
-    #recipe { background: var(--cream); height: 100dvh; }
 
-    .recipe-hero {
-      position: relative; width: 100%; aspect-ratio: 4/3; max-height: 320px;
-      overflow: hidden; flex-shrink: 0;
-      background: linear-gradient(145deg, #cdd8b8 0%, #b8c9a0 20%, #d4b896 60%, #c4a87a 100%);
-    }
-    .recipe-hero::after {
-      content: ''; position: absolute; inset: 0;
-      background: radial-gradient(ellipse at 65% 55%, rgba(255,255,255,.18) 0%, transparent 60%);
-    }
-    .back-btn {
-      position: absolute; top: 16px; left: 16px; z-index: 2;
-      width: 36px; height: 36px; border-radius: 50%;
-      background: rgba(250,245,239,.88); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
-      border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--ink);
-    }
-    .back-btn:hover { background: rgba(250,245,239,.97); }
+    /* Hero scrolls naturally — no sticky */
+    .recipe-hero { position: relative; width: 100%; aspect-ratio: 4/3; max-height: 320px; overflow: hidden; background: #d4c8b4; flex-shrink: 0; }
+    .recipe-hero-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .back-btn { position: absolute; top: 14px; left: 14px; z-index: 2; display: block; cursor: pointer; width: 36px; height: 36px; }
 
-    .recipe-scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+    .recipe-content { max-width: 680px; width: 100%; margin: 0 auto; padding: 28px 20px 0; }
 
-    .recipe-content {
-      max-width: 640px; width: 100%; margin: 0 auto; padding: 28px 20px 120px;
-    }
+    .recipe-title { font-family: var(--serif); font-weight: 400; font-size: 42px; line-height: 45px; color: var(--ink); margin-bottom: 20px; }
 
-    .recipe-title {
-      font-family: var(--serif); font-weight: 400;
-      font-size: 42px; line-height: 45px; color: var(--ink); margin-bottom: 10px;
-    }
-    .recipe-source { font-size: 14px; color: var(--stone); margin-bottom: 12px; }
-    .recipe-meta {
-      display: flex; align-items: center; gap: 6px;
-      font-size: 12px; font-weight: 700; letter-spacing: 0.1em;
-      text-transform: uppercase; color: var(--stone); margin-bottom: 20px;
-    }
-    .recipe-desc {
-      font-size: 18px; line-height: 26px; color: var(--stone); margin-bottom: 32px;
-    }
+    .recipe-meta-row { display: flex; align-items: center; gap: 10px; margin-bottom: 24px; flex-wrap: wrap; }
+    .time-badge { display: flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--stone); }
 
-    /* ─── Tabs ───────────────────────────────────────────────── */
-    .tab-bar {
-      display: flex; border-bottom: 1px solid rgba(0,0,0,.1); margin-bottom: 0;
-    }
-    .tab {
-      flex: 1; padding: 13px 16px;
-      background: none; border: none; border-bottom: 2.5px solid transparent; margin-bottom: -1px;
-      cursor: pointer; font-family: var(--sans); font-weight: 800; font-size: 12px;
-      letter-spacing: 0.1em; text-transform: uppercase; color: var(--stone);
-      transition: color 150ms, border-color 150ms;
-    }
-    .tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+    .recipe-desc { font-size: 18px; line-height: 26px; color: var(--stone); margin-bottom: 48px; }
 
-    .tab-panel { display: none; padding-top: 32px; }
-    .tab-panel.active { display: block; }
+    .section-heading { font-family: var(--serif); font-weight: 700; font-size: 42px; line-height: 1; letter-spacing: -0.01em; text-transform: uppercase; color: var(--ink); font-feature-settings: 'dlig' 1, 'liga' 1; margin-bottom: 28px; }
 
-    /* ─── Section heading ────────────────────────────────────── */
-    .section-heading {
-      font-family: var(--serif); font-weight: 700; font-size: 42px; line-height: 1;
-      letter-spacing: -0.01em; text-transform: uppercase; color: var(--ink);
-      font-feature-settings: 'dlig' 1, 'liga' 1; margin-bottom: 28px;
-    }
-
-    /* ─── Controls ───────────────────────────────────────────── */
-    .controls { display: flex; align-items: center; gap: 10px; margin-bottom: 24px; }
-
-    .serving-pill {
-      display: flex; align-items: center; height: 38px;
-      border: 1.5px solid rgba(0,0,0,.15); border-radius: 100px; overflow: hidden;
-    }
-    .serving-btn {
-      width: 38px; height: 100%; border: none; background: none;
-      cursor: pointer; font-size: 20px; font-weight: 300; color: var(--ink);
-      display: flex; align-items: center; justify-content: center; transition: background 100ms;
-    }
-    .serving-btn:hover { background: rgba(0,0,0,.05); }
-    #serving-label {
-      font-size: 12px; font-weight: 800; letter-spacing: 0.08em;
-      text-transform: uppercase; color: var(--ink); min-width: 64px; text-align: center;
-    }
-
-    .unit-toggle {
-      height: 38px; display: flex; align-items: center; gap: 5px;
-      border: 1.5px solid rgba(0,0,0,.15); border-radius: 100px; padding: 0 14px;
-      font-family: var(--sans); font-size: 12px; font-weight: 800; letter-spacing: 0.08em;
-      text-transform: uppercase; color: var(--stone); cursor: pointer; background: transparent;
-      transition: all 140ms;
-    }
+    .controls { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+    .serving-pill { display: flex; align-items: center; height: 38px; border: 1.5px solid rgba(0,0,0,0.15); border-radius: 100px; overflow: hidden; }
+    .serving-btn { width: 38px; height: 100%; border: none; background: none; cursor: pointer; font-size: 20px; font-weight: 300; color: var(--ink); display: flex; align-items: center; justify-content: center; transition: background 100ms; }
+    .serving-btn:hover { background: rgba(0,0,0,0.05); }
+    #serving-label { font-size: 12px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink); min-width: 80px; text-align: center; }
+    .unit-toggle { height: 38px; display: flex; align-items: center; gap: 5px; border: 1.5px solid rgba(0,0,0,0.15); border-radius: 100px; padding: 0 14px; font-family: var(--sans); font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--stone); cursor: pointer; background: transparent; transition: all 140ms; }
     .unit-toggle.is-metric { color: var(--ink); border-color: var(--ink); }
 
-    /* ─── Ingredient list ────────────────────────────────────── */
-    .ing-list { list-style: none; }
-    .ing-row {
-      display: flex; align-items: flex-start; gap: 14px;
-      padding: 14px 0; border-bottom: 1px solid var(--line);
-      cursor: pointer; transition: opacity 200ms;
-    }
+    .ing-list { list-style: none; margin-bottom: 0; }
+    .ing-row { display: flex; align-items: flex-start; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--line); cursor: pointer; transition: opacity 200ms; }
     .ing-row:first-child { border-top: 1px solid var(--line); }
-    .ing-row.checked { opacity: 0.38; }
+    .ing-row.checked { opacity: 0.35; }
     .ing-row.checked .ing-text { text-decoration: line-through; text-decoration-color: var(--stone); }
-
-    .ing-cb {
-      width: 20px; height: 20px; border-radius: 5px; flex-shrink: 0; margin-top: 1px;
-      border: 1.5px solid rgba(0,0,0,.22); background: transparent;
-      display: flex; align-items: center; justify-content: center;
-      transition: all 160ms ease;
-    }
+    .ing-cb { width: 20px; height: 20px; border-radius: 4px; flex-shrink: 0; margin-top: 1px; border: 1.5px solid rgba(0,0,0,0.2); background: transparent; display: flex; align-items: center; justify-content: center; transition: all 160ms; }
     .ing-row.checked .ing-cb { background: var(--secondary); border-color: var(--secondary); }
     .ing-cb svg { display: none; }
     .ing-row.checked .ing-cb svg { display: block; }
-
     .ing-text { font-size: 16px; line-height: 22px; color: var(--ink); flex: 1; }
-    .ing-qty { font-weight: 700; }
 
-    /* ─── Shop row ───────────────────────────────────────────── */
-    .shop-row { display: flex; gap: 10px; margin-top: 24px; }
+    .shop-row { display: flex; gap: 10px; margin-top: 24px; margin-bottom: 52px; }
     .shop-row .cta-tertiary { flex: 1; }
 
-    /* ─── Steps ──────────────────────────────────────────────── */
-    .step-list { list-style: none; display: flex; flex-direction: column; gap: 40px; }
-    .step-label {
-      display: block; font-size: 11px; font-weight: 800;
-      letter-spacing: 0.14em; text-transform: uppercase; color: var(--stone); margin-bottom: 10px;
-    }
-    .step-body {
-      font-family: var(--serif); font-weight: 700; font-size: 22px; line-height: 1.5; color: var(--ink);
-    }
+    .step-list { list-style: none; display: flex; flex-direction: column; gap: 36px; }
+    .step-label { display: block; font-size: 11px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--stone); margin-bottom: 10px; }
+    .step-body { font-size: 16px; line-height: 26px; color: var(--ink); }
 
-    /* ─── Floating cook button ───────────────────────────────── */
-    .cook-float {
-      position: fixed; bottom: 0; left: 0; right: 0; z-index: 20;
+    .recipe-bottom-spacer { height: 100px; }
+
+    /* Sticky KOOK IT — slides up when Preparation enters view, hides on scroll back */
+    .sticky-kook {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 30;
       display: flex; justify-content: center;
-      padding: 16px 20px 32px;
-      background: linear-gradient(to top, var(--cream) 55%, transparent);
+      padding: 16px 20px 36px;
+      background: linear-gradient(to top, var(--cream) 58%, transparent);
       pointer-events: none;
+      transform: translateY(110%);
+      transition: transform 380ms cubic-bezier(0.34, 1.4, 0.64, 1);
     }
-    .cook-float .cta { pointer-events: auto; min-width: 160px; }
+    .sticky-kook.visible { transform: translateY(0); pointer-events: auto; }
+    .sticky-kook .cta-primary { min-width: 200px; padding: 15px 32px; font-size: 15px; }
 
     /* ═══════════════════════════════════════════════════════════
        COOKING MODE
     ═══════════════════════════════════════════════════════════ */
-    #cooking {
-      background: var(--cook-bg); color: var(--cream);
-      position: relative; overflow: hidden;
-    }
+    #cooking { background: var(--cook-bg); color: var(--cream); }
 
-    /* Full-screen invisible tap zones — z-index 1 */
-    .cook-tap-overlay {
-      position: absolute; inset: 0; z-index: 1;
-      display: grid; grid-template-columns: 1fr 1fr;
-    }
-    .cook-prev-zone { cursor: w-resize; }
-    .cook-next-zone { cursor: e-resize; }
-
-    /* Header — z-index 10, above tap overlay */
-    .cook-header {
-      position: relative; z-index: 10;
+    /* Header: exit | counter | megaphone */
+    .cook-top {
+      position: relative; z-index: 10; flex-shrink: 0;
       display: flex; align-items: center; justify-content: space-between;
       padding: 20px 20px 0; max-width: 640px; width: 100%; margin: 0 auto;
     }
-    .cook-close {
-      width: 36px; height: 36px; border-radius: 50%;
-      background: rgba(250,245,239,.12); border: none; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      color: var(--cream); font-size: 18px; transition: background 120ms;
+    .cook-icon-btn { background: none; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: opacity 120ms; }
+    .cook-icon-btn:hover { opacity: 0.75; }
+    .cook-counter { font-size: 13px; font-weight: 700; letter-spacing: 0.06em; color: rgba(250,245,239,0.5); }
+
+    /* Title section: bird + KOOK IT! — always visible, above tabs */
+    .cook-title-section {
+      position: relative; z-index: 10; flex-shrink: 0;
+      padding: 28px 20px 0; max-width: 640px; width: 100%; margin: 0 auto;
     }
-    .cook-close:hover { background: rgba(250,245,239,.2); }
-    .cook-counter {
-      font-size: 13px; font-weight: 700; letter-spacing: 0.06em;
-      color: rgba(250,245,239,.5);
+    .cook-title-row { display: flex; align-items: center; gap: 12px; }
+    .cook-bird-img { height: 42px; display: block; }
+    .cook-title-text {
+      font-family: var(--serif); font-weight: 700; font-size: 42px; line-height: 1.05;
+      color: #D6D5AA; font-feature-settings: 'dlig' 1, 'liga' 1; text-transform: uppercase;
     }
 
-    /* Step body — pointer-events none, taps pass through to zones */
+    /* Tab bar */
+    .cook-tab-bar {
+      position: relative; z-index: 10; flex-shrink: 0;
+      display: flex; border-bottom: 1px solid rgba(250,245,239,0.12);
+      padding: 0 20px; max-width: 640px; width: 100%; margin: 20px auto 0;
+    }
+    .cook-tab {
+      flex: 1; padding: 13px 16px; background: none; border: none;
+      border-bottom: 2px solid transparent; margin-bottom: -1px; cursor: pointer;
+      font-family: var(--sans); font-weight: 800; font-size: 12px;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: rgba(250,245,239,0.35); transition: all 150ms;
+    }
+    .cook-tab.active { color: var(--cream); border-bottom-color: var(--cream); }
+
+    /* Panels */
+    .cook-panel { display: none; flex: 1; flex-direction: column; overflow: hidden; position: relative; }
+    .cook-panel.active { display: flex; }
+
+    /* Tap zones — transparent, cover entire panel */
+    .cook-tap-overlay { position: absolute; inset: 0; z-index: 1; display: grid; grid-template-columns: 1fr 1fr; }
+    .cook-prev-zone { cursor: w-resize; }
+    .cook-next-zone { cursor: e-resize; }
+
+    /* Step body — pointer-events none so taps fall through to zones */
     .cook-body {
       position: relative; z-index: 2; pointer-events: none;
-      flex: 1; display: flex; flex-direction: column; justify-content: center;
+      flex: 1; display: flex; flex-direction: column; justify-content: flex-start; align-items: flex-start;
       padding: 32px 28px 0; max-width: 640px; width: 100%; margin: 0 auto;
     }
-    .cook-title {
-      font-family: var(--serif); font-weight: 700; font-size: 42px; line-height: 1.05;
-      color: var(--cream); font-feature-settings: 'dlig' 1, 'liga' 1; margin-bottom: 24px;
-    }
     .cook-step-p {
-      font-size: 20px; line-height: 28px; color: rgba(250,245,239,.88);
+      font-family: var(--sans); font-weight: 300; font-size: 27px; line-height: 37px;
+      color: rgba(250,245,239,0.85); text-align: left;
     }
 
-    /* Dots row — z-index 2, pointer-events none */
-    .cook-dots-row {
-      position: relative; z-index: 2; pointer-events: none;
-      display: flex; justify-content: center; gap: 8px; padding: 28px 20px 0;
-    }
-    .dot {
-      width: 6px; height: 6px; border-radius: 50%;
-      background: rgba(250,245,239,.25); transition: background 200ms;
-    }
+    /* Dots */
+    .cook-dots-row { position: relative; z-index: 2; pointer-events: none; display: flex; justify-content: center; gap: 8px; padding: 24px 20px 0; flex-shrink: 0; }
+    .dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(250,245,239,0.25); transition: background 200ms; }
     .dot.active { background: var(--cream); }
 
-    /* Ask Cuckoo — z-index 10, above tap overlay, pointer-events auto */
-    .cook-cta-row {
-      position: relative; z-index: 10;
-      display: flex; justify-content: center;
-      padding: 20px 20px 44px;
-    }
+    /* ASK KOOKU CTA — z-index 10, above tap zones */
+    .cook-cta-row { position: relative; z-index: 10; flex-shrink: 0; display: flex; justify-content: center; padding: 20px 20px 44px; }
+
+    /* Ingredients reference panel */
+    .cook-ing-panel { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 24px 24px 48px; max-width: 640px; width: 100%; margin: 0 auto; }
+    .cook-ing-row { display: flex; gap: 12px; padding: 13px 0; border-bottom: 1px solid rgba(250,245,239,0.1); }
+    .cook-ing-row:first-child { border-top: 1px solid rgba(250,245,239,0.1); }
+    .cook-ing-text { font-size: 16px; line-height: 22px; color: rgba(250,245,239,0.85); }
   </style>
 </head>
 <body>
 
 <!-- ═══════════════════════════════════════════════════════
-     INDEX
+     HOME
 ═══════════════════════════════════════════════════════ -->
 <div class="page active" id="index">
-  <header class="idx-header">
-    <h1 class="wordmark">cuckoobook</h1>
-    <div style="display:flex;align-items:center;gap:8px;">
-      <button class="cta cta-primary" style="padding:10px 18px;" onclick="alert('Capture — snap a photo of a cookbook page and AI extracts the recipe. Coming in the full app.')">+ Capture</button>
-    </div>
+  <header class="home-header">
+    <button class="menu-btn" aria-label="Menu" onclick="alert('Menu coming in the full app.')">
+      <span></span><span></span><span></span>
+    </button>
+    <img class="home-logo" src="packages/ui/assets/logo.png" alt="Cuckoobook">
+    <button class="add-btn" aria-label="Add recipe" onclick="alert('Capture — snap a cookbook page and AI extracts the recipe. Coming in the full app.')">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 2v14M2 9h14" stroke="white" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
   </header>
 
-  <main class="idx-main">
-    <div class="toolbar">
-      <span class="count-label">1 recipe</span>
-      <button class="cta cta-ghost" onclick="alert('Demo recipe already seeded!')">Seed demo recipe</button>
+  <div class="saved-section">
+    <div class="saved-header">
+      <h2 class="saved-title">Saved Recipes</h2>
+      <button class="saved-chevron" aria-label="Filter">
+        <svg width="18" height="10" viewBox="0 0 18 10" fill="none"><path d="M1 1l8 8 8-8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
     </div>
-    <div class="grid">
-      <div class="card" onclick="showRecipe()">
-        <div class="card-photo"></div>
-        <div class="card-info">
-          <div class="card-title">Lemony Orzo With Asparagus and Garlic Bread Crumbs</div>
-          <div class="card-meta">4 servings · 20 min</div>
-        </div>
-      </div>
+    <hr class="saved-divider">
+  </div>
+
+  <div class="recipe-grid">
+    <div class="r-card" onclick="showRecipe()">
+      <img class="r-card-photo" src="packages/ui/assets/AS-Lemony-Orzo-with-Asparagus-pgmk-threeByTwoMediumAt2X.jpg.webp" alt="Lemony Orzo">
+      <div class="r-card-info"><div class="r-card-title">Lemony Orzo with Asparagus and Garlic…</div><div class="r-card-time">20 MIN</div></div>
     </div>
-  </main>
+    <div class="r-card" onclick="alert('Add more recipes via Capture.')">
+      <img class="r-card-photo" src="packages/ui/assets/KD-burgoo-hqwf-threeByTwoMediumAt2X.jpg.webp" alt="Burgoo">
+      <div class="r-card-info"><div class="r-card-title">Burgoo</div><div class="r-card-time">20 MIN</div></div>
+    </div>
+    <div class="r-card" onclick="alert('Add more recipes via Capture.')">
+      <img class="r-card-photo" src="packages/ui/assets/as-cheesy-baked-gnocchi-threeByTwoMediumAt2X-v2.jpg.webp" alt="Crispy Gnocchi">
+      <div class="r-card-info"><div class="r-card-title">Crispy Gnocchi With Burst Tomatoes and…</div><div class="r-card-time">20 MIN</div></div>
+    </div>
+    <div class="r-card" onclick="alert('Add more recipes via Capture.')">
+      <img class="r-card-photo" src="packages/ui/assets/el-zucchini-pancakes-threeByTwoMediumAt2X-v4.jpg" alt="Zucchini Pancakes">
+      <div class="r-card-info"><div class="r-card-title">Zucchini Pancakes</div><div class="r-card-time">30 MIN</div></div>
+    </div>
+    <div class="r-card" onclick="alert('Add more recipes via Capture.')">
+      <img class="r-card-photo" src="packages/ui/assets/SS-Rhubarb-Macaroon-Tart-wvbc-threeByTwoMediumAt2X.jpg.webp" alt="Rhubarb Macaroon Tart">
+      <div class="r-card-info"><div class="r-card-title">Rhubarb Macaroon Tart</div><div class="r-card-time">20 MIN</div></div>
+    </div>
+    <div class="r-card" onclick="alert('Add more recipes via Capture.')">
+      <img class="r-card-photo" src="packages/ui/assets/merlin_209335479_52115ec4-9a9b-483e-b749-ed40dc44a69d-threeByTwoMediumAt2X.jpg.webp" alt="Sheet-Pan Feta">
+      <div class="r-card-info"><div class="r-card-title">Sheet-Pan Feta With Chickpeas and…</div><div class="r-card-time">40 MIN</div></div>
+    </div>
+    <div class="r-card" onclick="alert('Add more recipes via Capture.')">
+      <img class="r-card-photo" src="packages/ui/assets/15FD-KO-EASTERREX-GK-Honey-Lemon-Salmon-kcht-threeByTwoMediumAt2X-v2.jpg.webp" alt="Lemon Butter Salmon">
+      <div class="r-card-info"><div class="r-card-title">Lemon Butter Salmon With Dill</div><div class="r-card-time">20 MIN</div></div>
+    </div>
+    <div class="r-card" onclick="alert('Add more recipes via Capture.')">
+      <img class="r-card-photo" src="packages/ui/assets/16EATrex-pea-stew-qcbp-threeByTwoMediumAt2X.jpg.webp" alt="Spiced Pea Stew">
+      <div class="r-card-info"><div class="r-card-title">Spiced Pea Stew With Yogurt</div><div class="r-card-time">20 MIN</div></div>
+    </div>
+  </div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════
-     RECIPE DETAIL
+     RECIPE
 ═══════════════════════════════════════════════════════ -->
-<div class="page" id="recipe">
-  <div class="recipe-hero">
-    <button class="back-btn" onclick="showIndex()" aria-label="Back">
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-        <path d="M12 4L6 10L12 16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
+<div id="recipe">
+
+  <!-- Sticky KOOK IT — slides up when Preparation enters view, hides on scroll back -->
+  <div class="sticky-kook" id="sticky-kook">
+    <button class="cta cta-primary" onclick="showCooking()">
+      <img src="packages/ui/assets/cook.svg" width="11" height="12" alt="">
+      Kook It
     </button>
   </div>
 
-  <div class="recipe-scroll" id="recipe-scroll">
-    <div class="recipe-content">
-      <h1 class="recipe-title">Lemony Orzo With Asparagus and Garlic Bread Crumbs</h1>
-      <p class="recipe-source">NYT Cooking</p>
-      <div class="recipe-meta">
-        <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
-          <circle cx="7.5" cy="7.5" r="6" stroke="currentColor" stroke-width="1.2"/>
-          <path d="M7.5 4.5V7.8L9.5 9.2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
-        </svg>
-        20 MIN
-      </div>
-      <p class="recipe-desc">Every spoonful of this pasta has a happy jumble of lemony orzo, grassy asparagus, garlicky bread crumbs, fresh herbs and salty Parmesan. The pasta and thinly sliced asparagus cook together in the same pot, then rest in a lemony dressing while the garlic bread crumbs are toasted, so the pasta has time to absorb as much flavor as possible.</p>
-
-      <!-- Tab bar -->
-      <div class="tab-bar">
-        <button class="tab active" id="tab-ing" onclick="switchTab('ing')">Ingredients</button>
-        <button class="tab" id="tab-prep" onclick="switchTab('prep')">Preparation</button>
-      </div>
-
-      <!-- Ingredients panel -->
-      <div class="tab-panel active" id="panel-ing">
-        <h2 class="section-heading">Ingredients</h2>
-
-        <div class="controls">
-          <div class="serving-pill">
-            <button class="serving-btn" onclick="changeServings(-1)">−</button>
-            <span id="serving-label">4 SERV.</span>
-            <button class="serving-btn" onclick="changeServings(1)">+</button>
-          </div>
-          <button class="unit-toggle" id="unit-toggle" onclick="toggleUnit()">
-            <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-              <path d="M2 6.5a4.5 4.5 0 1 0 9 0" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
-              <path d="M11 6.5 9 4l-2 2.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            <span id="unit-label">IMPERIAL</span>
-          </button>
-        </div>
-
-        <ul class="ing-list" id="ing-list"></ul>
-
-        <div class="shop-row">
-          <button class="cta cta-tertiary" onclick="alert('Grocery list feature coming soon — will aggregate your scaled ingredients into a shareable checklist.')">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-              <path d="M7 2v10M2 7h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-            </svg>
-            Groceries
-          </button>
-          <button class="cta cta-tertiary" onclick="alert('Shop integration coming soon — will send your ingredients to Instacart or Amazon Fresh.')">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-              <path d="M1 2h2l1.5 7h6L12 5H4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-              <circle cx="5.5" cy="11.5" r="1" fill="currentColor"/>
-              <circle cx="10.5" cy="11.5" r="1" fill="currentColor"/>
-            </svg>
-            Shop
-          </button>
-        </div>
-      </div>
-
-      <!-- Preparation panel -->
-      <div class="tab-panel" id="panel-prep">
-        <h2 class="section-heading">Preparation</h2>
-        <ol class="step-list">
-          <li>
-            <span class="step-label">Step 1</span>
-            <p class="step-body">Bring a medium pot of salted water to a boil. Add the orzo and cook until al dente according to package directions. Two minutes before the orzo is done, add the asparagus. Drain the orzo and asparagus. Wipe out and reserve the pot.</p>
-          </li>
-          <li>
-            <span class="step-label">Step 2</span>
-            <p class="step-body">While the orzo and asparagus cook, make the dressing: In a large bowl, stir together 3 tablespoons oil and the lemon zest and juice; season to taste with salt and pepper. Add the drained orzo and asparagus and toss to coat. Set aside while you toast the bread crumbs.</p>
-          </li>
-          <li>
-            <span class="step-label">Step 3</span>
-            <p class="step-body">In the reserved pot, heat the remaining 2 tablespoons oil over medium. Add the panko and cook, stirring, until golden brown, 3 to 5 minutes. Remove from heat, then stir in the garlic and season with salt and pepper.</p>
-          </li>
-          <li>
-            <span class="step-label">Step 4</span>
-            <p class="step-body">Stir the Parmesan and herbs into the orzo, taste, then season with salt, pepper and additional lemon juice, if desired. Top with the toasted bread crumbs and more Parmesan if you like. Serve warm or at room temperature.</p>
-          </li>
-        </ol>
-      </div>
-    </div>
+  <!-- Hero scrolls naturally with content -->
+  <div class="recipe-hero">
+    <img class="recipe-hero-img" src="packages/ui/assets/AS-Lemony-Orzo-with-Asparagus-pgmk-threeByTwoMediumAt2X.jpg.webp" alt="Lemony Orzo">
+    <img class="back-btn" src="packages/ui/assets/back.svg" alt="Back" onclick="showIndex()">
   </div>
 
-  <div class="cook-float">
-    <button class="cta cta-primary" onclick="showCooking()">Cook</button>
+  <div class="recipe-content">
+    <h1 class="recipe-title">Lemony Orzo with Asparagus and Garlic Bread Crumbs</h1>
+
+    <div class="recipe-meta-row">
+      <div class="time-badge">
+        <img src="packages/ui/assets/Alarm.svg" width="16" height="16" alt="">
+        20 MIN
+      </div>
+      <button class="cta cta-tertiary" onclick="alert('Shop integration coming soon.')">
+        <img src="packages/ui/assets/shop.svg" width="16" height="16" alt="" style="opacity:.75">
+        Shop
+      </button>
+      <button class="cta cta-primary" onclick="showCooking()">
+        <img src="packages/ui/assets/cook.svg" width="11" height="12" alt="">
+        Kook It
+      </button>
+    </div>
+
+    <p class="recipe-desc">Every spoonful of this pasta has a happy jumble of lemony orzo, grassy asparagus, garlicky bread crumbs, fresh herbs and salty Parmesan. The pasta and thinly sliced asparagus cook together in the same pot, then rest in a lemony dressing while the garlic bread crumbs are toasted, so the pasta has time to absorb as much flavor as possible.</p>
+
+    <!-- INGREDIENTS -->
+    <h2 class="section-heading">Ingredients</h2>
+
+    <div class="controls">
+      <div class="serving-pill">
+        <button class="serving-btn" onclick="changeServings(-1)">−</button>
+        <span id="serving-label">4 SERVINGS</span>
+        <button class="serving-btn" onclick="changeServings(1)">+</button>
+      </div>
+      <button class="unit-toggle" id="unit-toggle" onclick="toggleUnit()">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5a4.5 4.5 0 1 0 9 0" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><path d="M11 6.5 9 4l-2 2.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <span id="unit-label">IMPERIAL</span>
+      </button>
+    </div>
+
+    <ul class="ing-list" id="ing-list"></ul>
+
+    <div class="shop-row">
+      <button class="cta cta-tertiary" onclick="alert('Grocery list coming soon.')">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2v10M2 7h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Groceries
+      </button>
+      <button class="cta cta-tertiary" onclick="alert('Shop integration coming soon.')">
+        <img src="packages/ui/assets/shop.svg" width="16" height="16" alt="" style="opacity:.7">
+        Shop
+      </button>
+    </div>
+
+    <!-- PREPARATION — scroll trigger for sticky Kook It -->
+    <h2 class="section-heading" id="prep-section">Preparation</h2>
+
+    <ol class="step-list">
+      <li>
+        <span class="step-label">Step 1</span>
+        <p class="step-body">Bring a medium pot of salted water to a boil. Add the orzo and cook until al dente according to package directions. Two minutes before the orzo is done, add the asparagus. Drain the orzo and asparagus. Wipe out and reserve the pot.</p>
+      </li>
+      <li>
+        <span class="step-label">Step 2</span>
+        <p class="step-body">While the orzo and asparagus cook, make the dressing: In a large bowl, stir together 3 tablespoons oil and the lemon zest and juice; season to taste with salt and pepper. Add the drained orzo and asparagus and toss to coat. Set aside while you toast the bread crumbs.</p>
+      </li>
+      <li>
+        <span class="step-label">Step 3</span>
+        <p class="step-body">In the reserved pot, heat the remaining 2 tablespoons oil over medium. Add the panko and cook, stirring, until golden brown, 3 to 5 minutes. Remove from heat, then stir in the garlic and season with salt and pepper.</p>
+      </li>
+      <li>
+        <span class="step-label">Step 4</span>
+        <p class="step-body">Stir the Parmesan and herbs into the orzo, taste, then season with salt, pepper and additional lemon juice, if desired. Top with the toasted bread crumbs and more Parmesan if you like. Serve warm or at room temperature.</p>
+      </li>
+    </ol>
+
+    <div class="recipe-bottom-spacer"></div>
   </div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════
      COOKING MODE
 ═══════════════════════════════════════════════════════ -->
-<div class="page" id="cooking">
-  <!-- Tap zones — behind everything -->
-  <div class="cook-tap-overlay">
-    <div class="cook-prev-zone" onclick="cookNav(-1)"></div>
-    <div class="cook-next-zone" onclick="cookNav(1)"></div>
-  </div>
+<div id="cooking">
 
-  <!-- Header -->
-  <div class="cook-header">
-    <button class="cook-close" onclick="showRecipe()">×</button>
+  <!-- Header: exit | counter | megaphone -->
+  <div class="cook-top">
+    <button class="cook-icon-btn" onclick="showRecipe()" aria-label="Exit">
+      <img src="packages/ui/assets/exit.svg" width="36" height="36" alt="Exit">
+    </button>
     <span class="cook-counter" id="cook-counter">1 of 4</span>
-    <div style="width:36px"></div>
-  </div>
-
-  <!-- Step content -->
-  <div class="cook-body">
-    <h2 class="cook-title">Cuckook It!</h2>
-    <p class="cook-step-p" id="cook-step-p"></p>
-  </div>
-
-  <!-- Dots -->
-  <div class="cook-dots-row" id="cook-dots"></div>
-
-  <!-- Ask Cuckoo CTA -->
-  <div class="cook-cta-row">
-    <button class="cta cta-secondary" onclick="alert('Ask Cuckoo — your AI cooking assistant. Ask anything while you cook: "what does fold in mean?", "how much garlic?", "can I sub butter for olive oil?" Powered by Claude via your Anthropic key. Coming in the full app.')">
-      Ask Cuckoo
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="opacity:.6">
-        <path d="M7 1.5C3.96 1.5 1.5 3.96 1.5 7S3.96 12.5 7 12.5 12.5 10.04 12.5 7 10.04 1.5 7 1.5Z" stroke="currentColor" stroke-width="1.2"/>
-        <path d="M5 5.5C5 4.4 5.9 3.5 7 3.5c1.1 0 2 .9 2 2 0 1.3-2 1.8-2 3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
-        <circle cx="7" cy="10.5" r=".6" fill="currentColor"/>
-      </svg>
+    <button class="cook-icon-btn" aria-label="Voice control" onclick="alert('Voice control — say "Next step", "Repeat", or "Go back". Coming in the full app.')">
+      <img src="packages/ui/assets/megaphone.svg" width="44" height="44" alt="Voice">
     </button>
   </div>
+
+  <!-- Title: bird + KOOK IT! — above tabs, always visible -->
+  <div class="cook-title-section">
+    <div class="cook-title-row">
+      <img src="packages/ui/assets/kooku Beige.png" class="cook-bird-img" alt="">
+      <span class="cook-title-text">Kook It!</span>
+    </div>
+  </div>
+
+  <!-- Tab bar -->
+  <div class="cook-tab-bar">
+    <button class="cook-tab active" id="ctab-steps" onclick="switchCookTab('steps')">Preparation</button>
+    <button class="cook-tab" id="ctab-ingredients" onclick="switchCookTab('ingredients')">Ingredients</button>
+  </div>
+
+  <!-- PREPARATION PANEL -->
+  <div class="cook-panel active" id="cpanel-steps">
+    <div class="cook-tap-overlay">
+      <div class="cook-prev-zone" onclick="cookNav(-1)"></div>
+      <div class="cook-next-zone" onclick="cookNav(1)"></div>
+    </div>
+
+    <div class="cook-body">
+      <p class="cook-step-p" id="cook-step-p"></p>
+    </div>
+
+    <div class="cook-dots-row" id="cook-dots"></div>
+
+    <div class="cook-cta-row">
+      <button class="cta" style="background:#EA7F63;color:#fff;padding:13px 28px;font-size:14px;"
+        onclick="alert('Ask Kooku — your AI cooking assistant. Ask anything: "what does fold in mean?", "how much garlic?". Powered by Claude. Coming in the full app.')">
+        <img src="packages/ui/assets/kooku.svg" width="18" height="16" alt="">
+        Ask Kooku
+      </button>
+    </div>
+  </div>
+
+  <!-- INGREDIENTS PANEL -->
+  <div class="cook-panel" id="cpanel-ingredients">
+    <div class="cook-ing-panel" id="cook-ing-list"></div>
+  </div>
+
 </div>
 
 <script>
-  /* ─── Data ──────────────────────────────────────────────── */
   const DEFAULT_SERVINGS = 4;
-  let servings = 4;
-  let unitSystem = 'imperial'; // 'imperial' | 'metric'
-  let checked = new Set();
+  let servings = 4, unitSystem = 'imperial', checked = new Set(), cookStep = 0;
 
   const ingredients = [
     { qty: null,  unit: null,    type: 'none',   text: 'Salt and black pepper' },
@@ -520,10 +446,9 @@
     'Stir the Parmesan and herbs into the orzo, taste, then season with salt, pepper and additional lemon juice, if desired. Top with the toasted bread crumbs and more Parmesan if you like. Serve warm or at room temperature.',
   ];
 
-  /* ─── Unit conversion ───────────────────────────────────── */
+  /* ─── Unit conversion ────────────────────────────────── */
   const ML = { tsp: 5, tbsp: 15, cup: 240, floz: 30, pint: 480, quart: 960 };
   const GM = { oz: 28, lb: 454 };
-
   const FRACS = [[7/8,'⅞'],[3/4,'¾'],[2/3,'⅔'],[1/2,'½'],[1/3,'⅓'],[1/4,'¼'],[1/8,'⅛']];
   function toFrac(n) {
     const whole = Math.floor(n), frac = n - whole;
@@ -534,71 +459,66 @@
     return whole > 0 ? `${whole}` : n.toFixed(1);
   }
   function r5(n) { return Math.round(n / 5) * 5 || 1; }
-
   function displayQty(ing, scale) {
     if (ing.qty === null) return null;
     const q = ing.qty * scale;
-    if (unitSystem === 'imperial') {
-      return `${toFrac(q)} ${ing.unit}`;
-    }
-    if (ing.type === 'volume') {
-      const ml = q * ML[ing.unit];
-      return ml >= 1000 ? `${(ml/1000).toFixed(1)} l` : `${r5(ml)} ml`;
-    }
-    if (ing.type === 'weight') {
-      const g = q * GM[ing.unit];
-      return g >= 1000 ? `${(g/1000).toFixed(1)} kg` : `${r5(g)} g`;
-    }
+    if (unitSystem === 'imperial') return `${toFrac(q)} ${ing.unit}`;
+    if (ing.type === 'volume') { const ml = q * ML[ing.unit]; return ml >= 1000 ? `${(ml/1000).toFixed(1)} l` : `${r5(ml)} ml`; }
+    if (ing.type === 'weight') { const g = q * GM[ing.unit]; return g >= 1000 ? `${(g/1000).toFixed(1)} kg` : `${r5(g)} g`; }
     return `${toFrac(q)} ${ing.unit}`;
   }
 
-  /* ─── Render ingredients ─────────────────────────────────── */
+  /* ─── Render ingredients ─────────────────────────────── */
   function renderIngredients() {
     const scale = servings / DEFAULT_SERVINGS;
-    const list = document.getElementById('ing-list');
-    list.innerHTML = '';
-    ingredients.forEach((ing, i) => {
-      const qtyStr = displayQty(ing, scale);
-      const isChecked = checked.has(i);
-      const li = document.createElement('li');
-      li.className = 'ing-row' + (isChecked ? ' checked' : '');
-      li.onclick = () => { checked.has(i) ? checked.delete(i) : checked.add(i); renderIngredients(); };
-      li.innerHTML = `
-        <div class="ing-cb">
-          <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
-            <polyline points="1 4 3.5 6.5 9 1" stroke="${getComputedStyle(document.documentElement).getPropertyValue('--cook-bg').trim() || '#0B2826'}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-        <span class="ing-text">${qtyStr ? `<span class="ing-qty">${qtyStr}</span> ` : ''}${ing.text}</span>`;
-      list.appendChild(li);
+    ['ing-list', 'cook-ing-list'].forEach(id => {
+      const list = document.getElementById(id);
+      if (!list) return;
+      const isCook = id === 'cook-ing-list';
+      list.innerHTML = '';
+      ingredients.forEach((ing, i) => {
+        const qtyStr = displayQty(ing, scale);
+        const fullText = qtyStr ? `${qtyStr} ${ing.text}` : ing.text;
+        if (isCook) {
+          const el = document.createElement('div');
+          el.className = 'cook-ing-row';
+          el.innerHTML = `<span class="cook-ing-text">${fullText}</span>`;
+          list.appendChild(el);
+        } else {
+          const isChecked = checked.has(i);
+          const li = document.createElement('li');
+          li.className = 'ing-row' + (isChecked ? ' checked' : '');
+          li.onclick = () => { checked.has(i) ? checked.delete(i) : checked.add(i); renderIngredients(); };
+          li.innerHTML = `<div class="ing-cb"><svg width="10" height="8" viewBox="0 0 10 8" fill="none"><polyline points="1 4 3.5 6.5 9 1" stroke="#0B2826" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="ing-text">${fullText}</span>`;
+          list.appendChild(li);
+        }
+      });
     });
   }
 
   function changeServings(d) {
     servings = Math.max(1, Math.min(50, servings + d));
-    document.getElementById('serving-label').textContent = `${servings} SERV.`;
+    document.getElementById('serving-label').textContent = `${servings} SERVING${servings !== 1 ? 'S' : ''}`;
     renderIngredients();
   }
 
   function toggleUnit() {
     unitSystem = unitSystem === 'imperial' ? 'metric' : 'imperial';
-    const btn = document.getElementById('unit-toggle');
     document.getElementById('unit-label').textContent = unitSystem === 'metric' ? 'METRIC' : 'IMPERIAL';
-    btn.classList.toggle('is-metric', unitSystem === 'metric');
+    document.getElementById('unit-toggle').classList.toggle('is-metric', unitSystem === 'metric');
     renderIngredients();
   }
 
-  /* ─── Tab switching ──────────────────────────────────────── */
-  function switchTab(id) {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-    document.getElementById('tab-' + id).classList.add('active');
-    document.getElementById('panel-' + id).classList.add('active');
+  /* ─── Sticky KOOK IT — shows/hides based on scroll position */
+  function checkPrepVisibility() {
+    const prep = document.getElementById('prep-section');
+    if (!prep) return;
+    const rect = prep.getBoundingClientRect();
+    const shouldShow = rect.top < window.innerHeight * 0.85;
+    document.getElementById('sticky-kook').classList.toggle('visible', shouldShow);
   }
 
-  /* ─── Cooking mode ───────────────────────────────────────── */
-  let cookStep = 0;
-
+  /* ─── Cooking mode ───────────────────────────────────── */
   function renderCooking() {
     document.getElementById('cook-step-p').textContent = steps[cookStep];
     document.getElementById('cook-counter').textContent = `${cookStep + 1} of ${steps.length}`;
@@ -619,29 +539,38 @@
     renderCooking();
   }
 
-  /* ─── Page routing ───────────────────────────────────────── */
+  function switchCookTab(id) {
+    document.querySelectorAll('.cook-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.cook-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('ctab-' + id).classList.add('active');
+    document.getElementById('cpanel-' + id).classList.add('active');
+  }
+
+  /* ─── Routing ────────────────────────────────────────── */
   function showIndex() {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.page, #recipe, #cooking').forEach(p => p.classList.remove('active'));
     document.getElementById('index').classList.add('active');
-    window.scrollTo(0,0);
   }
 
   function showRecipe() {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById('recipe').classList.add('active');
-    document.getElementById('recipe-scroll').scrollTop = 0;
-    window.scrollTo(0,0);
+    document.querySelectorAll('.page, #recipe, #cooking').forEach(p => p.classList.remove('active'));
+    const recipe = document.getElementById('recipe');
+    recipe.classList.add('active');
+    recipe.scrollTop = 0;
+    document.getElementById('sticky-kook').classList.remove('visible');
+    recipe.addEventListener('scroll', checkPrepVisibility);
   }
 
   function showCooking() {
     cookStep = 0;
+    switchCookTab('steps');
     renderCooking();
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    renderIngredients();
+    document.querySelectorAll('.page, #recipe, #cooking').forEach(p => p.classList.remove('active'));
     document.getElementById('cooking').classList.add('active');
-    window.scrollTo(0,0);
   }
 
-  /* ─── Init ───────────────────────────────────────────────── */
+  /* ─── Init ───────────────────────────────────────────── */
   renderIngredients();
 </script>
 </body>
