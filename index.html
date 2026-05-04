@@ -106,7 +106,7 @@
       overflow: hidden; background: #d4c8b4; flex-shrink: 0;
     }
     .recipe-hero-img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .back-btn { position: absolute; top: 14px; left: 14px; z-index: 2; display: block; cursor: pointer; width: 36px; height: 36px; }
+    .back-btn { position: absolute; top: 16px; left: 16px; z-index: 2; display: block; cursor: pointer; width: 36px; height: 36px; }
 
     .recipe-content { max-width: 680px; width: 100%; margin: 0 auto; padding: 28px 20px 0; }
     .recipe-title { font-family: var(--serif); font-weight: 400; font-size: 42px; line-height: 45px; color: var(--ink); margin-bottom: 20px; }
@@ -167,7 +167,7 @@
     .sticky-kook {
       position: fixed; bottom: 0; left: 0; right: 0; z-index: 30;
       display: flex; justify-content: center;
-      padding: 16px 20px calc(25px + env(safe-area-inset-bottom, 0px));
+      padding: 16px 20px calc(10px + env(safe-area-inset-bottom, 0px));
       background: linear-gradient(to top, var(--cream) 58%, transparent);
       pointer-events: none;
       transform: translateY(110%);
@@ -181,14 +181,14 @@
     ═══════════════════════════════════════════════════════════ */
     #cooking { color: var(--cream); overflow: hidden; }
 
-    /* Header: close | [bird KOOK IT!] | megaphone */
+    /* Header: close | [bird KOOK IT!] | megaphone — 16px sides matches home header */
     .cook-top {
       flex-shrink: 0;
       display: flex; align-items: center; justify-content: space-between;
-      padding: 20px 20px 0;
+      padding: 20px 16px 0;
     }
     .cook-icon-btn {
-      width: 48px; height: 48px; background: none; border: none; cursor: pointer;
+      width: 44px; height: 44px; background: none; border: none; cursor: pointer;
       display: flex; align-items: center; justify-content: center;
       transition: opacity 120ms; flex-shrink: 0;
     }
@@ -202,14 +202,14 @@
       color: #D6D5AA; font-feature-settings: 'dlig' 1, 'liga' 1; text-transform: uppercase;
     }
 
-    /* Tab bar — full width so border matches ingredient dividers */
+    /* Tab bar — inset 20px each side, aligns with ingredient dividers and text */
     .cook-tab-bar {
       flex-shrink: 0;
       display: flex; border-bottom: 1px solid rgba(250,245,239,0.15);
-      margin-top: 20px;
+      margin: 20px 20px 0;
     }
     .cook-tab {
-      flex: 1; padding: 13px 20px; background: none; border: none;
+      flex: 1; padding: 13px 0; background: none; border: none;
       border-bottom: 2px solid transparent; margin-bottom: -1px; cursor: pointer;
       font-family: var(--sans); font-weight: 800; font-size: 12px;
       letter-spacing: 0.1em; text-transform: uppercase;
@@ -245,16 +245,17 @@
     .dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(250,245,239,0.25); transition: background 200ms; }
     .dot.active { background: var(--cream); }
 
-    /* ASK KOOKU — 30px from browser bar */
+    /* ASK KOOKU — 10px from browser bar, gradient fades to cook-bg */
     .cook-cta-row {
       position: relative; z-index: 10; flex-shrink: 0;
       display: flex; justify-content: center;
-      padding: 16px 20px calc(30px + env(safe-area-inset-bottom, 0px));
+      padding: 48px 20px calc(10px + env(safe-area-inset-bottom, 0px));
+      background: linear-gradient(to top, var(--cook-bg) 60%, transparent);
     }
 
-    /* Ingredients panel — no container padding so dividers go full width */
-    .cook-ing-panel { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 0; }
-    .cook-ing-row { display: flex; gap: 0; padding: 14px 20px; border-bottom: 1px solid rgba(250,245,239,0.15); }
+    /* Ingredients panel — 20px horizontal padding, dividers are inset to match text */
+    .cook-ing-panel { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 0 20px; }
+    .cook-ing-row { display: flex; gap: 0; padding: 14px 0; border-bottom: 1px solid rgba(250,245,239,0.15); }
     .cook-ing-row:last-child { border-bottom: none; }
     .cook-ing-text { font-size: 18px; line-height: 24px; color: rgba(250,245,239,0.85); font-weight: 400; }
   </style>
