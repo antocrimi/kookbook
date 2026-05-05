@@ -3,7 +3,6 @@
 /* eslint-disable @next/next/no-img-element -- prototype design uses raw <img> for the wordmark logo. */
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Banner } from "@cuckoobook/ui";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 import { RecipeCard } from "./RecipeCard";
 import { SeedRecipe } from "./SeedRecipe";
@@ -64,7 +63,7 @@ export default function RecipesPage() {
 
   return (
     <div className="recipe-app">
-      <div className="page">
+      <div className="page" id="index">
         <header className="home-header">
           <button
             className="menu-btn"
@@ -85,6 +84,7 @@ export default function RecipesPage() {
           {menuOpen && (
             <div className="menu-dropdown" role="menu">
               <Link href="/settings" onClick={() => setMenuOpen(false)}>Settings</Link>
+              <SeedRecipe />
               <SignOut />
             </div>
           )}
@@ -93,7 +93,7 @@ export default function RecipesPage() {
         <div className="saved-section">
           <div className="saved-header">
             <h2 className="saved-title">Saved Recipes</h2>
-            <button className="saved-chevron" aria-label="Filter" disabled>
+            <button className="saved-chevron" aria-label="Filter">
               <svg width="18" height="10" viewBox="0 0 18 10" fill="none">
                 <path d="M1 1l8 8 8-8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
@@ -103,35 +103,27 @@ export default function RecipesPage() {
         </div>
 
         {error && (
-          <div style={{ padding: "0 16px 16px" }}>
-            <Banner variant="error" heading="Couldn't load recipes" body={error} />
-          </div>
+          <div className="recipes-error">Couldn&apos;t load recipes — {error}</div>
         )}
 
         {recipes === null ? null : recipes.length > 0 ? (
-          <>
-            <div className="recipe-grid">
-              {recipes.map((r) => (
-                <RecipeCard
-                  key={r.id}
-                  id={r.id}
-                  title={r.title}
-                  timeMin={r.time_min}
-                  photoUrl={r.photoUrl}
-                />
-              ))}
-            </div>
-            <div style={{ padding: "0 16px 32px", display: "flex", justifyContent: "flex-end" }}>
-              <SeedRecipe />
-            </div>
-          </>
+          <div className="recipe-grid">
+            {recipes.map((r) => (
+              <RecipeCard
+                key={r.id}
+                id={r.id}
+                title={r.title}
+                timeMin={r.time_min}
+                photoUrl={r.photoUrl}
+              />
+            ))}
+          </div>
         ) : (
           <div className="empty-state">
             <h2 className="empty-heading">Your recipe collection starts here.</h2>
             <p className="empty-body">
-              Snap a photo of a cookbook page and let AI extract the recipe. Or seed a demo recipe to explore the design.
+              Snap a photo of a cookbook page and let AI extract the recipe. Or open the menu and seed demo recipes to explore the design.
             </p>
-            <SeedRecipe />
           </div>
         )}
       </div>

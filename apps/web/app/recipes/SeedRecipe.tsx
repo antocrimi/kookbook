@@ -2,7 +2,6 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { Button } from "@cuckoobook/ui";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 import { SEED_RECIPES } from "./seedData";
 
@@ -25,9 +24,7 @@ export function SeedRecipe() {
       return;
     }
 
-    const { data: existing } = await supabase
-      .from("recipes")
-      .select("title");
+    const { data: existing } = await supabase.from("recipes").select("title");
     const existingTitles = new Set((existing ?? []).map((r) => r.title));
 
     const toInsert = SEED_RECIPES.filter((r) => !existingTitles.has(r.title)).map(
@@ -58,11 +55,11 @@ export function SeedRecipe() {
   }
 
   return (
-    <div className="flex flex-col items-end gap-2">
-      <Button size="xs" variant="ghost" onClick={seed} loading={pending}>
-        Seed demo recipes
-      </Button>
-      {error && <p className="text-xs text-coral">{error}</p>}
-    </div>
+    <>
+      <button type="button" onClick={seed} disabled={pending}>
+        {pending ? "Seeding…" : "Seed demo recipes"}
+      </button>
+      {error && <span style={{ color: "var(--recipe-primary)", fontSize: 12, padding: "0 12px" }}>{error}</span>}
+    </>
   );
 }

@@ -55,7 +55,7 @@ export function CookingMode({
             <img src="/prototype/assets/kooku Beige.png" className="cook-bird-img" alt="" />
             <span className="cook-title-text">Kook It!</span>
           </div>
-          <button className="cook-icon-btn" aria-label="Voice control (TBD)" disabled title="Voice control TBD">
+          <button className="cook-icon-btn" aria-label="Voice control">
             <img src="/prototype/assets/megaphone.svg" width={22} height={22} alt="Voice" />
           </button>
         </div>
@@ -103,7 +103,7 @@ export function CookingMode({
             </div>
 
             <div className="cook-cta-row">
-              <button className="cta" type="button" disabled title="AI assistant TBD">
+              <button className="cta" type="button">
                 <img src="/prototype/assets/kooku.svg" width={18} height={16} alt="" />
                 Ask Kooku
               </button>
@@ -122,7 +122,7 @@ export function CookingMode({
               ))}
             </div>
             <div className="cook-cta-row">
-              <button className="cta" type="button" disabled title="AI assistant TBD">
+              <button className="cta" type="button">
                 <img src="/prototype/assets/kooku.svg" width={18} height={16} alt="" />
                 Ask Kooku
               </button>

@@ -119,7 +119,7 @@ export function RecipeView({ recipe, photoUrl }: RecipeViewProps) {
                 {recipe.time_min} MIN
               </div>
             )}
-            <button className="cta cta-tertiary" type="button" disabled title="Shop integration TBD">
+            <button className="cta cta-tertiary" type="button">
               <img src="/prototype/assets/shop.svg" width={16} height={16} alt="" style={{ opacity: 0.75 }} />
               Shop
             </button>
@@ -182,13 +182,13 @@ export function RecipeView({ recipe, photoUrl }: RecipeViewProps) {
           </ul>
 
           <div className="shop-row">
-            <button className="cta cta-tertiary" type="button" disabled title="Groceries integration TBD">
+            <button className="cta cta-tertiary" type="button">
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
                 <path d="M7 2v10M2 7h10" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
               </svg>
               Groceries
             </button>
-            <button className="cta cta-tertiary" type="button" disabled title="Shop integration TBD">
+            <button className="cta cta-tertiary" type="button">
               <img src="/prototype/assets/shop.svg" width={16} height={16} alt="" style={{ opacity: 0.7 }} />
               Shop
             </button>
