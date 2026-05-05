@@ -650,12 +650,13 @@
   }
 
   /* ─── Sticky KOOK IT ─────────────────────────────────── */
-  // Show sticky once the inline "Kook It" button in the meta row scrolls off screen
+  // Show when PREPARATION heading enters the top half of the screen;
+  // hide again when scrolling back up past that same point.
   function checkPrepVisibility() {
-    const metaRow = document.querySelector('#recipe .recipe-meta-row');
-    if (!metaRow) return;
-    const rect = metaRow.getBoundingClientRect();
-    document.getElementById('sticky-kook').classList.toggle('visible', rect.bottom < 0);
+    const prep = document.getElementById('prep-section');
+    if (!prep) return;
+    const rect = prep.getBoundingClientRect();
+    document.getElementById('sticky-kook').classList.toggle('visible', rect.top <= window.innerHeight * 0.5);
   }
 
   /* ─── Cooking mode ───────────────────────────────────── */
