@@ -118,20 +118,13 @@
     }
     .menu-btn span { display: block; width: 20px; height: 1.5px; background: var(--ink); border-radius: 2px; }
     .home-logo { height: 26px; display: block; cursor: pointer; }
-    /* Bird groups: fast crossfade so no ghosting between poses */
-    .home-logo .bird-1 { transition: opacity 100ms ease; }
-    .home-logo .bird-2 { opacity: 0; transition: opacity 100ms ease 30ms; }
-    .home-logo:hover .bird-1, .home-logo.tapped .bird-1 { opacity: 0; }
-    .home-logo:hover .bird-2, .home-logo.tapped .bird-2 { opacity: 1; }
-    /* Playful press-and-spring on tap */
-    @keyframes logo-tap {
-      0%   { transform: scale(1, 1)    translateY(0); }
-      22%  { transform: scale(0.9, 0.85) translateY(3px); }
-      52%  { transform: scale(1.06, 1.1) translateY(-2px); }
-      72%  { transform: scale(0.98, 1.01) translateY(0); }
-      100% { transform: scale(1, 1)    translateY(0); }
-    }
-    .home-logo.tapped { animation: logo-tap 520ms cubic-bezier(0.34, 1.4, 0.64, 1) both; }
+    /* Bird groups: crisp swap, no whole-logo motion */
+    .home-logo .bird-1 { transition: opacity 140ms ease; }
+    .home-logo .bird-2 { opacity: 0; transition: opacity 140ms ease; }
+    .home-logo:hover .bird-1,
+    .home-logo.ducked .bird-1 { opacity: 0; }
+    .home-logo:hover .bird-2,
+    .home-logo.ducked .bird-2 { opacity: 1; }
     /* + button: no width/center — right edge aligns with chevron naturally */
     .add-btn { background: none; border: none; cursor: pointer; padding: 12px 0 12px 16px; display: flex; align-items: center; }
     .add-btn:active { opacity: 0.6; }
@@ -572,6 +565,7 @@
 <script>
   const DEFAULT_SERVINGS = 4;
   let servings = 4, unitSystem = 'imperial', checked = new Set(), cookStep = 0;
+  let lastCardRect = null, lastCardSrc = null;
 
   const ingredients = [
     { qty: null,  unit: null,    type: 'none',   text: 'Salt and black pepper' },
@@ -695,18 +689,74 @@
     document.documentElement.classList.remove('cook-mode');
     document.getElementById('cooking').classList.remove('active');
 
-    const recipe = document.getElementById('recipe');
+    const recipe    = document.getElementById('recipe');
+    const heroEl    = recipe.querySelector('.recipe-hero');
+    const heroImg   = recipe.querySelector('.recipe-hero-img');
     const contentEl = recipe.querySelector('.recipe-content');
-    const heroImg = recipe.querySelector('.recipe-hero-img');
-    contentEl.style.cssText = '';
-    heroImg.style.cssText = '';
 
-    // Clear inline overrides so CSS transition controls slide-down
-    recipe.style.transition = '';
-    recipe.style.transform = '';
-    requestAnimationFrame(() => recipe.classList.remove('active'));
+    if (lastCardRect && lastCardSrc) {
+      // Reverse FLIP: fly shrinks from hero back to card position
+      const heroRect = heroEl.getBoundingClientRect();
+      const DUR  = 420;
+      const EASE = 'cubic-bezier(0.32, 0.72, 0, 1)';
 
-    document.getElementById('index').classList.remove('nav-pushed');
+      const sx = lastCardRect.width  / heroRect.width;
+      const sy = lastCardRect.height / heroRect.height;
+      const tx = lastCardRect.left + lastCardRect.width  / 2 - (heroRect.left + heroRect.width  / 2);
+      const ty = lastCardRect.top  + lastCardRect.height / 2 - (heroRect.top  + heroRect.height / 2);
+
+      // Hide recipe content & hero immediately — fly carries the visual
+      heroImg.style.opacity = '0';
+      heroEl.style.background = 'transparent';
+      contentEl.style.transition = 'opacity 120ms ease';
+      contentEl.style.opacity = '0';
+      recipe.style.background = 'transparent';
+
+      // Fly starts at hero position, identity transform
+      const fly = document.createElement('div');
+      fly.style.cssText = `
+        position:fixed;
+        left:${heroRect.left}px; top:${heroRect.top}px;
+        width:${heroRect.width}px; height:${heroRect.height}px;
+        background:url(${lastCardSrc}) center/cover no-repeat;
+        border-radius:0px;
+        z-index:50;
+        pointer-events:none;
+        transform-origin:center center;
+        transform:translate(0,0) scale(1);
+        will-change:transform,border-radius;
+      `;
+      document.body.appendChild(fly);
+
+      // Home scales back up immediately
+      document.getElementById('index').classList.remove('nav-pushed');
+
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        fly.style.transition = `transform ${DUR}ms ${EASE}, border-radius 300ms ease`;
+        fly.style.transform  = `translate(${tx}px,${ty}px) scale(${sx},${sy})`;
+        fly.style.borderRadius = '6px';
+
+        setTimeout(() => {
+          fly.remove();
+          recipe.classList.remove('active');
+          recipe.style.background = '';
+          heroImg.style.cssText   = '';
+          heroEl.style.background = '';
+          contentEl.style.cssText = '';
+          lastCardRect = null;
+          lastCardSrc  = null;
+        }, DUR + 20);
+      }));
+
+    } else {
+      // Fallback (no stored card, e.g. deep link) — just slide down
+      contentEl.style.cssText = '';
+      heroImg.style.cssText   = '';
+      recipe.style.transform  = '';
+      recipe.style.transition = '';
+      requestAnimationFrame(() => recipe.classList.remove('active'));
+      document.getElementById('index').classList.remove('nav-pushed');
+    }
   }
 
   function showRecipe(cardEl) {
@@ -735,6 +785,8 @@
     }
 
     const cardRect = cardImg.getBoundingClientRect();
+    lastCardRect = cardRect;
+    lastCardSrc  = cardImg.src;
 
     // Jump recipe to final position instantly (skip slide-up)
     recipe.style.transition = 'none';
@@ -816,11 +868,10 @@
     document.getElementById('cooking').classList.add('active');
   }
 
-  /* ─── Logo tap (mobile) ─────────────────────────────── */
+  /* ─── Logo tap (mobile) — toggles duck pose, cycles on each tap ── */
   document.querySelector('.home-logo').addEventListener('touchstart', function(e) {
     e.preventDefault();
-    this.classList.add('tapped');
-    setTimeout(() => this.classList.remove('tapped'), 500);
+    this.classList.toggle('ducked');
   }, { passive: false });
 
   /* ─── Init ───────────────────────────────────────────── */
