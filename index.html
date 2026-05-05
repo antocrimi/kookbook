@@ -656,7 +656,9 @@
     const prep = document.getElementById('prep-section');
     if (!prep) return;
     const rect = prep.getBoundingClientRect();
-    document.getElementById('sticky-kook').classList.toggle('visible', rect.top <= window.innerHeight * 0.5);
+    // Show when PREPARATION heading reaches the top ~15% of the viewport
+    // (user has scrolled to that section); hide when scrolling back above it
+    document.getElementById('sticky-kook').classList.toggle('visible', rect.top <= window.innerHeight * 0.15);
   }
 
   /* ─── Cooking mode ───────────────────────────────────── */
