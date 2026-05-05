@@ -35,7 +35,8 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
     };
   }, []);
 
-  const isPublic = PUBLIC_PATHS.has(pathname);
+  const normalized = pathname.length > 1 ? pathname.replace(/\/$/, "") : pathname;
+  const isPublic = PUBLIC_PATHS.has(normalized);
 
   useEffect(() => {
     if (state.status !== "ready") return;
