@@ -650,15 +650,18 @@
   }
 
   /* ─── Sticky KOOK IT ─────────────────────────────────── */
-  // Show when PREPARATION heading enters the top half of the screen;
-  // hide again when scrolling back up past that same point.
+  // Visible when PREPARATION heading reaches top 15% of viewport;
+  // hidden when scrolling back below that same threshold.
   function checkPrepVisibility() {
-    const prep = document.getElementById('prep-section');
-    if (!prep) return;
-    const rect = prep.getBoundingClientRect();
-    // Show when PREPARATION heading reaches the top ~15% of the viewport
-    // (user has scrolled to that section); hide when scrolling back above it
-    document.getElementById('sticky-kook').classList.toggle('visible', rect.top <= window.innerHeight * 0.15);
+    const prep   = document.getElementById('prep-section');
+    const sticky = document.getElementById('sticky-kook');
+    const recipe = document.getElementById('recipe');
+    if (!prep || !sticky || !recipe) return;
+    // Only update while recipe is the active page
+    if (!recipe.classList.contains('active')) return;
+    const rect      = prep.getBoundingClientRect();
+    const threshold = window.innerHeight * 0.15;
+    sticky.classList.toggle('visible', rect.top <= threshold);
   }
 
   /* ─── Cooking mode ───────────────────────────────────── */
@@ -773,7 +776,6 @@
 
     recipe.scrollTop = 0;
     document.getElementById('sticky-kook').classList.remove('visible');
-    recipe.addEventListener('scroll', checkPrepVisibility);
 
     // Reset any stale inline styles from previous nav
     contentEl.style.cssText = '';
@@ -872,19 +874,45 @@
     document.getElementById('cooking').classList.add('active');
   }
 
-  /* ─── Logo tap (mobile) — mirrors hover: duck on press, stand on release ── */
-  const _logo = document.querySelector('.home-logo');
-  _logo.addEventListener('touchstart', function(e) {
-    e.preventDefault();
-    this.classList.add('ducked');
-  }, { passive: false });
-  _logo.addEventListener('touchend', function() {
-    const el = this;
-    setTimeout(() => el.classList.remove('ducked'), 180);
-  });
-  _logo.addEventListener('touchcancel', function() {
-    this.classList.remove('ducked');
-  });
+  /* ─── Bootstrap: attach global listeners ONCE ────────── */
+  // Sticky: attach scroll listener once on the recipe scroll container.
+  // Also re-evaluate on resize (window.innerHeight changes).
+  (function setupSticky() {
+    const recipe = document.getElementById('recipe');
+    if (recipe) {
+      recipe.addEventListener('scroll', checkPrepVisibility, { passive: true });
+    }
+    window.addEventListener('resize', checkPrepVisibility);
+  })();
+
+  // Bird logo tap: mirrors hover. Touchstart → duck. Touchend → stand
+  // after 180ms. Pending timer is cancelled on every new touchstart so
+  // rapid taps cannot race the cycle.
+  (function setupLogoTap() {
+    const logo = document.querySelector('.home-logo');
+    if (!logo) return;
+    let standTimer = null;
+    const cancelStand = () => {
+      if (standTimer !== null) { clearTimeout(standTimer); standTimer = null; }
+    };
+    logo.addEventListener('touchstart', function(e) {
+      e.preventDefault();
+      cancelStand();
+      logo.classList.add('ducked');
+    }, { passive: false });
+    const scheduleStand = () => {
+      cancelStand();
+      standTimer = setTimeout(() => {
+        logo.classList.remove('ducked');
+        standTimer = null;
+      }, 180);
+    };
+    logo.addEventListener('touchend',    scheduleStand);
+    logo.addEventListener('touchcancel', () => {
+      cancelStand();
+      logo.classList.remove('ducked');
+    });
+  })();
 
   /* ─── Init ───────────────────────────────────────────── */
   renderIngredients();
