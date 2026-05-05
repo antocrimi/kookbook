@@ -21,7 +21,7 @@ const LEMONY_ORZO: SeedRecipe = {
   default_servings: 4,
   time_min: 20,
   original_photo_path:
-    "/prototype/assets/AS-Lemony-Orzo-with-Asparagus-pgmk-threeByTwoMediumAt2X.jpg.webp",
+    "seed/lemony-orzo.webp",
   ingredients: [
     { raw: "Salt and black pepper", item: "salt and black pepper" },
     { raw: "1 cup orzo", item: "orzo", quantity: { value: 1, unit: "cup" } },
@@ -89,7 +89,7 @@ const BURGOO: SeedRecipe = {
     "Kentucky's signature Saturday-afternoon stew: three meats simmered slow with corn, lima beans and potatoes until everything's falling apart and the broth tastes like all of it at once. Active time is short — most of it is hands-off simmering while the kitchen smells extraordinary.",
   default_servings: 8,
   time_min: 20,
-  original_photo_path: "/prototype/assets/KD-burgoo-hqwf-threeByTwoMediumAt2X.jpg.webp",
+  original_photo_path: "seed/burgoo.webp",
   ingredients: [
     {
       raw: "2 tablespoons vegetable oil",
@@ -204,7 +204,7 @@ const CRISPY_GNOCCHI: SeedRecipe = {
   default_servings: 4,
   time_min: 20,
   original_photo_path:
-    "/prototype/assets/as-cheesy-baked-gnocchi-threeByTwoMediumAt2X-v2.jpg.webp",
+    "seed/crispy-gnocchi.webp",
   ingredients: [
     {
       raw: "3 tablespoons extra-virgin olive oil, divided",
@@ -269,7 +269,7 @@ const ZUCCHINI_PANCAKES: SeedRecipe = {
   default_servings: 4,
   time_min: 30,
   original_photo_path:
-    "/prototype/assets/el-zucchini-pancakes-threeByTwoMediumAt2X-v4.jpg",
+    "seed/zucchini-pancakes.jpg",
   ingredients: [
     {
       raw: "2 medium zucchini (about 1 pound), grated on the large holes of a box grater",
@@ -352,7 +352,7 @@ const RHUBARB_MACAROON_TART: SeedRecipe = {
   default_servings: 8,
   time_min: 20,
   original_photo_path:
-    "/prototype/assets/SS-Rhubarb-Macaroon-Tart-wvbc-threeByTwoMediumAt2X.jpg.webp",
+    "seed/rhubarb-macaroon-tart.webp",
   ingredients: [
     {
       raw: "1¼ cups all-purpose flour, plus more for rolling",
@@ -475,7 +475,7 @@ const SHEET_PAN_FETA: SeedRecipe = {
   default_servings: 4,
   time_min: 40,
   original_photo_path:
-    "/prototype/assets/merlin_209335479_52115ec4-9a9b-483e-b749-ed40dc44a69d-threeByTwoMediumAt2X.jpg.webp",
+    "seed/sheet-pan-feta.webp",
   ingredients: [
     {
       raw: "2 (15-ounce) cans chickpeas, drained and rinsed",
@@ -561,7 +561,7 @@ const LEMON_BUTTER_SALMON: SeedRecipe = {
   default_servings: 4,
   time_min: 20,
   original_photo_path:
-    "/prototype/assets/15FD-KO-EASTERREX-GK-Honey-Lemon-Salmon-kcht-threeByTwoMediumAt2X-v2.jpg.webp",
+    "seed/lemon-butter-salmon.webp",
   ingredients: [
     {
       raw: "4 (6-ounce) skin-on salmon fillets",
@@ -631,7 +631,7 @@ const SPICED_PEA_STEW: SeedRecipe = {
   default_servings: 4,
   time_min: 20,
   original_photo_path:
-    "/prototype/assets/16EATrex-pea-stew-qcbp-threeByTwoMediumAt2X.jpg.webp",
+    "seed/spiced-pea-stew.webp",
   ingredients: [
     {
       raw: "3 tablespoons olive oil",
