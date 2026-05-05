@@ -120,8 +120,8 @@
     .home-logo { height: 26px; display: block; cursor: pointer; }
     .home-logo .bird-1 { transition: opacity 200ms ease; }
     .home-logo .bird-2 { opacity: 0; transition: opacity 200ms ease; }
-    .home-logo:hover .bird-1 { opacity: 0; }
-    .home-logo:hover .bird-2 { opacity: 1; }
+    .home-logo:hover .bird-1, .home-logo.tapped .bird-1 { opacity: 0; }
+    .home-logo:hover .bird-2, .home-logo.tapped .bird-2 { opacity: 1; }
     /* + button: no width/center — right edge aligns with chevron naturally */
     .add-btn { background: none; border: none; cursor: pointer; padding: 12px 0 12px 16px; display: flex; align-items: center; }
     .add-btn:active { opacity: 0.6; }
@@ -791,6 +791,13 @@
     document.documentElement.classList.add('cook-mode');
     document.getElementById('cooking').classList.add('active');
   }
+
+  /* ─── Logo tap (mobile) ─────────────────────────────── */
+  document.querySelector('.home-logo').addEventListener('touchstart', function(e) {
+    e.preventDefault();
+    this.classList.add('tapped');
+    setTimeout(() => this.classList.remove('tapped'), 500);
+  }, { passive: false });
 
   /* ─── Init ───────────────────────────────────────────── */
   renderIngredients();
