@@ -1,27 +1,26 @@
+"use client";
+
+/* eslint-disable @next/next/no-img-element -- prototype design uses raw <img>; original_photo_path can be a path-style fixture URL or a Supabase Storage public URL, both work. */
 import Link from "next/link";
-import Image from "next/image";
-import styles from "./RecipeCard.module.scss";
 
 interface RecipeCardProps {
   id: string;
   title: string;
-  servings: number;
+  timeMin: number | null;
   photoUrl: string | null;
 }
 
-export function RecipeCard({ id, title, servings, photoUrl }: RecipeCardProps) {
+export function RecipeCard({ id, title, timeMin, photoUrl }: RecipeCardProps) {
   return (
-    <Link href={`/recipe?id=${id}`} className={styles.card}>
-      <div className={styles.photo}>
-        {photoUrl ? (
-          <Image src={photoUrl} alt={title} fill className="object-cover" sizes="(max-width: 600px) 50vw, 33vw" />
-        ) : (
-          <div className={styles.photoPlaceholder} />
-        )}
-      </div>
-      <div className={styles.info}>
-        <h2 className={styles.title}>{title}</h2>
-        <span className={styles.meta}>{servings} servings</span>
+    <Link href={`/recipe?id=${id}`} className="r-card">
+      {photoUrl ? (
+        <img src={photoUrl} alt={title} className="r-card-photo" />
+      ) : (
+        <div className="r-card-photo" />
+      )}
+      <div className="r-card-info">
+        <div className="r-card-title">{title}</div>
+        {timeMin != null && <div className="r-card-time">{timeMin} MIN</div>}
       </div>
     </Link>
   );
