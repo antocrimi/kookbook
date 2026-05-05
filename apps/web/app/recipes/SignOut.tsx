@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Button } from "@cuckoobook/ui";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 
 export function SignOut() {
@@ -15,8 +14,8 @@ export function SignOut() {
   }
 
   return (
-    <Button size="xs" variant="ghost" onClick={signOut}>
+    <button type="button" onClick={signOut}>
       Sign out
-    </Button>
+    </button>
   );
 }

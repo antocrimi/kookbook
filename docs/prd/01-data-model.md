@@ -1,7 +1,7 @@
 # Recipe data model
 
 **Status:** draft
-**Last updated:** 2026-04-30
+**Last updated:** 2026-05-05
 **Owner:** Kaz
 
 ## Summary
@@ -53,6 +53,8 @@ The shape of a recipe — and how recipes are organized — is the foundation ev
 | `source`         | `text`                              | nullable. Free-form attribution.                                     |
 | `notes`          | `text`                              | nullable. Personal notes.                                            |
 | `default_servings` | `int`                             | required. The recipe's as-written serving count.                     |
+| `time_min`       | `int`                               | nullable. Total/active cook time in minutes. Shown as "20 MIN" on the detail page meta row. |
+| `description`    | `text`                              | nullable. One-paragraph editorial blurb shown above the ingredient list on the detail page. |
 | `ingredients`    | `jsonb`                             | array of `Ingredient` (see below). Order preserved.                  |
 | `steps`          | `jsonb`                             | array of `Step` (see below). Order preserved.                        |
 | `original_photo_path` | `text`                         | nullable. Path inside the Supabase Storage bucket.                   |
@@ -150,5 +152,6 @@ If AI extracts a unit not in this enum, we store it under a `custom_unit: string
 
 ## Changelog
 
+- 2026-05-05 — added `time_min` (int) and `description` (text) to `recipes`. Both nullable. Carries forward design fields the prototype shows (cook-time chip, recipe blurb) that the initial schema lacked. Migration `20260505072311_add_recipe_time_and_description.sql`.
 - 2026-04-30 — initial draft. Captured schema, folder/tag model, ingredient shape, unit enum, RLS storage rules, indexes, acceptance criteria, and open questions for the iteration round.
 - 2026-04-30 — locked: optional `group` label on Ingredient and Step (no first-class group entity); temperatures stay as prose with render-time substitution (no structured extraction); single original photo per recipe (no finished-dish slot in MVP).

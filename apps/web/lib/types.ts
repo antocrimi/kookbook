@@ -28,8 +28,10 @@ export type Recipe = {
   folder_id: string;
   title: string;
   source?: string | null;
+  description?: string | null;
   notes?: string | null;
   default_servings: number;
+  time_min?: number | null;
   ingredients: Ingredient[];
   steps: Step[];
   original_photo_path?: string | null;
