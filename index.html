@@ -650,11 +650,12 @@
   }
 
   /* ─── Sticky KOOK IT ─────────────────────────────────── */
+  // Show sticky once the inline "Kook It" button in the meta row scrolls off screen
   function checkPrepVisibility() {
-    const prep = document.getElementById('prep-section');
-    if (!prep) return;
-    const rect = prep.getBoundingClientRect();
-    document.getElementById('sticky-kook').classList.toggle('visible', rect.top < window.innerHeight * 0.85);
+    const metaRow = document.querySelector('#recipe .recipe-meta-row');
+    if (!metaRow) return;
+    const rect = metaRow.getBoundingClientRect();
+    document.getElementById('sticky-kook').classList.toggle('visible', rect.bottom < 0);
   }
 
   /* ─── Cooking mode ───────────────────────────────────── */
@@ -868,11 +869,19 @@
     document.getElementById('cooking').classList.add('active');
   }
 
-  /* ─── Logo tap (mobile) — toggles duck pose, cycles on each tap ── */
-  document.querySelector('.home-logo').addEventListener('touchstart', function(e) {
+  /* ─── Logo tap (mobile) — mirrors hover: duck on press, stand on release ── */
+  const _logo = document.querySelector('.home-logo');
+  _logo.addEventListener('touchstart', function(e) {
     e.preventDefault();
-    this.classList.toggle('ducked');
+    this.classList.add('ducked');
   }, { passive: false });
+  _logo.addEventListener('touchend', function() {
+    const el = this;
+    setTimeout(() => el.classList.remove('ducked'), 180);
+  });
+  _logo.addEventListener('touchcancel', function() {
+    this.classList.remove('ducked');
+  });
 
   /* ─── Init ───────────────────────────────────────────── */
   renderIngredients();
