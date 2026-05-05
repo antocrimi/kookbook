@@ -118,10 +118,20 @@
     }
     .menu-btn span { display: block; width: 20px; height: 1.5px; background: var(--ink); border-radius: 2px; }
     .home-logo { height: 26px; display: block; cursor: pointer; }
-    .home-logo .bird-1 { transition: opacity 200ms ease; }
-    .home-logo .bird-2 { opacity: 0; transition: opacity 200ms ease; }
+    /* Bird groups: fast crossfade so no ghosting between poses */
+    .home-logo .bird-1 { transition: opacity 100ms ease; }
+    .home-logo .bird-2 { opacity: 0; transition: opacity 100ms ease 30ms; }
     .home-logo:hover .bird-1, .home-logo.tapped .bird-1 { opacity: 0; }
     .home-logo:hover .bird-2, .home-logo.tapped .bird-2 { opacity: 1; }
+    /* Playful press-and-spring on tap */
+    @keyframes logo-tap {
+      0%   { transform: scale(1, 1)    translateY(0); }
+      22%  { transform: scale(0.9, 0.85) translateY(3px); }
+      52%  { transform: scale(1.06, 1.1) translateY(-2px); }
+      72%  { transform: scale(0.98, 1.01) translateY(0); }
+      100% { transform: scale(1, 1)    translateY(0); }
+    }
+    .home-logo.tapped { animation: logo-tap 520ms cubic-bezier(0.34, 1.4, 0.64, 1) both; }
     /* + button: no width/center — right edge aligns with chevron naturally */
     .add-btn { background: none; border: none; cursor: pointer; padding: 12px 0 12px 16px; display: flex; align-items: center; }
     .add-btn:active { opacity: 0.6; }
@@ -150,11 +160,14 @@
     }
     .r-card-info { padding: 14px 0 0; }
     .r-card-title {
-      font-family: var(--sans); font-weight: 600; font-size: 15px; line-height: 16px;
+      font-family: var(--sans); font-weight: 600; font-size: 15px; line-height: 18px;
       color: var(--ink); margin-bottom: 4px;
       display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden;
     }
     .r-card-time { font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--stone); }
+    /* Progressive title reveal: more lines as screen gets wider */
+    @media (min-width: 600px)  { .r-card-title { -webkit-line-clamp: 3; } }
+    @media (min-width: 900px)  { .r-card-title { -webkit-line-clamp: 4; } }
 
     /* ═══════════════════════════════════════════════════════════
        RECIPE PAGE
@@ -739,19 +752,31 @@
     contentEl.style.transform = 'translateY(20px)';
     contentEl.style.transition = 'none';
 
-    // Flying image overlay from card → hero
+    // FLIP: place fly at hero rect, invert-transform it to look like the card,
+    // then animate to identity — runs entirely on the GPU compositor (no layout).
     const fly = document.createElement('div');
-    const DUR = 460;
+    const DUR = 480;
     const EASE = 'cubic-bezier(0.32, 0.72, 0, 1)';
+
+    // Suppress hero background so it doesn't bleed through the transparent fly
+    heroEl.style.background = 'transparent';
+
+    const sx = cardRect.width  / heroRect.width;
+    const sy = cardRect.height / heroRect.height;
+    const tx = cardRect.left + cardRect.width  / 2 - (heroRect.left + heroRect.width  / 2);
+    const ty = cardRect.top  + cardRect.height / 2 - (heroRect.top  + heroRect.height / 2);
+
     fly.style.cssText = `
       position:fixed;
-      left:${cardRect.left}px; top:${cardRect.top}px;
-      width:${cardRect.width}px; height:${cardRect.height}px;
+      left:${heroRect.left}px; top:${heroRect.top}px;
+      width:${heroRect.width}px; height:${heroRect.height}px;
       background:url(${cardImg.src}) center/cover no-repeat;
-      border-radius:6px;
+      border-radius:0px;
       z-index:50;
       pointer-events:none;
-      will-change:left,top,width,height,border-radius;
+      transform-origin:center center;
+      transform:translate(${tx}px,${ty}px) scale(${sx},${sy});
+      will-change:transform,border-radius;
     `;
     document.body.appendChild(fly);
 
@@ -759,11 +784,9 @@
     document.getElementById('index').classList.add('nav-pushed');
 
     requestAnimationFrame(() => requestAnimationFrame(() => {
-      fly.style.transition = `left ${DUR}ms ${EASE}, top ${DUR}ms ${EASE}, width ${DUR}ms ${EASE}, height ${DUR}ms ${EASE}, border-radius 360ms ease`;
-      fly.style.left   = `${heroRect.left}px`;
-      fly.style.top    = `${heroRect.top}px`;
-      fly.style.width  = `${heroRect.width}px`;
-      fly.style.height = `${heroRect.height}px`;
+      // Animate transform to identity = fly lands on hero — GPU composited, no layout
+      fly.style.transition = `transform ${DUR}ms ${EASE}, border-radius 360ms ease`;
+      fly.style.transform = 'translate(0,0) scale(1)';
       fly.style.borderRadius = '0px';
 
       // Content slides in shortly after image starts landing
@@ -775,6 +798,7 @@
 
       // Swap fly for real hero image when animation finishes
       setTimeout(() => {
+        heroEl.style.background = '';
         heroImg.style.transition = 'opacity 60ms ease';
         heroImg.style.opacity = '1';
         setTimeout(() => fly.remove(), 60);
