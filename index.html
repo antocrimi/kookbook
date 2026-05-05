@@ -47,16 +47,45 @@
     html.cook-mode, html.cook-mode body { background: var(--cook-bg); }
 
     /* ─── Pages ─────────────────────────────────────────────── */
-    .page { display: none; min-height: 100dvh; background: var(--cream); }
-    .page.active { display: block; }
-    #recipe { display: none; }
-    #recipe.active { display: block; height: 100dvh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
-    #cooking { display: none; }
-    #cooking.active {
-      display: flex; flex-direction: column;
-      min-height: 100dvh; height: 100dvh;
-      background: var(--cook-bg);
+    #index, #recipe, #cooking {
+      position: fixed; inset: 0;
+      backface-visibility: hidden; -webkit-backface-visibility: hidden;
     }
+
+    #index {
+      background: var(--cream);
+      overflow-y: auto; -webkit-overflow-scrolling: touch;
+      z-index: 10;
+      transform-origin: 50% 30%;
+      transition: transform 520ms cubic-bezier(0.32, 0.72, 0, 1), opacity 420ms ease;
+    }
+    #index.nav-pushed {
+      transform: scale(0.91);
+      opacity: 0.45;
+      pointer-events: none;
+    }
+
+    #recipe {
+      background: var(--cream);
+      overflow-y: auto; -webkit-overflow-scrolling: touch;
+      z-index: 20;
+      transform: translateY(100%);
+      transition: transform 520ms cubic-bezier(0.32, 0.72, 0, 1);
+      height: 100dvh;
+    }
+    #recipe.active { transform: translateY(0); }
+
+    #cooking {
+      display: flex; flex-direction: column;
+      background: var(--cook-bg);
+      z-index: 30;
+      overflow: hidden;
+      transform: translateY(100%);
+      transition: transform 480ms cubic-bezier(0.32, 0.72, 0, 1);
+      height: 100dvh;
+      color: var(--cream);
+    }
+    #cooking.active { transform: translateY(0); }
 
     /* ─── CTAs ──────────────────────────────────────────────── */
     .cta {
@@ -78,7 +107,7 @@
     .home-header {
       display: flex; align-items: center; justify-content: space-between;
       padding: 18px 16px 16px;
-      background: var(--cream);
+      background: #ffffff;
       box-shadow: 0 4px 20px rgba(0,0,0,0.05);
       position: relative; z-index: 1;
     }
@@ -88,7 +117,11 @@
       gap: 5px; padding: 10px;
     }
     .menu-btn span { display: block; width: 20px; height: 1.5px; background: var(--ink); border-radius: 2px; }
-    .home-logo { height: 26px; display: block; }
+    .home-logo { height: 26px; display: block; cursor: pointer; }
+    .home-logo .bird-1 { transition: opacity 200ms ease; }
+    .home-logo .bird-2 { opacity: 0; transition: opacity 200ms ease; }
+    .home-logo:hover .bird-1 { opacity: 0; }
+    .home-logo:hover .bird-2 { opacity: 1; }
     /* + button: no width/center — right edge aligns with chevron naturally */
     .add-btn { background: none; border: none; cursor: pointer; padding: 12px 0 12px 16px; display: flex; align-items: center; }
     .add-btn:active { opacity: 0.6; }
@@ -106,8 +139,16 @@
     .recipe-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px 12px; padding: 0 16px 48px; }
     .r-card { cursor: pointer; }
     .r-card:active { opacity: 0.78; }
+    .r-card-photo-wrap {
+      overflow: hidden; border-radius: 6px;
+      transition: transform 320ms cubic-bezier(0.34, 1.2, 0.64, 1), box-shadow 320ms ease;
+    }
     .r-card-photo { width: 100%; aspect-ratio: 3/2; object-fit: cover; display: block; }
-    .r-card-info { padding: 8px 0 0; }
+    .r-card:hover .r-card-photo-wrap {
+      transform: scale(1.015);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.14);
+    }
+    .r-card-info { padding: 14px 0 0; }
     .r-card-title {
       font-family: var(--sans); font-weight: 600; font-size: 15px; line-height: 16px;
       color: var(--ink); margin-bottom: 4px;
@@ -294,7 +335,24 @@
     <button class="menu-btn" aria-label="Menu" onclick="alert('Menu coming in the full app.')">
       <span></span><span></span><span></span>
     </button>
-    <img class="home-logo" src="packages/ui/assets/logo.png" alt="Cuckoobook">
+    <svg class="home-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 675.02 88.69" fill="currentColor" aria-label="Kookbook">
+      <!-- Text: K O O K — B O O K -->
+      <path d="M74.48,82.37c-30.65,0-28.56-42.55-50.21-42.55h-1.98l-6.26,6.54v20.83c0,7.98.77,11.3,4.39,12.52v1.55H0v-1.55c3.63-1.22,4.39-4.54,4.39-12.52V17.76c0-7.98-.77-11.3-4.39-12.52v-1.55h20.43v1.55c-3.63,1.22-4.39,4.54-4.39,12.52v26.04l26.7-27.59c7.03-7.2,7.36-10.64,2.64-11.41v-1.11h17.25v1.55c-4.39,1.22-9.45,2.77-15.05,8.53l-23.51,24.27,2.86-.22c34.28-2.77,30.1,41,55.04,41,5.6,0,10.66-3.44,13.4-8.09l1.1.89c-3.95,6.21-11.21,10.75-21.97,10.75ZM93.27,60.2c-14.28,0-29.33-8.53-29.33-27.37S78.22,2.91,93.27,2.91c13.62,0,29.22,8.09,29.22,27.59s-16.26,29.7-29.22,29.7ZM97.12,57.77c10.77,0,14.28-9.42,14.28-18.84,0-14.07-9.56-35.24-23.73-33.8-9.56,1-12.74,9.86-12.74,19.39,0,13.08,7.69,33.24,22.19,33.24Z"/>
+      <path d="M165.65,82.37c-18.68,0-39.33-12.41-39.33-40.23,0-21.94,16.04-39.34,39.33-39.34,18.57,0,39.22,12.85,39.22,40s-20.76,39.56-39.22,39.56ZM171.92,78.93c16.81,0,22.85-12.74,21.86-27.37-1.65-23.6-14.83-45.88-33.84-45.88-14.94,0-23.4,11.75-22.19,29.7,1.54,22.16,15.49,43.55,34.17,43.55Z"/>
+      <path d="M207.98,81.26v-1.55c3.63-1.22,4.4-4.54,4.4-12.52V17.76c0-7.98-.77-11.3-4.4-12.52v-1.55h20.43v1.55c-3.62,1.22-4.39,4.54-4.39,12.52v26.04l26.69-27.59c7.03-7.2,7.36-10.64,2.64-11.41v-1.11h17.25v1.55c-4.39,1.22-9.45,2.77-15.05,8.53l-23.4,24.16,2.75-.11c16.48-.89,19.66,4.76,26.48,22.38,6.48,16.84,8.02,19.5,11.54,19.5.55,0,.99,0,1.65-.11v1.66c-2.53.66-5.16.78-7.47.78-9.12,0-10.33-2.66-16.92-18.95-6.92-17.18-8.02-23.27-17.91-23.27h-1.98l-6.26,6.54v20.83c0,7.98.77,11.3,4.39,12.52v1.55h-20.43Z"/>
+      <path d="M405.71,81.26h-23.84v-1.55c3.62-1.22,4.39-4.54,4.39-12.52V17.76c0-7.98-.77-11.3-4.39-12.52v-1.55h27.14c18.02,0,24.61,5.65,24.61,14.63,0,7.54-4.72,14.41-18.57,16.84,18.13.55,27.36,8.98,27.47,20.06.22,12.97-9.78,26.04-36.8,26.04ZM406.69,79.49c15.82,0,22.74-8.42,22.74-20.17,0-13.3-7.36-22.72-23.73-22.72h-7.8v33.24c0,7.98.99,9.64,5.71,9.64h3.08ZM407.68,34.83c8.02,0,12.85-6.21,12.85-13.96,0-9.75-6.92-15.4-18.13-15.4h-4.5v29.37h9.78Z"/>
+      <path d="M483.69,82.37c-18.68,0-39.33-12.41-39.33-40.23,0-21.94,16.04-39.34,39.33-39.34,18.57,0,39.22,12.85,39.22,40s-20.76,39.56-39.22,39.56ZM489.95,78.93c16.81,0,22.85-12.74,21.86-27.37-1.65-23.6-14.83-45.88-33.84-45.88-14.94,0-23.4,11.75-22.19,29.7,1.54,22.16,15.49,43.55,34.17,43.55Z"/>
+      <path d="M566.12,82.37c-18.68,0-39.33-12.41-39.33-40.23,0-21.94,16.04-39.34,39.33-39.34,18.57,0,39.22,12.85,39.22,40s-20.76,39.56-39.22,39.56ZM572.38,78.93c16.81,0,22.85-12.74,21.86-27.37-1.65-23.6-14.83-45.88-33.84-45.88-14.94,0-23.4,11.75-22.19,29.7,1.54,22.16,15.49,43.55,34.17,43.55Z"/>
+      <path d="M608.45,81.26v-1.55c3.62-1.22,4.39-4.54,4.39-12.52V17.76c0-7.98-.77-11.3-4.39-12.52v-1.55h20.43v1.55c-3.63,1.22-4.39,4.54-4.39,12.52v26.04l26.7-27.59c7.03-7.2,7.36-10.64,2.64-11.41v-1.11h17.25v1.55c-4.39,1.22-9.45,2.77-15.05,8.53l-23.4,24.16,2.75-.11c16.48-.89,19.66,4.76,26.48,22.38,6.48,16.84,8.02,19.5,11.53,19.5.55,0,.99,0,1.65-.11v1.66c-2.53.66-5.16.78-7.47.78-9.12,0-10.33-2.66-16.92-18.95-6.92-17.18-8.02-23.27-17.91-23.27h-1.98l-6.26,6.54v20.83c0,7.98.77,11.3,4.39,12.52v1.55h-20.43Z"/>
+      <!-- Bird pose 1: tall/upright (default) -->
+      <g class="bird-1">
+        <path d="M326.4,7.22c4.34-5.83,12.24-8.67,19.23-6.48,4.9,1.15,6.14,5.25,9,5.03,1.66-.04,5.04-.1,6.7-.11,3.2,1.12-6.1,3.58-6.01,9.69-.23,1.12.18,7.05.23,8.29.24,1.7.07,8.54.14,10.38-.17,16.6-8.46,33.44-25.28,38.38-.05,3.95-.02,15.44-.02,15.51,0,.44-.36.8-.8.8h-1.27c-.44,0-.8-.36-.8-.8v-14.76c-2.43.44-7.33.93-9.79.96,0,2.94,0,13.73,0,13.8,0,.44-.36.8-.8.8h-1.38c-.44,0-.8-.36-.8-.8v-13.96c-12.77-1.35-24.83-6.45-34.78-14.61,16.64-2.22,29.33-15.42,36.27-30,3.51-7.29,5.09-15.65,10.15-22.1ZM340.63,32.01c-.53-.09-1.06.2-1.35.69-2,5.61-5.33,11.89-9.47,16.19-7.03,7.77-17.16,11.5-27.49,11.89,15.16,5.36,31.29-6.13,37.35-19.77h0c.77-1.93,3.62-8.02.96-8.99ZM347.08,12.65c2.02-4.79-3.77-9.49-8.12-6.65-8.27,5.8,3.83,15.89,8.12,6.65ZM340.39,8.85c.89-.69,2.11-.74,3,.04h0c.67.58.94,1.46.74,2.33-.17.76-.76,1.45-1.65,1.73-1.07.34-2.24-.24-2.69-1.17-.5-1.01-.27-2.25.61-2.93Z"/>
+      </g>
+      <!-- Bird pose 2: ducked/fat (on hover) -->
+      <g class="bird-2" transform="translate(0,2.55)">
+        <path d="M326.88,15.47c16.96-5.97,26.25,3.76,28.93,10.5.62.57,2.55.79,5.87,1.97h0c1.49.53,1.26,1.03.27,1.93-.98.9-4.24,3.87-4.28,3.91,2.15,6.21,2.48,12.9.92,19.29-2,8.23-7.59,14.79-14.61,19.5-3.74,2.51-8.73,3.92-13.55,4.7,0,4.08.01,8.05.01,8.07,0,.44-.36.8-.8.8h-1.27c-.44,0-.8-.36-.8-.8v-7.67c-3.81.44-7.32.53-9.78.51,0,3.59,0,7.15,0,7.16,0,.44-.36.8-.8.8h-1.38c-.44,0-.8-.36-.8-.8v-7.23c-.38-.02-.59-.03-.59-.03-25.02-3.08-32.84-20.67-32.84-20.67.03,0,6.54,1.33,18.72-8.66,12.16-9.97,12.56-28.27,26.77-33.27ZM332.23,42.2c-.77-.08-1.77.53-1.76,1.49.03,3.87-.92,7.65-2.98,10.95-5.71,9.14-15.26,11.43-26.64,8.32-.94-.26-2.82-.99-2.85-.99.01.02,2.57,4.4,12.11,5,6.79.43,13.4-2.42,17.9-7.51h0c3.73-4.22,5.74-9.69,5.73-15.32,0-1.03-.47-1.83-1.52-1.94ZM343.71,23.12c-3.06,0-5.54,2.48-5.54,5.54s2.48,5.54,5.54,5.54c3.06,0,5.54-2.48,5.54-5.54s-2.48-5.54-5.54-5.54ZM343.84,26.54c1.23,0,2.23,1,2.23,2.23s-1,2.23-2.23,2.23c-1.23,0-2.23-1-2.23-2.23s1-2.23,2.23-2.23Z"/>
+      </g>
+    </svg>
     <button class="add-btn" aria-label="Add recipe" onclick="alert('Capture — snap a cookbook page and AI extracts the recipe. Coming in the full app.')">
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
         <path d="M10 2v16M2 10h16" stroke="black" stroke-width="1.5" stroke-linecap="round"/>
@@ -313,36 +371,36 @@
   </div>
 
   <div class="recipe-grid">
-    <div class="r-card" onclick="showRecipe()">
-      <img class="r-card-photo" src="packages/ui/assets/AS-Lemony-Orzo-with-Asparagus-pgmk-threeByTwoMediumAt2X.jpg.webp" alt="Lemony Orzo">
+    <div class="r-card" onclick="showRecipe(this)">
+      <div class="r-card-photo-wrap"><img class="r-card-photo" src="packages/ui/assets/AS-Lemony-Orzo-with-Asparagus-pgmk-threeByTwoMediumAt2X.jpg.webp" alt="Lemony Orzo"></div>
       <div class="r-card-info"><div class="r-card-title">Lemony Orzo with Asparagus and Garlic…</div><div class="r-card-time">20 MIN</div></div>
     </div>
     <div class="r-card" onclick="alert('Add more recipes via Capture.')">
-      <img class="r-card-photo" src="packages/ui/assets/KD-burgoo-hqwf-threeByTwoMediumAt2X.jpg.webp" alt="Burgoo">
+      <div class="r-card-photo-wrap"><img class="r-card-photo" src="packages/ui/assets/KD-burgoo-hqwf-threeByTwoMediumAt2X.jpg.webp" alt="Burgoo"></div>
       <div class="r-card-info"><div class="r-card-title">Burgoo</div><div class="r-card-time">20 MIN</div></div>
     </div>
     <div class="r-card" onclick="alert('Add more recipes via Capture.')">
-      <img class="r-card-photo" src="packages/ui/assets/as-cheesy-baked-gnocchi-threeByTwoMediumAt2X-v2.jpg.webp" alt="Crispy Gnocchi">
+      <div class="r-card-photo-wrap"><img class="r-card-photo" src="packages/ui/assets/as-cheesy-baked-gnocchi-threeByTwoMediumAt2X-v2.jpg.webp" alt="Crispy Gnocchi"></div>
       <div class="r-card-info"><div class="r-card-title">Crispy Gnocchi With Burst Tomatoes and…</div><div class="r-card-time">20 MIN</div></div>
     </div>
     <div class="r-card" onclick="alert('Add more recipes via Capture.')">
-      <img class="r-card-photo" src="packages/ui/assets/el-zucchini-pancakes-threeByTwoMediumAt2X-v4.jpg" alt="Zucchini Pancakes">
+      <div class="r-card-photo-wrap"><img class="r-card-photo" src="packages/ui/assets/el-zucchini-pancakes-threeByTwoMediumAt2X-v4.jpg" alt="Zucchini Pancakes"></div>
       <div class="r-card-info"><div class="r-card-title">Zucchini Pancakes</div><div class="r-card-time">30 MIN</div></div>
     </div>
     <div class="r-card" onclick="alert('Add more recipes via Capture.')">
-      <img class="r-card-photo" src="packages/ui/assets/SS-Rhubarb-Macaroon-Tart-wvbc-threeByTwoMediumAt2X.jpg.webp" alt="Rhubarb Macaroon Tart">
+      <div class="r-card-photo-wrap"><img class="r-card-photo" src="packages/ui/assets/SS-Rhubarb-Macaroon-Tart-wvbc-threeByTwoMediumAt2X.jpg.webp" alt="Rhubarb Macaroon Tart"></div>
       <div class="r-card-info"><div class="r-card-title">Rhubarb Macaroon Tart</div><div class="r-card-time">20 MIN</div></div>
     </div>
     <div class="r-card" onclick="alert('Add more recipes via Capture.')">
-      <img class="r-card-photo" src="packages/ui/assets/merlin_209335479_52115ec4-9a9b-483e-b749-ed40dc44a69d-threeByTwoMediumAt2X.jpg.webp" alt="Sheet-Pan Feta">
+      <div class="r-card-photo-wrap"><img class="r-card-photo" src="packages/ui/assets/merlin_209335479_52115ec4-9a9b-483e-b749-ed40dc44a69d-threeByTwoMediumAt2X.jpg.webp" alt="Sheet-Pan Feta"></div>
       <div class="r-card-info"><div class="r-card-title">Sheet-Pan Feta With Chickpeas and…</div><div class="r-card-time">40 MIN</div></div>
     </div>
     <div class="r-card" onclick="alert('Add more recipes via Capture.')">
-      <img class="r-card-photo" src="packages/ui/assets/15FD-KO-EASTERREX-GK-Honey-Lemon-Salmon-kcht-threeByTwoMediumAt2X-v2.jpg.webp" alt="Lemon Butter Salmon">
+      <div class="r-card-photo-wrap"><img class="r-card-photo" src="packages/ui/assets/15FD-KO-EASTERREX-GK-Honey-Lemon-Salmon-kcht-threeByTwoMediumAt2X-v2.jpg.webp" alt="Lemon Butter Salmon"></div>
       <div class="r-card-info"><div class="r-card-title">Lemon Butter Salmon With Dill</div><div class="r-card-time">20 MIN</div></div>
     </div>
     <div class="r-card" onclick="alert('Add more recipes via Capture.')">
-      <img class="r-card-photo" src="packages/ui/assets/16EATrex-pea-stew-qcbp-threeByTwoMediumAt2X.jpg.webp" alt="Spiced Pea Stew">
+      <div class="r-card-photo-wrap"><img class="r-card-photo" src="packages/ui/assets/16EATrex-pea-stew-qcbp-threeByTwoMediumAt2X.jpg.webp" alt="Spiced Pea Stew"></div>
       <div class="r-card-info"><div class="r-card-title">Spiced Pea Stew With Yogurt</div><div class="r-card-time">20 MIN</div></div>
     </div>
   </div>
@@ -622,18 +680,107 @@
   /* ─── Routing ────────────────────────────────────────── */
   function showIndex() {
     document.documentElement.classList.remove('cook-mode');
-    document.querySelectorAll('.page, #recipe, #cooking').forEach(p => p.classList.remove('active'));
-    document.getElementById('index').classList.add('active');
+    document.getElementById('cooking').classList.remove('active');
+
+    const recipe = document.getElementById('recipe');
+    const contentEl = recipe.querySelector('.recipe-content');
+    const heroImg = recipe.querySelector('.recipe-hero-img');
+    contentEl.style.cssText = '';
+    heroImg.style.cssText = '';
+
+    // Clear inline overrides so CSS transition controls slide-down
+    recipe.style.transition = '';
+    recipe.style.transform = '';
+    requestAnimationFrame(() => recipe.classList.remove('active'));
+
+    document.getElementById('index').classList.remove('nav-pushed');
   }
 
-  function showRecipe() {
+  function showRecipe(cardEl) {
     document.documentElement.classList.remove('cook-mode');
-    document.querySelectorAll('.page, #recipe, #cooking').forEach(p => p.classList.remove('active'));
+    document.getElementById('cooking').classList.remove('active');
+
     const recipe = document.getElementById('recipe');
-    recipe.classList.add('active');
+    const contentEl = recipe.querySelector('.recipe-content');
+    const heroImg = recipe.querySelector('.recipe-hero-img');
+
     recipe.scrollTop = 0;
     document.getElementById('sticky-kook').classList.remove('visible');
     recipe.addEventListener('scroll', checkPrepVisibility);
+
+    // Reset any stale inline styles from previous nav
+    contentEl.style.cssText = '';
+    heroImg.style.cssText = '';
+
+    const cardImg = cardEl && cardEl.querySelector('.r-card-photo');
+
+    if (!cardImg) {
+      // Called without a card (e.g. back from cooking) — just ensure visible
+      document.getElementById('index').classList.add('nav-pushed');
+      recipe.classList.add('active');
+      return;
+    }
+
+    const cardRect = cardImg.getBoundingClientRect();
+
+    // Jump recipe to final position instantly (skip slide-up)
+    recipe.style.transition = 'none';
+    recipe.style.transform = 'translateY(0)';
+    recipe.classList.add('active');
+    void recipe.offsetHeight; // force reflow so we can measure
+
+    const heroEl = recipe.querySelector('.recipe-hero');
+    const heroRect = heroEl.getBoundingClientRect();
+
+    // Hide actual hero image and content while fly animates
+    heroImg.style.opacity = '0';
+    heroImg.style.transition = 'none';
+    contentEl.style.opacity = '0';
+    contentEl.style.transform = 'translateY(20px)';
+    contentEl.style.transition = 'none';
+
+    // Flying image overlay from card → hero
+    const fly = document.createElement('div');
+    const DUR = 460;
+    const EASE = 'cubic-bezier(0.32, 0.72, 0, 1)';
+    fly.style.cssText = `
+      position:fixed;
+      left:${cardRect.left}px; top:${cardRect.top}px;
+      width:${cardRect.width}px; height:${cardRect.height}px;
+      background:url(${cardImg.src}) center/cover no-repeat;
+      border-radius:6px;
+      z-index:50;
+      pointer-events:none;
+      will-change:left,top,width,height,border-radius;
+    `;
+    document.body.appendChild(fly);
+
+    // Dim home
+    document.getElementById('index').classList.add('nav-pushed');
+
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      fly.style.transition = `left ${DUR}ms ${EASE}, top ${DUR}ms ${EASE}, width ${DUR}ms ${EASE}, height ${DUR}ms ${EASE}, border-radius 360ms ease`;
+      fly.style.left   = `${heroRect.left}px`;
+      fly.style.top    = `${heroRect.top}px`;
+      fly.style.width  = `${heroRect.width}px`;
+      fly.style.height = `${heroRect.height}px`;
+      fly.style.borderRadius = '0px';
+
+      // Content slides in shortly after image starts landing
+      setTimeout(() => {
+        contentEl.style.transition = `opacity 340ms ease, transform 440ms ${EASE}`;
+        contentEl.style.opacity = '1';
+        contentEl.style.transform = 'translateY(0)';
+      }, 180);
+
+      // Swap fly for real hero image when animation finishes
+      setTimeout(() => {
+        heroImg.style.transition = 'opacity 60ms ease';
+        heroImg.style.opacity = '1';
+        setTimeout(() => fly.remove(), 60);
+        recipe.style.transition = '';
+      }, DUR + 20);
+    }));
   }
 
   function showCooking() {
@@ -642,7 +789,6 @@
     renderCooking();
     renderIngredients();
     document.documentElement.classList.add('cook-mode');
-    document.querySelectorAll('.page, #recipe, #cooking').forEach(p => p.classList.remove('active'));
     document.getElementById('cooking').classList.add('active');
   }
 
