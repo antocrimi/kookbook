@@ -1,7 +1,7 @@
 # Capture flow (photo → AI extraction → confirm)
 
 **Status:** draft
-**Last updated:** 2026-04-30
+**Last updated:** 2026-05-06
 **Owner:** Kaz
 
 ## Summary
@@ -91,7 +91,7 @@ Detailed in `04-llm-integration.md`. Headline: a single call to Claude with up t
 - [ ] Saving with no folder selected lands the recipe in Inbox.
 - [ ] Saving with a freshly-typed tag creates the tag and attaches it.
 - [ ] Navigating away mid-flow with photos uploaded creates a draft, recoverable from the Drafts list.
-- [ ] No raw API key is ever sent to the browser; the extraction call originates from the server (see `04-llm-integration.md`).
+- [ ] No raw API key is ever sent to the browser; the extraction call originates from the Supabase Edge Function (see `04-llm-integration.md`).
 
 ## Decisions locked (2026-04-30)
 
@@ -106,5 +106,6 @@ Detailed in `04-llm-integration.md`. Headline: a single call to Claude with up t
 
 ## Changelog
 
+- 2026-05-06 — extraction-call host moved from a Next.js API route to a Supabase Edge Function in `04-llm-integration.md` (forced by the static-export deployment). The capture-side flow is unchanged: browser uploads photos, calls the proxy, renders streaming JSON deltas. Acceptance-criterion wording updated to point at the Edge Function instead of "the server" generically.
 - 2026-04-30 — initial draft. Captured the capture flow, multi-photo support, streaming extraction UX, draft handling, acceptance criteria, and open questions.
 - 2026-04-30 — locked: default extraction model is Sonnet 4.6 (Haiku 4.5 opt-in); re-extract warns before discarding user edits.
