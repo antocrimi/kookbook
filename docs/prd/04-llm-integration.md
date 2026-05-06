@@ -1,7 +1,7 @@
 # LLM integration (BYO Anthropic key)
 
 **Status:** draft
-**Last updated:** 2026-04-30
+**Last updated:** 2026-05-06
 **Owner:** Kaz
 
 ## Summary
@@ -15,31 +15,38 @@ Recipe extraction is powered by Claude vision models, called with the user's own
 ## Architecture (data flow)
 
 ```
-┌────────────┐   1. POST /api/extract        ┌────────────────────┐
-│  Browser   │ ─────────────────────────────▶│  Next.js route     │
-│ (capture)  │   { recipeDraftId, model }    │  handler (Node)    │
-└────────────┘                                └────────┬───────────┘
-                                                       │ 2. Fetch encrypted key
-                                                       ▼
-                                              ┌────────────────────┐
-                                              │  Supabase Postgres │
-                                              │   user_api_keys    │
-                                              │   (RLS, encrypted) │
-                                              └────────┬───────────┘
-                                                       │ 3. Decrypt
-                                                       ▼
-                                              ┌────────────────────┐
-                                              │   Anthropic API    │
-                                              │  (vision, stream)  │
-                                              └────────┬───────────┘
-                                                       │ 4. SSE stream
-┌────────────┐   5. Re-stream as SSE         ┌────────▼───────────┐
-│  Browser   │ ◀──────────────────────────── │  Next.js route     │
-│ (capture)  │                                │  handler           │
-└────────────┘                                └────────────────────┘
+┌────────────┐   1. POST /functions/v1/extract  ┌──────────────────────┐
+│  Browser   │ ────────────────────────────────▶│  Supabase Edge       │
+│ (capture)  │   Authorization: Bearer <JWT>    │  Function (Deno)     │
+│            │   { photo_paths, model, ... }    │                      │
+└────────────┘                                   └─────────┬────────────┘
+                                                           │ 2. Validate JWT,
+                                                           │    fetch encrypted key
+                                                           ▼
+                                                 ┌──────────────────────┐
+                                                 │  Supabase Postgres   │
+                                                 │   user_api_keys      │
+                                                 │   (RLS) → Vault      │
+                                                 └─────────┬────────────┘
+                                                           │ 3. Decrypt via
+                                                           │    vault.decrypted_secrets
+                                                           ▼
+                                                 ┌──────────────────────┐
+                                                 │   Anthropic API      │
+                                                 │  (vision, stream)    │
+                                                 └─────────┬────────────┘
+                                                           │ 4. SSE stream
+┌────────────┐   5. Re-stream as SSE             ┌─────────▼────────────┐
+│  Browser   │ ◀────────────────────────────────│  Supabase Edge       │
+│ (capture)  │                                   │  Function            │
+└────────────┘                                   └──────────────────────┘
 ```
 
-The browser **never sees the API key**. The server is the only place plaintext exists, and only briefly during a request.
+The browser **never sees the API key**. Only the Edge Function holds plaintext, and only briefly during a single request.
+
+### Why a Supabase Edge Function (not a Next.js API route)
+
+The web app is deployed as a **static export** on DigitalOcean App Platform's free Static Site tier (see `05-auth-and-onboarding.md` changelog 2026-05-04). There is no Node.js runtime on the deployment host, so a Next.js route handler cannot exist there. Supabase Edge Functions (Deno, hosted in Supabase's edge network) provide the same shape — server-side code with access to Vault and outbound HTTP — without requiring a separate web-app server. The browser calls the function at `https://<project-ref>.supabase.co/functions/v1/extract` with the user's JWT, identical to how it already calls `/rest/v1/...` for Postgres queries today.
 
 ## Requirements
 
@@ -47,8 +54,8 @@ The browser **never sees the API key**. The server is the only place plaintext e
 
 - **Key onboarding.** First-run wizard (after sign-in) prompts the user for their Anthropic API key with a one-line explanation and a link to console.anthropic.com. The form validates the key by making a tiny test call (`max_tokens: 5`, "Say 'ok'") before saving. Invalid keys are rejected with a clear error.
 - **Encrypted storage.** API keys live in `user_api_keys` table, encrypted at rest using **Supabase Vault** (pgsodium under the hood). One row per user per provider; for MVP, only `provider = 'anthropic'`. Plaintext key never returned to the browser via any API.
-- **Server-side proxy route.** All Anthropic calls go through `/api/extract` (and any future LLM routes). The route fetches the encrypted key, decrypts it server-side via Vault, makes the upstream call, and streams the response back as SSE.
-- **Streaming pass-through.** The server consumes Anthropic's SSE stream, parses for content deltas, and re-emits a normalized SSE stream to the browser. The browser decodes JSON deltas progressively to populate the capture form (see `02-capture.md`).
+- **Server-side proxy via Supabase Edge Function.** All Anthropic calls go through the `extract` Edge Function (`/functions/v1/extract`), and any future LLM calls go through their own Edge Functions following the same pattern. The function validates the user's JWT, fetches the encrypted key from `user_api_keys`, decrypts it server-side via Vault, makes the upstream call, and streams the response back as SSE. Function source lives at `supabase/functions/extract/index.ts`; deploy with `supabase functions deploy extract`.
+- **Streaming pass-through.** The Edge Function consumes Anthropic's SSE stream, parses for content deltas, and re-emits a normalized SSE stream to the browser. The browser decodes JSON deltas progressively to populate the capture form (see `02-capture.md`).
 - **Structured output via tool use.** Extraction is implemented as a single forced tool call with a JSON-schema parameter matching our `Recipe` shape. Claude's tool use is the most reliable way to get a strict JSON object from a vision call. The model has no other tools available — `tool_choice: { type: "tool", name: "extract_recipe" }`.
 - **Model selection.** Per-user setting: `default_model` (Sonnet 4.6 default, Haiku 4.5 alternate). The capture flow can override per-call (re-extract with a different model). No silent model fallback — if the chosen model errors, we surface the error.
 - **Usage logging.** Every extraction call writes a row to `extraction_logs`: `user_id`, `model`, `input_tokens`, `output_tokens`, `cache_read_tokens`, `cache_creation_tokens`, `duration_ms`, `status`, `error_code`. **No prompt content, no photo bytes, no plaintext key** in logs.
@@ -165,16 +172,20 @@ The exact prompt and tool schema live in code; this PRD captures intent, not the
 - [ ] An invalid Anthropic key entered during onboarding is rejected with a clear error before saving.
 - [ ] After saving, the plaintext key is not retrievable through any API the browser can call. (Enforced by RLS + the absence of a "get my key" route.)
 - [ ] Updating the key in settings replaces the old encrypted secret atomically. The old key is unrecoverable.
-- [ ] Extraction calls hit `/api/extract` and never include the key in any browser-visible request or response.
+- [ ] Extraction calls hit the `extract` Edge Function (`/functions/v1/extract`) and never include the key in any browser-visible request or response.
 - [ ] Each extraction call writes one `extraction_logs` row with token counts and duration. Failed calls log too, with `status='error'` and an `error_code`.
 - [ ] Settings → Usage shows current month's call count and estimated cost.
 - [ ] Streaming: the capture form's fields populate progressively during extraction, not after a single big response.
 - [ ] On `401` from Anthropic, the user is directed to settings; the key is not silently cleared.
 - [ ] System prompt and tool schema are marked with `cache_control: { type: "ephemeral" }`. Cache hits are visible in `extraction_logs.cache_read_tokens` for subsequent calls within the cache TTL.
 
+## Decisions locked
+
+- **2026-05-06 — Encryption layer:** Supabase Vault (pgsodium under the hood) is the storage path for plaintext API keys. App-level envelope encryption was the alternative; rejected because Vault gives us roughly the same security with no new key-management code, and `user_api_keys.secret_id → vault.secrets` cleanly matches the schema already in the migration. `vault.decrypted_secrets` is read inside the Edge Function only.
+- **2026-05-06 — Server runtime:** Supabase Edge Function (Deno), not a Next.js route handler. The web app deploys as a static export on DO's free tier and has no Node runtime; the Edge Function provides the proxy with the same security guarantees and lives close to the data.
+
 ## Open questions
 
-- **Which encryption layer?** Supabase Vault (pgsodium-based, opinionated, simple) vs. app-level envelope encryption with a server-side master key (more portable, more code). Vault is the default unless we hit a limitation. Worth a quick verify-it-works spike before committing.
 - **Cost estimate fidelity.** Static rates table (committed JSON, manual update on price changes) is the simplest path. Acceptable until Anthropic introduces metered tiers or volume discounts that complicate the math.
 - **Image token estimation pre-call.** Anthropic publishes a formula (`(width × height) / 750` rounded up) — accurate enough for the cost preview. No upstream "dry run" exists.
 - **Throttling behavior on user side.** If the user fires 10 extraction requests in parallel, do we serialize them server-side (queue per user), or pass-through and let Anthropic rate-limit? Pass-through for MVP — re-evaluate if Anthropic's rate limiting is too aggressive.
@@ -182,4 +193,5 @@ The exact prompt and tool schema live in code; this PRD captures intent, not the
 
 ## Changelog
 
+- 2026-05-06 — server runtime flipped from Next.js API route handler (`/api/extract`) to a **Supabase Edge Function** (`extract`, deployed at `/functions/v1/extract`). Forced by the move to a static-export deployment on DO App Platform (PR #5, see `05-auth-and-onboarding.md` changelog). Architecture diagram, Must-have proxy bullet, and acceptance criterion updated. Encryption-layer open question resolved in favor of Vault (was already the leaning); locked under "Decisions locked." Prompt shape, structured tool use, streaming, retry/backoff, usage logging, and cost surfaces are unchanged — only the host moved.
 - 2026-04-30 — initial draft. Captured the architecture, key storage with Supabase Vault, server-side proxy, structured tool-use prompt, error handling, usage logging, and acceptance criteria.
