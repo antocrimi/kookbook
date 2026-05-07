@@ -20,12 +20,38 @@
 import { createClient } from "npm:@supabase/supabase-js@2.105.1";
 import Anthropic from "npm:@anthropic-ai/sdk@0.92.0";
 
+// CORS: open origin is safe here because the function is gated by Bearer
+// JWT auth (no cookies). If the auth model ever changes to cookie-based
+// sessions, tighten this to specific origins or origin-per-deployment to
+// avoid CSRF. Tracked as Risk #10 in docs/prd/04-llm-integration.md.
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
+
+// Strip anything that looks like an Anthropic key or a Supabase JWT from
+// strings we send back to the client. Defensive — the SDK doesn't currently
+// echo the key in error messages, but a future change or a logging line
+// would silently leak it. Risk #5 in PRD 04 "Security risks & mitigations".
+const SECRET_PATTERNS: RegExp[] = [
+  /sk-ant-[A-Za-z0-9_-]+/g, // Anthropic API keys
+  /eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+/g, // JWTs
+];
+
+function scrubSecrets(value: string): string {
+  let out = value;
+  for (const pat of SECRET_PATTERNS) {
+    out = out.replace(pat, "[redacted]");
+  }
+  return out;
+}
+
+function scrubError(input: unknown): string {
+  const message = input instanceof Error ? input.message : String(input);
+  return scrubSecrets(message);
+}
 
 const VALIDATE_MODEL = "claude-haiku-4-5-20251001";
 
@@ -91,7 +117,7 @@ async function handleValidate(
     { provider_in: "anthropic" },
   );
   if (keyErr) {
-    return json({ error: `vault read failed: ${keyErr.message}` }, 500);
+    return json({ error: `vault read failed: ${scrubError(keyErr.message)}` }, 500);
   }
   if (!apiKey) {
     return json({ error: "no Anthropic key configured for this user" }, 400);
@@ -106,9 +132,8 @@ async function handleValidate(
       messages: [{ role: "user", content: "Say 'ok'." }],
     });
   } catch (e) {
-    const message = e instanceof Error ? e.message : String(e);
     const status = (e as { status?: number })?.status ?? 502;
-    return json({ error: `validation failed: ${message}`, upstream_status: status }, 400);
+    return json({ error: `validation failed: ${scrubError(e)}`, upstream_status: status }, 400);
   }
 
   const { data: validatedAt, error: markErr } = await userClient.rpc(
@@ -116,7 +141,7 @@ async function handleValidate(
     { provider_in: "anthropic" },
   );
   if (markErr) {
-    return json({ error: `validated upstream but DB stamp failed: ${markErr.message}` }, 500);
+    return json({ error: `validated upstream but DB stamp failed: ${scrubError(markErr.message)}` }, 500);
   }
 
   return json({ ok: true, model: VALIDATE_MODEL, validated_at: validatedAt, duration_ms: Date.now() - startedAt });

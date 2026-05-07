@@ -7,9 +7,20 @@ import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 type Status =
   | { kind: "loading" }
   | { kind: "absent" }
-  | { kind: "set"; lastValidatedAt: string | null };
+  | {
+      kind: "set";
+      lastValidatedAt: string | null;
+      createdAt: string;
+    };
 
-type FormState = "idle" | "submitting" | "success" | "error";
+type FormState = "idle" | "submitting" | "removing" | "success" | "error";
+
+const ROTATION_WARN_DAYS = 90;
+const ROTATION_URGENT_DAYS = 180;
+
+function ageInDays(iso: string): number {
+  return Math.floor((Date.now() - new Date(iso).getTime()) / (1000 * 60 * 60 * 24));
+}
 
 function formatRelative(iso: string | null): string {
   if (!iso) return "never validated";
@@ -39,18 +50,18 @@ export function AnthropicKeyForm() {
     const supabase = createSupabaseBrowserClient();
     const { data, error } = await supabase
       .from("user_api_keys")
-      .select("last_validated_at")
+      .select("last_validated_at, created_at")
       .eq("provider", "anthropic")
       .maybeSingle();
-    if (error) {
+    if (error || !data) {
       setStatus({ kind: "absent" });
       return;
     }
-    if (!data) {
-      setStatus({ kind: "absent" });
-      return;
-    }
-    setStatus({ kind: "set", lastValidatedAt: data.last_validated_at });
+    setStatus({
+      kind: "set",
+      lastValidatedAt: data.last_validated_at,
+      createdAt: data.created_at,
+    });
     setEditing(false);
   }
 
@@ -100,24 +111,73 @@ export function AnthropicKeyForm() {
     await refresh();
   }
 
+  async function onRemove() {
+    if (!confirm("Remove your stored Anthropic key? You'll need to paste it again to capture recipes.")) return;
+    setError(null);
+    setFormState("removing");
+    const supabase = createSupabaseBrowserClient();
+    const { error: delErr } = await supabase.rpc("delete_user_api_key", {
+      provider_in: "anthropic",
+    });
+    if (delErr) {
+      setError(`Couldn't remove key: ${delErr.message}`);
+      setFormState("error");
+      return;
+    }
+    setFormState("idle");
+    await refresh();
+  }
+
   if (status.kind === "loading") {
     return null;
   }
 
   const showForm = status.kind === "absent" || editing;
 
+  let rotationWarning: { variant: "info" | "warning"; body: string } | null = null;
+  if (status.kind === "set") {
+    const days = ageInDays(status.createdAt);
+    if (days >= ROTATION_URGENT_DAYS) {
+      rotationWarning = {
+        variant: "warning",
+        body: `Your stored key is ${days} days old. Industry-norm rotation is every 90 days — consider rotating in your Anthropic console and pasting the new one here.`,
+      };
+    } else if (days >= ROTATION_WARN_DAYS) {
+      rotationWarning = {
+        variant: "info",
+        body: `Your stored key is ${days} days old. Consider rotating it in your Anthropic console (industry norm: every 90 days).`,
+      };
+    }
+  }
+
   return (
     <div className="flex w-full max-w-sm flex-col gap-3">
       {status.kind === "set" && !editing && (
-        <div className="flex items-center justify-between gap-3">
-          <div className="text-sm text-stone">
-            <span className="font-mono">●●●●●●●●</span>{" "}
-            <span>{formatRelative(status.lastValidatedAt)}</span>
+        <>
+          <div className="flex items-center justify-between gap-3">
+            <div className="text-sm text-stone">
+              <span className="font-mono">●●●●●●●●</span>{" "}
+              <span>{formatRelative(status.lastValidatedAt)}</span>
+              <span className="ml-2 text-xs">· age {ageInDays(status.createdAt)}d</span>
+            </div>
+            <div className="flex gap-1">
+              <Button size="sm" variant="ghost" onClick={() => setEditing(true)} disabled={formState === "removing"}>
+                Replace
+              </Button>
+              <Button size="sm" variant="ghost" onClick={onRemove} loading={formState === "removing"}>
+                Remove
+              </Button>
+            </div>
           </div>
-          <Button size="sm" variant="ghost" onClick={() => setEditing(true)}>
-            Replace
-          </Button>
-        </div>
+          {rotationWarning && (
+            <Banner
+              variant={rotationWarning.variant}
+              heading="Key rotation reminder"
+              body={rotationWarning.body}
+              dismissible={false}
+            />
+          )}
+        </>
       )}
 
       {showForm && (
@@ -144,12 +204,33 @@ export function AnthropicKeyForm() {
             </a>
             . Stored encrypted in Supabase Vault. Only the Edge Function ever sees the plaintext.
           </p>
+          <p className="text-xs text-stone">
+            Tip: set a monthly spend cap in your{" "}
+            <a
+              href="https://console.anthropic.com/settings/billing"
+              target="_blank"
+              rel="noreferrer"
+              className="underline"
+            >
+              Anthropic billing settings
+            </a>
+            {" "}so a leaked key can&apos;t run up unbounded charges.
+          </p>
           <div className="flex items-center gap-2">
             <Button type="submit" loading={formState === "submitting"}>
               {formState === "submitting" ? "Validating…" : "Validate & save"}
             </Button>
             {status.kind === "set" && (
-              <Button type="button" variant="ghost" onClick={() => { setEditing(false); setKeyInput(""); setError(null); setFormState("idle"); }}>
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => {
+                  setEditing(false);
+                  setKeyInput("");
+                  setError(null);
+                  setFormState("idle");
+                }}
+              >
                 Cancel
               </Button>
             )}
