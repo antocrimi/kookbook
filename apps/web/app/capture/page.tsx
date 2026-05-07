@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { Banner, Button } from "@cuckoobook/ui";
 import { compressImage } from "@/lib/imageCompress";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
+import { ConfirmForm, type ExtractedRecipe } from "./ConfirmForm";
 
 const MAX_PHOTOS = 4;
 const RECIPE_PHOTOS_BUCKET = "recipe-photos";
@@ -28,7 +29,7 @@ type ExtractResult = {
     cache_read_tokens: number;
     cache_creation_tokens: number;
   };
-  recipe?: unknown;
+  recipe?: ExtractedRecipe;
 };
 
 export default function CapturePage() {
@@ -40,8 +41,9 @@ export default function CapturePage() {
   );
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [phase, setPhase] = useState<
-    "picking" | "uploading" | "extracting" | "done" | "error"
+    "picking" | "uploading" | "extracting" | "confirming" | "error"
   >("picking");
+  const [uploadedPaths, setUploadedPaths] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<ExtractResult | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -132,14 +134,15 @@ export default function CapturePage() {
       setPhase("error");
       return;
     }
-    if (!data?.ok) {
+    if (!data?.ok || !data.recipe) {
       setError(data?.error ?? "Extraction failed.");
       setPhase("error");
       setResult(data);
       return;
     }
     setResult(data);
-    setPhase("done");
+    setUploadedPaths(uploadedPaths);
+    setPhase("confirming");
   }
 
   function reset() {
@@ -147,6 +150,7 @@ export default function CapturePage() {
     setPhotos([]);
     setResult(null);
     setError(null);
+    setUploadedPaths([]);
     setPhase("picking");
   }
 
@@ -271,36 +275,21 @@ export default function CapturePage() {
             />
           )}
 
-          {phase === "done" && result?.ok && (
+          {phase === "confirming" && result?.recipe && (
             <>
               <Banner
                 variant="success"
-                heading={`Extracted in ${(result.duration_ms ?? 0) / 1000}s`}
-                body={`Model: ${result.model}. Tokens — input: ${result.usage?.input_tokens ?? "?"}, output: ${result.usage?.output_tokens ?? "?"}, cache read: ${result.usage?.cache_read_tokens ?? 0}, cache creation: ${result.usage?.cache_creation_tokens ?? 0}.`}
+                heading={`Extracted in ${((result.duration_ms ?? 0) / 1000).toFixed(1)}s`}
+                body={`Model: ${result.model}. Tokens — input ${result.usage?.input_tokens ?? "?"} / output ${result.usage?.output_tokens ?? "?"}${result.usage?.cache_read_tokens ? ` · cache hit ${result.usage.cache_read_tokens}` : ""}.`}
                 dismissible={false}
               />
-              <pre
-                style={{
-                  marginTop: 24,
-                  padding: 16,
-                  background: "#fff",
-                  border: "1px solid var(--recipe-line)",
-                  borderRadius: 8,
-                  fontSize: 12,
-                  lineHeight: 1.4,
-                  overflowX: "auto",
-                  whiteSpace: "pre-wrap",
-                  wordBreak: "break-word",
-                }}
-              >
-                {JSON.stringify(result.recipe, null, 2)}
-              </pre>
-              <div style={{ marginTop: 16 }}>
-                <Button variant="ghost" onClick={reset}>Capture another</Button>
+              <div style={{ marginTop: 24 }}>
+                <ConfirmForm
+                  extracted={result.recipe}
+                  photoPaths={uploadedPaths}
+                  onCancel={reset}
+                />
               </div>
-              <p className="text-xs text-stone" style={{ marginTop: 24 }}>
-                The proper confirm/edit form lands in PR D. For now this is a sanity check that the pipeline works.
-              </p>
             </>
           )}
         </main>
