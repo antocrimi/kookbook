@@ -167,6 +167,90 @@ The exact prompt and tool schema live in code; this PRD captures intent, not the
 | Tool call returns `confidence: none` | Treat as "no recipe found." Show original photo + "We couldn't extract a recipe — edit manually." |
 | Stream truncated                     | Save partial extraction as a draft; surface "Extraction incomplete — review and complete." |
 
+## Security risks & mitigations
+
+The threat model we're explicitly accepting by using Supabase Vault: **anyone with trusted access to the Supabase project (service-role key, Dashboard SQL Editor) can recover any user's plaintext API key.** That's the operator/insider risk for a closed two-user app. The threats we *do* guard against: external attackers, DB backup leaks, cross-user reads, browser-side XSS retrieval, accidental git commits, log exposure.
+
+Risks ranked by realistic likelihood × impact:
+
+### 1. Operator read via service role (highest realistic risk)
+
+A collaborator with Supabase Dashboard or service-role access runs `select decrypted_secret from vault.decrypted_secrets ...` and exfiltrates a user's key.
+
+- **Current mitigations:** SECURITY DEFINER RPCs grant `authenticated` only; service role bypasses RLS by design. Plaintext is never returned to the browser through any route the browser can call. Project members are limited to kaz + antocrimi.
+- **Required mitigations:** annual audit of Supabase Dashboard → Organization Members. Service-role key only ever lives in the Edge Function platform secret store and the developer's `.env.local` — never in shell history, screenshots, chat, or CI logs.
+- **Nice-to-have:** if collaborator count grows beyond 2-3, move to envelope encryption with a separate KMS (HCP Vault Transit / AWS KMS) so DB access alone can't recover the key.
+
+### 2. Edge Function deploy hijack
+
+Anyone with `supabase functions deploy` capability can ship a malicious version of `extract` that exfiltrates keys.
+
+- **Current mitigations:** function source lives in the repo; a malicious deploy creates a git diff.
+- **Required mitigations:** branch protection on `main` requiring PR review for any change under `supabase/functions/`. Limit `supabase functions deploy` to maintainers (kaz, antocrimi). Code review focused on outbound HTTP — does the function talk to anything other than `api.anthropic.com`?
+- **Nice-to-have:** quarterly check that the deployed function's hash matches the repo head.
+
+### 3. Supabase JWT secret compromise
+
+If the project's JWT signing secret leaks (Settings → API → JWT Settings), forged JWTs can call the Edge Function as any user. The function trusts `auth.uid()` to identify the caller.
+
+- **Current mitigations:** secret is stored only in the Supabase platform.
+- **Required mitigations:** treat the JWT secret as the top-tier secret in the project — never paste in CI logs, screenshots, or chat. Rotate via Dashboard if any exposure is suspected (this invalidates all sessions; users re-sign-in once).
+
+### 4. Browser session hijack (XSS or stolen session token)
+
+Attacker with the user's Supabase session can use the Edge Function as the user (spend their Anthropic credit) but cannot retrieve the plaintext key (no `get_user_api_key` route is exposed to browser-callable channels).
+
+- **Current mitigations:** AuthGate + RLS on user-data tables. `<input type="password">` for the paste form, cleared on submit. No `get_user_api_key` PostgREST exposure.
+- **Required mitigations:** never use `dangerouslySetInnerHTML` for user-supplied recipe content. Keep Supabase JWT lifetime at the 1-hour default.
+- **Nice-to-have:** Content Security Policy headers on the DO Static Site config (defense in depth against XSS).
+
+### 5. Edge Function error message leakage
+
+The function returns `e.message` to the client on Anthropic errors. The Anthropic SDK doesn't currently include the key in errors, but a future change or a request-logging line could.
+
+- **Current state:** unscrubbed — gap to close.
+- **Required mitigations:** add a `scrubSecrets()` helper that strips anything matching `sk-ant-[a-zA-Z0-9_-]+` (and any other API-key-shaped patterns) from response bodies before sending. Apply to all error paths in the Edge Function.
+
+### 6. Anthropic-side blast radius
+
+If a key leaks via any of the above, the leaker can spend the user's Anthropic credit until revocation.
+
+- **Current state:** no in-app affordance to remove or rotate.
+- **Required mitigations:** "Remove key" button in /settings (`set_user_api_key` to a rotation marker, then `delete from public.user_api_keys`) so a user who suspects compromise can rotate immediately. Surface "set a monthly cap in console.anthropic.com" copy in /settings as a UX nudge.
+
+### 7. No key rotation hygiene
+
+Keys live forever until the user manually replaces them.
+
+- **Current state:** `last_validated_at` is tracked, `created_at` indirectly tracks age via `user_api_keys.created_at`.
+- **Required mitigations:** show "key age: 92 days" in /settings, with a soft warning banner at 90 days and a stronger one at 180. Industry-norm rotation cadence for service API keys is 90 days.
+
+### 8. `extraction_logs` schema drift risk
+
+A future migration that adds a freeform column (e.g., `request_body text`) to `extraction_logs` could accidentally log plaintext.
+
+- **Required mitigations:** PR review rule — any new column on `*_logs` tables requires an explicit security note in the PR description ("does this row contain any plaintext secrets, ever?").
+
+### 9. Browser autocomplete / clipboard exposure during paste
+
+Plaintext briefly in browser memory + possibly password manager autocomplete during the paste-and-submit window.
+
+- **Current mitigations:** `<input type="password">` + form clears on submit + no echo back to UI.
+- **No further cheap mitigations** — this is inherent to "user pastes a secret." Recommend users paste from a password manager rather than copy-paste from a doc.
+
+### 10. CORS `*` on the Edge Function
+
+Currently safe because we use Bearer auth (no CSRF), but a future migration to cookie-based auth would create an attack surface.
+
+- **Required mitigations:** comment in the Edge Function header noting "tighten CORS if auth model changes." Easy to forget.
+
+### 11. Supabase Vault internals migration
+
+Supabase is migrating Vault from pgsodium to a new implementation. Future schema changes possible.
+
+- **Current mitigations:** schema uses `secret_id` UUID indirection, not the encryption mechanism — should migrate transparently.
+- **Required mitigations:** watch Supabase changelog for migration windows.
+
 ## Acceptance criteria
 
 - [ ] An invalid Anthropic key entered during onboarding is rejected with a clear error before saving.
@@ -189,9 +273,9 @@ The exact prompt and tool schema live in code; this PRD captures intent, not the
 - **Cost estimate fidelity.** Static rates table (committed JSON, manual update on price changes) is the simplest path. Acceptable until Anthropic introduces metered tiers or volume discounts that complicate the math.
 - **Image token estimation pre-call.** Anthropic publishes a formula (`(width × height) / 750` rounded up) — accurate enough for the cost preview. No upstream "dry run" exists.
 - **Throttling behavior on user side.** If the user fires 10 extraction requests in parallel, do we serialize them server-side (queue per user), or pass-through and let Anthropic rate-limit? Pass-through for MVP — re-evaluate if Anthropic's rate limiting is too aggressive.
-- **Key rotation cadence.** No forced rotation. User-driven only. Document in the user-facing help: "rotate your key periodically."
 
 ## Changelog
 
+- 2026-05-06 — added "Security risks & mitigations" section (11 risks, ranked by likelihood × impact, each with current and required mitigations). Captures the Supabase Vault threat model we're explicitly accepting (operator/insider read) and what we're defending against. Folds the previous "Key rotation cadence" open question into the new section as a required mitigation.
 - 2026-05-06 — server runtime flipped from Next.js API route handler (`/api/extract`) to a **Supabase Edge Function** (`extract`, deployed at `/functions/v1/extract`). Forced by the move to a static-export deployment on DO App Platform (PR #5, see `05-auth-and-onboarding.md` changelog). Architecture diagram, Must-have proxy bullet, and acceptance criterion updated. Encryption-layer open question resolved in favor of Vault (was already the leaning); locked under "Decisions locked." Prompt shape, structured tool use, streaming, retry/backoff, usage logging, and cost surfaces are unchanged — only the host moved.
 - 2026-04-30 — initial draft. Captured the architecture, key storage with Supabase Vault, server-side proxy, structured tool-use prompt, error handling, usage logging, and acceptance criteria.

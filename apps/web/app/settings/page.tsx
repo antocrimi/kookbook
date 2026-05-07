@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Button } from "@cuckoobook/ui";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
+import { AnthropicKeyForm } from "./AnthropicKeyForm";
 import { ChangePasswordForm } from "./ChangePasswordForm";
 import { SignOut } from "../recipes/SignOut";
 import styles from "./page.module.scss";
@@ -41,6 +42,11 @@ export default function SettingsPage() {
         <section className={styles.section}>
           <h3 className={styles.sectionTitle}>Password</h3>
           <ChangePasswordForm />
+        </section>
+
+        <section className={styles.section}>
+          <h3 className={styles.sectionTitle}>Anthropic API key</h3>
+          <AnthropicKeyForm />
         </section>
       </main>
     </div>
