@@ -14,6 +14,13 @@ export function SeedRecipe() {
     setError(null);
     const supabase = createSupabaseBrowserClient();
 
+    const { data: userData } = await supabase.auth.getUser();
+    const userId = userData.user?.id;
+    if (!userId) {
+      setError("Not signed in.");
+      return;
+    }
+
     const { data: folder } = await supabase
       .from("folders")
       .select("id")
@@ -29,6 +36,7 @@ export function SeedRecipe() {
 
     const toInsert = SEED_RECIPES.filter((r) => !existingTitles.has(r.title)).map(
       (r) => ({
+        user_id: userId,
         folder_id: folder.id,
         title: r.title,
         source: r.source,

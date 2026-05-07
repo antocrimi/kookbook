@@ -2,10 +2,12 @@
 
 /* eslint-disable @next/next/no-img-element -- prototype-style raw <img>; data URLs and storage URLs both work. */
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Banner, Button } from "@cuckoobook/ui";
 import { compressImage } from "@/lib/imageCompress";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
+import type { Ingredient, Step } from "@/lib/types";
 import { ConfirmForm, type ExtractedRecipe } from "./ConfirmForm";
 
 const MAX_PHOTOS = 4;
@@ -32,26 +34,102 @@ type ExtractResult = {
   recipe?: ExtractedRecipe;
 };
 
+type Phase =
+  | "loading-draft"
+  | "picking"
+  | "uploading"
+  | "extracting"
+  | "confirming"
+  | "error";
+
+function deriveDraftPrefix(path: string | null | undefined): string | null {
+  if (!path) return null;
+  const m = path.match(/^(.+\/captures\/[^/]+)\//);
+  return m ? `${m[1]}/` : null;
+}
+
+async function listDraftPhotoPaths(
+  supabase: ReturnType<typeof createSupabaseBrowserClient>,
+  prefix: string,
+): Promise<string[]> {
+  const { data } = await supabase.storage.from(RECIPE_PHOTOS_BUCKET).list(prefix);
+  if (!data) return [];
+  return data
+    .filter((entry) => entry.name && !entry.name.endsWith("/"))
+    .map((entry) => `${prefix}${entry.name}`)
+    .sort();
+}
+
 export default function CapturePage() {
+  return (
+    <Suspense fallback={null}>
+      <CaptureBody />
+    </Suspense>
+  );
+}
+
+function CaptureBody() {
+  const params = useSearchParams();
+  const draftIdParam = params.get("draftId");
+
   const [userId, setUserId] = useState<string | null>(null);
-  const [draftId] = useState<string>(() =>
+  const [draftFolder] = useState<string>(() =>
     typeof crypto !== "undefined" && "randomUUID" in crypto
       ? crypto.randomUUID()
       : `draft-${Date.now()}`,
   );
   const [photos, setPhotos] = useState<Photo[]>([]);
-  const [phase, setPhase] = useState<
-    "picking" | "uploading" | "extracting" | "confirming" | "error"
-  >("picking");
+  const [phase, setPhase] = useState<Phase>(draftIdParam ? "loading-draft" : "picking");
   const [uploadedPaths, setUploadedPaths] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<ExtractResult | null>(null);
+  const [recipeId, setRecipeId] = useState<string | null>(null);
+  const [extracted, setExtracted] = useState<ExtractedRecipe | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     const supabase = createSupabaseBrowserClient();
     supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id ?? null));
   }, []);
+
+  // Resume: fetch draft and skip straight to the confirm form.
+  useEffect(() => {
+    if (!draftIdParam) return;
+    let cancelled = false;
+    (async () => {
+      const supabase = createSupabaseBrowserClient();
+      const { data, error } = await supabase
+        .from("recipes")
+        .select("*")
+        .eq("id", draftIdParam)
+        .eq("is_draft", true)
+        .maybeSingle();
+      if (cancelled) return;
+      if (error || !data) {
+        setError(error?.message ?? "Draft not found.");
+        setPhase("error");
+        return;
+      }
+      const prefix = deriveDraftPrefix(data.original_photo_path);
+      const paths = prefix ? await listDraftPhotoPaths(supabase, prefix) : [];
+      setRecipeId(data.id);
+      setUploadedPaths(paths);
+      setExtracted({
+        title: data.title ?? "",
+        source: data.source ?? "",
+        description: data.description ?? "",
+        default_servings: data.default_servings ?? 4,
+        time_min: data.time_min ?? undefined,
+        ingredients: (data.ingredients ?? []) as Ingredient[],
+        steps: (data.steps ?? []) as Step[],
+        notes: data.notes ?? "",
+      });
+      setPhase("confirming");
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [draftIdParam]);
 
   function onFilesChosen(e: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files ?? []);
@@ -80,6 +158,65 @@ export default function CapturePage() {
     });
   }
 
+  async function uploadAllPhotos(uid: string): Promise<string[]> {
+    const supabase = createSupabaseBrowserClient();
+    const paths: string[] = [];
+    for (let i = 0; i < photos.length; i++) {
+      const photo = photos[i];
+      const compressed = await compressImage(photo.file);
+      const path = `${uid}/captures/${draftFolder}/${i}.jpg`;
+      const { error: uploadErr } = await supabase.storage
+        .from(RECIPE_PHOTOS_BUCKET)
+        .upload(path, compressed, { contentType: "image/jpeg", upsert: true });
+      if (uploadErr) throw new Error(`upload ${i}: ${uploadErr.message}`);
+      paths.push(path);
+      setPhotos((prev) =>
+        prev.map((p) => (p.id === photo.id ? { ...p, storagePath: path } : p)),
+      );
+    }
+    return paths;
+  }
+
+  async function createDraft(
+    uid: string,
+    paths: string[],
+    extractedRecipe: ExtractedRecipe | null,
+  ): Promise<string | null> {
+    const supabase = createSupabaseBrowserClient();
+    const { data: inbox } = await supabase
+      .from("folders")
+      .select("id")
+      .eq("is_inbox", true)
+      .single();
+    if (!inbox) {
+      throw new Error("Inbox folder missing for current user.");
+    }
+    const insertPayload = {
+      user_id: uid,
+      folder_id: inbox.id,
+      is_draft: true,
+      title: extractedRecipe?.title?.trim() || "(untitled)",
+      source: extractedRecipe?.source ?? null,
+      description: extractedRecipe?.description ?? null,
+      default_servings: extractedRecipe?.default_servings ?? 4,
+      time_min: extractedRecipe?.time_min ?? null,
+      ingredients: extractedRecipe?.ingredients ?? [],
+      steps: extractedRecipe?.steps ?? [],
+      notes: extractedRecipe?.notes ?? null,
+      original_photo_path: paths[0] ?? null,
+      extracted_at: extractedRecipe ? new Date().toISOString() : null,
+    };
+    const { data, error } = await supabase
+      .from("recipes")
+      .insert(insertPayload)
+      .select("id")
+      .single();
+    if (error || !data) {
+      throw new Error(error?.message ?? "Couldn't create draft.");
+    }
+    return data.id;
+  }
+
   async function onSubmit() {
     if (!userId) {
       setError("Not signed in.");
@@ -96,26 +233,9 @@ export default function CapturePage() {
     setResult(null);
     setPhase("uploading");
 
-    const supabase = createSupabaseBrowserClient();
-    const uploadedPaths: string[] = [];
-
+    let paths: string[];
     try {
-      for (let i = 0; i < photos.length; i++) {
-        const photo = photos[i];
-        const compressed = await compressImage(photo.file);
-        const path = `${userId}/captures/${draftId}/${i}.jpg`;
-        const { error: uploadErr } = await supabase.storage
-          .from(RECIPE_PHOTOS_BUCKET)
-          .upload(path, compressed, {
-            contentType: "image/jpeg",
-            upsert: true,
-          });
-        if (uploadErr) throw new Error(`upload ${i}: ${uploadErr.message}`);
-        uploadedPaths.push(path);
-        setPhotos((prev) =>
-          prev.map((p) => (p.id === photo.id ? { ...p, storagePath: path } : p)),
-        );
-      }
+      paths = await uploadAllPhotos(userId);
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
       setPhase("error");
@@ -123,25 +243,65 @@ export default function CapturePage() {
     }
 
     setPhase("extracting");
-
+    const supabase = createSupabaseBrowserClient();
     const { data, error: invokeErr } = await supabase.functions.invoke<ExtractResult>(
       "extract",
-      { body: { mode: "extract", photo_paths: uploadedPaths } },
+      { body: { mode: "extract", photo_paths: paths } },
     );
 
     if (invokeErr) {
+      setUploadedPaths(paths);
       setError(`Extraction request failed: ${invokeErr.message}`);
       setPhase("error");
       return;
     }
     if (!data?.ok || !data.recipe) {
+      setUploadedPaths(paths);
       setError(data?.error ?? "Extraction failed.");
-      setPhase("error");
       setResult(data);
+      setPhase("error");
       return;
     }
+
+    let newRecipeId: string | null = null;
+    try {
+      newRecipeId = await createDraft(userId, paths, data.recipe);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+      setPhase("error");
+      return;
+    }
+
     setResult(data);
-    setUploadedPaths(uploadedPaths);
+    setUploadedPaths(paths);
+    setRecipeId(newRecipeId);
+    setExtracted(data.recipe);
+    setPhase("confirming");
+  }
+
+  async function startManualEntry() {
+    if (!userId) return;
+    let paths = uploadedPaths;
+    if (paths.length === 0) {
+      try {
+        paths = await uploadAllPhotos(userId);
+      } catch (e) {
+        setError(e instanceof Error ? e.message : String(e));
+        setPhase("error");
+        return;
+      }
+    }
+    let newRecipeId: string | null;
+    try {
+      newRecipeId = await createDraft(userId, paths, null);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+      setPhase("error");
+      return;
+    }
+    setUploadedPaths(paths);
+    setRecipeId(newRecipeId);
+    setExtracted({ title: "", default_servings: 4, ingredients: [], steps: [] });
     setPhase("confirming");
   }
 
@@ -151,6 +311,8 @@ export default function CapturePage() {
     setResult(null);
     setError(null);
     setUploadedPaths([]);
+    setRecipeId(null);
+    setExtracted(null);
     setPhase("picking");
   }
 
@@ -166,18 +328,25 @@ export default function CapturePage() {
               <path d="M12 4L6 10L12 16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </Link>
-          <span className="saved-title" style={{ fontSize: 18 }}>Capture</span>
+          <span className="saved-title" style={{ fontSize: 18 }}>
+            {draftIdParam ? "Resume draft" : "Capture"}
+          </span>
           <span style={{ width: 44 }} aria-hidden />
         </header>
 
         <main className="recipe-content" style={{ paddingBottom: 120 }}>
-          <p className="recipe-desc" style={{ marginBottom: 24 }}>
-            Up to {MAX_PHOTOS} photos per recipe. We&apos;ll downscale on your device, send to your Anthropic key, and show what comes back.
-          </p>
+          {phase === "loading-draft" && (
+            <p className="recipe-desc">Loading draft…</p>
+          )}
 
-          {photos.length > 0 && (
+          {!draftIdParam && phase !== "confirming" && (
+            <p className="recipe-desc" style={{ marginBottom: 24 }}>
+              Up to {MAX_PHOTOS} photos per recipe. We&apos;ll downscale on your device, send to your Anthropic key, and show what comes back.
+            </p>
+          )}
+
+          {!draftIdParam && phase !== "confirming" && photos.length > 0 && (
             <div
-              className="ing-list"
               style={{
                 display: "grid",
                 gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))",
@@ -230,7 +399,7 @@ export default function CapturePage() {
             </div>
           )}
 
-          {photos.length < MAX_PHOTOS && phase === "picking" && (
+          {!draftIdParam && phase !== "confirming" && photos.length < MAX_PHOTOS && phase === "picking" && (
             <div style={{ marginBottom: 24 }}>
               <Button
                 onClick={() => fileInputRef.current?.click()}
@@ -251,41 +420,58 @@ export default function CapturePage() {
             </div>
           )}
 
-          <div style={{ display: "flex", gap: 12, marginBottom: 24 }}>
-            <Button
-              onClick={onSubmit}
-              disabled={submitDisabled}
-              loading={phase === "uploading" || phase === "extracting"}
-              fullWidth
-            >
-              {phase === "uploading"
-                ? "Uploading photos…"
-                : phase === "extracting"
-                ? "Extracting recipe…"
-                : `Extract recipe (${photos.length} photo${photos.length === 1 ? "" : "s"})`}
-            </Button>
-          </div>
-
-          {phase === "error" && error && (
-            <Banner
-              variant="error"
-              heading="Capture failed"
-              body={error}
-              dismissible={false}
-            />
+          {!draftIdParam && phase !== "confirming" && phase !== "error" && (
+            <div style={{ display: "flex", gap: 12, marginBottom: 24 }}>
+              <Button
+                onClick={onSubmit}
+                disabled={submitDisabled}
+                loading={phase === "uploading" || phase === "extracting"}
+                fullWidth
+              >
+                {phase === "uploading"
+                  ? "Uploading photos…"
+                  : phase === "extracting"
+                  ? "Extracting recipe…"
+                  : `Extract recipe (${photos.length} photo${photos.length === 1 ? "" : "s"})`}
+              </Button>
+            </div>
           )}
 
-          {phase === "confirming" && result?.recipe && (
+          {phase === "error" && error && (
             <>
               <Banner
-                variant="success"
-                heading={`Extracted in ${((result.duration_ms ?? 0) / 1000).toFixed(1)}s`}
-                body={`Model: ${result.model}. Tokens — input ${result.usage?.input_tokens ?? "?"} / output ${result.usage?.output_tokens ?? "?"}${result.usage?.cache_read_tokens ? ` · cache hit ${result.usage.cache_read_tokens}` : ""}.`}
+                variant="error"
+                heading="Capture failed"
+                body={error}
                 dismissible={false}
               />
-              <div style={{ marginTop: 24 }}>
+              {!draftIdParam && (
+                <div style={{ display: "flex", gap: 12, marginTop: 16 }}>
+                  <Button onClick={startManualEntry} variant="outline">
+                    Edit manually
+                  </Button>
+                  <Button onClick={reset} variant="ghost">
+                    Start over
+                  </Button>
+                </div>
+              )}
+            </>
+          )}
+
+          {phase === "confirming" && extracted && recipeId && (
+            <>
+              {result && (
+                <Banner
+                  variant="success"
+                  heading={`Extracted in ${((result.duration_ms ?? 0) / 1000).toFixed(1)}s`}
+                  body={`Model: ${result.model}. Tokens — input ${result.usage?.input_tokens ?? "?"} / output ${result.usage?.output_tokens ?? "?"}${result.usage?.cache_read_tokens ? ` · cache hit ${result.usage.cache_read_tokens}` : ""}.`}
+                  dismissible={false}
+                />
+              )}
+              <div style={{ marginTop: result ? 24 : 0 }}>
                 <ConfirmForm
-                  extracted={result.recipe}
+                  recipeId={recipeId}
+                  extracted={extracted}
                   photoPaths={uploadedPaths}
                   onCancel={reset}
                 />
