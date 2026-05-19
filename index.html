@@ -885,33 +885,32 @@
     window.addEventListener('resize', checkPrepVisibility);
   })();
 
-  // Bird logo tap: mirrors hover. Touchstart → duck. Touchend → stand
-  // after 180ms. Pending timer is cancelled on every new touchstart so
-  // rapid taps cannot race the cycle.
+  // Bird logo tap: self-contained squat-and-spring cycle. Each tap puts
+  // the bird in the ducked pose for ~180ms then auto-springs back to
+  // standing. Achieved by toggling .ducked which crossfades between the
+  // two embedded SVG bird poses. Hover continues to work on desktop via
+  // CSS :hover. We attach both touchstart (mobile) and click (desktop /
+  // non-touch) so the gesture works whichever input the device uses.
   (function setupLogoTap() {
     const logo = document.querySelector('.home-logo');
     if (!logo) return;
-    let standTimer = null;
-    const cancelStand = () => {
-      if (standTimer !== null) { clearTimeout(standTimer); standTimer = null; }
+    const SQUAT_MS = 180;
+    let cycleTimer = null;
+    const squatAndSpring = () => {
+      if (cycleTimer !== null) clearTimeout(cycleTimer);
+      logo.classList.add('ducked');
+      cycleTimer = setTimeout(() => {
+        logo.classList.remove('ducked');
+        cycleTimer = null;
+      }, SQUAT_MS);
     };
+    // preventDefault on touchstart suppresses the synthetic click that
+    // would otherwise re-fire the cycle ~300ms later.
     logo.addEventListener('touchstart', function(e) {
       e.preventDefault();
-      cancelStand();
-      logo.classList.add('ducked');
+      squatAndSpring();
     }, { passive: false });
-    const scheduleStand = () => {
-      cancelStand();
-      standTimer = setTimeout(() => {
-        logo.classList.remove('ducked');
-        standTimer = null;
-      }, 180);
-    };
-    logo.addEventListener('touchend',    scheduleStand);
-    logo.addEventListener('touchcancel', () => {
-      cancelStand();
-      logo.classList.remove('ducked');
-    });
+    logo.addEventListener('click', squatAndSpring);
   })();
 
   /* ─── Init ───────────────────────────────────────────── */
