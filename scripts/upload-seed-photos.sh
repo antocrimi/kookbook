@@ -26,7 +26,6 @@ assets="apps/web/public/prototype/assets"
 # original_photo_path values in supabase/seed_recipes.sql.
 mappings=(
   "lemony-orzo:AS-Lemony-Orzo-with-Asparagus-pgmk-threeByTwoMediumAt2X.jpg.webp"
-  "burgoo:KD-burgoo-hqwf-threeByTwoMediumAt2X.jpg.webp"
   "crispy-gnocchi:as-cheesy-baked-gnocchi-threeByTwoMediumAt2X-v2.jpg.webp"
   "zucchini-pancakes:el-zucchini-pancakes-threeByTwoMediumAt2X-v4.jpg"
   "rhubarb-macaroon-tart:SS-Rhubarb-Macaroon-Tart-wvbc-threeByTwoMediumAt2X.jpg.webp"

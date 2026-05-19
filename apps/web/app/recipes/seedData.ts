@@ -81,119 +81,6 @@ const LEMONY_ORZO: SeedRecipe = {
   ],
 };
 
-const BURGOO: SeedRecipe = {
-  slug: "burgoo",
-  title: "Burgoo",
-  source: "NYT Cooking",
-  description:
-    "Kentucky's signature Saturday-afternoon stew: three meats simmered slow with corn, lima beans and potatoes until everything's falling apart and the broth tastes like all of it at once. Active time is short — most of it is hands-off simmering while the kitchen smells extraordinary.",
-  default_servings: 8,
-  time_min: 20,
-  original_photo_path: "seed/burgoo.webp",
-  ingredients: [
-    {
-      raw: "2 tablespoons vegetable oil",
-      item: "vegetable oil",
-      quantity: { value: 2, unit: "tbsp" },
-    },
-    {
-      raw: "1 pound beef chuck, cut into 1-inch pieces",
-      item: "beef chuck, cut into 1-inch pieces",
-      quantity: { value: 1, unit: "lb" },
-    },
-    {
-      raw: "1 pound boneless pork shoulder, cut into 1-inch pieces",
-      item: "boneless pork shoulder, cut into 1-inch pieces",
-      quantity: { value: 1, unit: "lb" },
-    },
-    {
-      raw: "1 pound boneless, skinless chicken thighs",
-      item: "boneless, skinless chicken thighs",
-      quantity: { value: 1, unit: "lb" },
-    },
-    {
-      raw: "1 large yellow onion, diced",
-      item: "yellow onion, diced",
-      quantity: { value: 1, unit: "whole" },
-      note: "large",
-    },
-    {
-      raw: "4 garlic cloves, minced",
-      item: "garlic, minced",
-      quantity: { value: 4, unit: "clove" },
-    },
-    {
-      raw: "6 cups low-sodium chicken broth",
-      item: "low-sodium chicken broth",
-      quantity: { value: 6, unit: "cup" },
-    },
-    {
-      raw: "1 (28-ounce) can crushed tomatoes",
-      item: "crushed tomatoes",
-      quantity: { value: 1, unit: "whole" },
-      note: "28-ounce can",
-    },
-    {
-      raw: "2 large russet potatoes, peeled and diced",
-      item: "russet potatoes, peeled and diced",
-      quantity: { value: 2, unit: "whole" },
-      note: "large",
-    },
-    {
-      raw: "2 carrots, diced",
-      item: "carrots, diced",
-      quantity: { value: 2, unit: "whole" },
-    },
-    {
-      raw: "2 cups frozen corn",
-      item: "frozen corn",
-      quantity: { value: 2, unit: "cup" },
-    },
-    {
-      raw: "1 cup frozen lima beans",
-      item: "frozen lima beans",
-      quantity: { value: 1, unit: "cup" },
-    },
-    {
-      raw: "2 tablespoons Worcestershire sauce",
-      item: "Worcestershire sauce",
-      quantity: { value: 2, unit: "tbsp" },
-    },
-    {
-      raw: "1 tablespoon paprika",
-      item: "paprika",
-      quantity: { value: 1, unit: "tbsp" },
-    },
-    {
-      raw: "1 teaspoon cayenne pepper",
-      item: "cayenne pepper",
-      quantity: { value: 1, unit: "tsp" },
-    },
-    {
-      raw: "2 bay leaves",
-      item: "bay leaves",
-      quantity: { value: 2, unit: "whole" },
-    },
-    { raw: "Salt and black pepper", item: "salt and black pepper" },
-  ],
-  steps: [
-    {
-      text: "Heat oil in a large heavy pot over medium-high. Working in batches, brown the beef and pork on all sides, about 6 minutes per batch. Transfer to a plate and reserve.",
-    },
-    {
-      text: "Reduce heat to medium. Add onion and cook, stirring, until softened, about 5 minutes. Add garlic and cook 1 minute. Return browned meat to the pot along with chicken thighs, broth, tomatoes, Worcestershire, paprika, cayenne and bay leaves. Bring to a simmer.",
-    },
-    {
-      text: "Reduce heat to low, cover and simmer until the meats are very tender, 1½ to 2 hours.",
-    },
-    {
-      text: "Remove the chicken thighs to a board and shred with two forks. Return shredded chicken to the pot. Add potatoes and carrots and simmer uncovered until vegetables are tender, about 30 minutes.",
-    },
-    {
-      text: "Stir in corn and lima beans and simmer 10 minutes more. Discard bay leaves. Season generously with salt and pepper. Serve hot.",
-    },
-  ],
-};
 
 const CRISPY_GNOCCHI: SeedRecipe = {
   slug: "crispy-gnocchi",
@@ -739,7 +626,6 @@ const SPICED_PEA_STEW: SeedRecipe = {
 
 export const SEED_RECIPES: SeedRecipe[] = [
   LEMONY_ORZO,
-  BURGOO,
   CRISPY_GNOCCHI,
   ZUCCHINI_PANCAKES,
   RHUBARB_MACAROON_TART,
