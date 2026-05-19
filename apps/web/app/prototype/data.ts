@@ -27,12 +27,6 @@ export const recipes: RecipeSummary[] = [
     timeMin: 20,
   },
   {
-    slug: "burgoo",
-    title: "Burgoo",
-    photo: "/prototype/assets/KD-burgoo-hqwf-threeByTwoMediumAt2X.jpg.webp",
-    timeMin: 20,
-  },
-  {
     slug: "crispy-gnocchi",
     title: "Crispy Gnocchi With Burst Tomatoes and…",
     photo: "/prototype/assets/as-cheesy-baked-gnocchi-threeByTwoMediumAt2X-v2.jpg.webp",
