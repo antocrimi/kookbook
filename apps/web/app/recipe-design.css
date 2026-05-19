@@ -110,7 +110,7 @@ html.cook-mode body { background: #0B2826; }
 .recipe-app .recipe-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px 12px; padding: 0 16px 48px; }
 .recipe-app .r-card { cursor: pointer; text-decoration: none; color: inherit; display: block; }
 .recipe-app .r-card:active { opacity: 0.78; }
-.recipe-app .r-card-photo { width: 100%; aspect-ratio: 3/2; object-fit: cover; display: block; background: #d4c8b4; }
+.recipe-app .r-card-photo { width: 100%; aspect-ratio: 3/2; object-fit: cover; display: block; background: #d4c8b4; border-radius: 12px; }
 .recipe-app .r-card-info { padding: 8px 0 0; }
 .recipe-app .r-card-title {
   font-family: var(--recipe-sans); font-weight: 600; font-size: 15px; line-height: 16px;

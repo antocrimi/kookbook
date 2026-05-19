@@ -17,7 +17,7 @@ declare
       "description": "Every spoonful of this pasta has a happy jumble of lemony orzo, grassy asparagus, garlicky bread crumbs, fresh herbs and salty Parmesan. The pasta and thinly sliced asparagus cook together in the same pot, then rest in a lemony dressing while the garlic bread crumbs are toasted, so the pasta has time to absorb as much flavor as possible.",
       "default_servings": 4,
       "time_min": 20,
-      "original_photo_path": "seed/lemony-orzo.webp",
+      "original_photo_path": "/prototype/assets/AS-Lemony-Orzo-with-Asparagus-pgmk-threeByTwoMediumAt2X.jpg.webp",
       "ingredients": [
         {"raw": "Salt and black pepper", "item": "salt and black pepper"},
         {"raw": "1 cup orzo", "item": "orzo", "quantity": {"value": 1, "unit": "cup"}},
@@ -42,7 +42,7 @@ declare
       "description": "Kentucky's signature Saturday-afternoon stew: three meats simmered slow with corn, lima beans and potatoes until everything's falling apart and the broth tastes like all of it at once. Active time is short — most of it is hands-off simmering while the kitchen smells extraordinary.",
       "default_servings": 8,
       "time_min": 20,
-      "original_photo_path": "seed/burgoo.webp",
+      "original_photo_path": "/prototype/assets/KD-burgoo-hqwf-threeByTwoMediumAt2X.jpg.webp",
       "ingredients": [
         {"raw": "2 tablespoons vegetable oil", "item": "vegetable oil", "quantity": {"value": 2, "unit": "tbsp"}},
         {"raw": "1 pound beef chuck, cut into 1-inch pieces", "item": "beef chuck, cut into 1-inch pieces", "quantity": {"value": 1, "unit": "lb"}},
@@ -76,7 +76,7 @@ declare
       "description": "Skip the boil — shelf-stable gnocchi pan-fry straight from the package into golden, crisp-edged pillows. Add cherry tomatoes and a few cloves of garlic to the same pan and let them collapse into a chunky sauce; finish off the heat with torn fresh mozzarella so it just melts.",
       "default_servings": 4,
       "time_min": 20,
-      "original_photo_path": "seed/crispy-gnocchi.webp",
+      "original_photo_path": "/prototype/assets/as-cheesy-baked-gnocchi-threeByTwoMediumAt2X-v2.jpg.webp",
       "ingredients": [
         {"raw": "3 tablespoons extra-virgin olive oil, divided", "item": "extra-virgin olive oil", "quantity": {"value": 3, "unit": "tbsp"}, "note": "divided"},
         {"raw": "1 (1-pound) package shelf-stable potato gnocchi", "item": "shelf-stable potato gnocchi", "quantity": {"value": 1, "unit": "lb"}},
@@ -100,7 +100,7 @@ declare
       "description": "Crisp on the outside, tender inside, generously herbed — these pancakes turn an end-of-summer surplus of zucchini into something dinner-worthy. Salting and squeezing the grated zucchini is the only step that takes patience; everything else comes together in one bowl.",
       "default_servings": 4,
       "time_min": 30,
-      "original_photo_path": "seed/zucchini-pancakes.jpg",
+      "original_photo_path": "/prototype/assets/el-zucchini-pancakes-threeByTwoMediumAt2X-v4.jpg",
       "ingredients": [
         {"raw": "2 medium zucchini (about 1 pound), grated on the large holes of a box grater", "item": "zucchini, grated on the large holes of a box grater", "quantity": {"value": 2, "unit": "whole"}, "note": "medium, about 1 lb total"},
         {"raw": "1 teaspoon kosher salt, plus more to taste", "item": "kosher salt", "quantity": {"value": 1, "unit": "tsp"}, "note": "plus more to taste"},
@@ -127,7 +127,7 @@ declare
       "description": "A buttery shortbread crust holds tart spring rhubarb under a chewy coconut-and-almond macaroon top. The contrast — crisp pastry, jammy fruit, lacy meringue-coconut crown — is what carries the whole thing.",
       "default_servings": 8,
       "time_min": 20,
-      "original_photo_path": "seed/rhubarb-macaroon-tart.webp",
+      "original_photo_path": "/prototype/assets/SS-Rhubarb-Macaroon-Tart-wvbc-threeByTwoMediumAt2X.jpg.webp",
       "ingredients": [
         {"raw": "1¼ cups all-purpose flour, plus more for rolling", "item": "all-purpose flour", "quantity": {"value": 1.25, "unit": "cup"}, "note": "plus more for rolling", "group": "Pastry"},
         {"raw": "¼ cup granulated sugar", "item": "granulated sugar", "quantity": {"value": 0.25, "unit": "cup"}, "group": "Pastry"},
@@ -158,7 +158,7 @@ declare
       "description": "A whole block of feta nestled into a sheet pan of chickpeas and cherry tomatoes, then roasted until the tomatoes burst and the cheese turns soft and golden at the edges. Mash everything together at the table and scoop with bread.",
       "default_servings": 4,
       "time_min": 40,
-      "original_photo_path": "seed/sheet-pan-feta.webp",
+      "original_photo_path": "/prototype/assets/merlin_209335479_52115ec4-9a9b-483e-b749-ed40dc44a69d-threeByTwoMediumAt2X.jpg.webp",
       "ingredients": [
         {"raw": "2 (15-ounce) cans chickpeas, drained and rinsed", "item": "chickpeas, drained and rinsed", "quantity": {"value": 2, "unit": "whole"}, "note": "15-ounce cans"},
         {"raw": "2 pints cherry or grape tomatoes", "item": "cherry or grape tomatoes", "quantity": {"value": 2, "unit": "pint"}},
@@ -186,7 +186,7 @@ declare
       "description": "A weeknight pan-seared salmon with crackly skin and a fast garlic-lemon butter spooned over the top. The whole thing comes together in one skillet in under twenty minutes — fancy enough for company, simple enough for a Tuesday.",
       "default_servings": 4,
       "time_min": 20,
-      "original_photo_path": "seed/lemon-butter-salmon.webp",
+      "original_photo_path": "/prototype/assets/15FD-KO-EASTERREX-GK-Honey-Lemon-Salmon-kcht-threeByTwoMediumAt2X-v2.jpg.webp",
       "ingredients": [
         {"raw": "4 (6-ounce) skin-on salmon fillets", "item": "skin-on salmon fillets", "quantity": {"value": 4, "unit": "whole"}, "note": "6-ounce each"},
         {"raw": "1 teaspoon salt", "item": "salt", "quantity": {"value": 1, "unit": "tsp"}},
@@ -210,7 +210,7 @@ declare
       "description": "Frozen peas, a deep base of warm spices and a generous swirl of yogurt — this is the kind of stew that feels both quick and considered. Serve over basmati or scoop with flatbread; the yogurt cools, the lemon brightens, the peas keep their squeaky pop.",
       "default_servings": 4,
       "time_min": 20,
-      "original_photo_path": "seed/spiced-pea-stew.webp",
+      "original_photo_path": "/prototype/assets/16EATrex-pea-stew-qcbp-threeByTwoMediumAt2X.jpg.webp",
       "ingredients": [
         {"raw": "3 tablespoons olive oil", "item": "olive oil", "quantity": {"value": 3, "unit": "tbsp"}},
         {"raw": "1 large yellow onion, finely chopped", "item": "yellow onion, finely chopped", "quantity": {"value": 1, "unit": "whole"}, "note": "large"},

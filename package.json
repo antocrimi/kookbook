@@ -17,5 +17,8 @@
   "packageManager": "pnpm@10.29.2",
   "engines": {
     "node": ">=20"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["@parcel/watcher", "esbuild"]
   }
 }
