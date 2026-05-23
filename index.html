@@ -233,7 +233,7 @@
       background: linear-gradient(to top, var(--cream) 58%, transparent);
       pointer-events: none;
       transform: translateY(110%);
-      transition: transform 380ms cubic-bezier(0.34, 1.4, 0.64, 1);
+      transition: transform 420ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
     .sticky-kook.visible { transform: translateY(0); pointer-events: auto; }
     .sticky-kook .cta-primary { min-width: 200px; padding: 15px 32px; font-size: 15px; }
@@ -415,13 +415,6 @@
 ═══════════════════════════════════════════════════════ -->
 <div id="recipe">
 
-  <div class="sticky-kook" id="sticky-kook">
-    <button class="cta cta-primary" onclick="showCooking()">
-      <img src="packages/ui/assets/cook.svg" width="11" height="12" alt="">
-      Kook It
-    </button>
-  </div>
-
   <div class="recipe-hero">
     <img class="recipe-hero-img" src="packages/ui/assets/AS-Lemony-Orzo-with-Asparagus-pgmk-threeByTwoMediumAt2X.jpg.webp" alt="Lemony Orzo">
     <img class="back-btn" src="packages/ui/assets/back.svg" alt="Back" onclick="showIndex()">
@@ -560,6 +553,14 @@
 
 </div>
 
+<!-- Sticky KOOK IT — must live outside #recipe so position:fixed works on iOS -->
+<div class="sticky-kook" id="sticky-kook">
+  <button class="cta cta-primary" onclick="showCooking()">
+    <img src="packages/ui/assets/cook.svg" width="11" height="12" alt="">
+    Kook It
+  </button>
+</div>
+
 <script>
   const DEFAULT_SERVINGS = 4;
   let servings = 4, unitSystem = 'imperial', checked = new Set(), cookStep = 0;
@@ -648,18 +649,16 @@
   }
 
   /* ─── Sticky KOOK IT ─────────────────────────────────── */
-  // Visible when PREPARATION heading reaches top 15% of viewport;
-  // hidden when scrolling back below that same threshold.
+  // Show when the Preparation heading enters the viewport from below (scroll down);
+  // hide when it exits below the viewport again (scroll up).
   function checkPrepVisibility() {
     const prep   = document.getElementById('prep-section');
     const sticky = document.getElementById('sticky-kook');
     const recipe = document.getElementById('recipe');
     if (!prep || !sticky || !recipe) return;
-    // Only update while recipe is the active page
     if (!recipe.classList.contains('active')) return;
-    const rect      = prep.getBoundingClientRect();
-    const threshold = window.innerHeight * 0.15;
-    sticky.classList.toggle('visible', rect.top <= threshold);
+    const rect = prep.getBoundingClientRect();
+    sticky.classList.toggle('visible', rect.top < window.innerHeight);
   }
 
   /* ─── Cooking mode ───────────────────────────────────── */
