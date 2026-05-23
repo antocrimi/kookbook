@@ -883,15 +883,15 @@
     window.addEventListener('resize', checkPrepVisibility);
   })();
 
-  // Bird logo: any hover-enter or tap triggers a self-contained 1→2→1 cycle.
-  // .ducked swaps between the two embedded SVG bird poses; auto-removed after
-  // SQUAT_MS so it always springs back. mouseenter covers desktop hover;
-  // touchstart covers mobile tap (preventDefault kills the synthetic click).
+  // Bird logo: hover-enter (desktop) or tap (mobile) → 1→2→1 cycle.
+  // recentTouch gates mouseenter so iOS's synthetic mouseenter (fired ~300ms
+  // after touchstart) doesn't re-duck the bird after it has already sprung back.
   (function setupLogoTap() {
     const logo = document.querySelector('.home-logo');
     if (!logo) return;
     const SQUAT_MS = 180;
     let cycleTimer = null;
+    let recentTouch = false;
     const squatAndSpring = () => {
       if (cycleTimer !== null) clearTimeout(cycleTimer);
       logo.classList.add('ducked');
@@ -900,9 +900,14 @@
         cycleTimer = null;
       }, SQUAT_MS);
     };
-    logo.addEventListener('mouseenter', squatAndSpring);
+    logo.addEventListener('mouseenter', () => {
+      if (recentTouch) return;
+      squatAndSpring();
+    });
     logo.addEventListener('touchstart', function(e) {
       e.preventDefault();
+      recentTouch = true;
+      setTimeout(() => { recentTouch = false; }, 600);
       squatAndSpring();
     }, { passive: false });
   })();
