@@ -121,9 +121,7 @@
     /* Bird groups: crisp swap, no whole-logo motion */
     .home-logo .bird-1 { transition: opacity 140ms ease; }
     .home-logo .bird-2 { opacity: 0; transition: opacity 140ms ease; }
-    .home-logo:hover .bird-1,
     .home-logo.ducked .bird-1 { opacity: 0; }
-    .home-logo:hover .bird-2,
     .home-logo.ducked .bird-2 { opacity: 1; }
     /* + button: no width/center — right edge aligns with chevron naturally */
     .add-btn { background: none; border: none; cursor: pointer; padding: 12px 0 12px 16px; display: flex; align-items: center; }
@@ -885,12 +883,10 @@
     window.addEventListener('resize', checkPrepVisibility);
   })();
 
-  // Bird logo tap: self-contained squat-and-spring cycle. Each tap puts
-  // the bird in the ducked pose for ~180ms then auto-springs back to
-  // standing. Achieved by toggling .ducked which crossfades between the
-  // two embedded SVG bird poses. Hover continues to work on desktop via
-  // CSS :hover. We attach both touchstart (mobile) and click (desktop /
-  // non-touch) so the gesture works whichever input the device uses.
+  // Bird logo: any hover-enter or tap triggers a self-contained 1→2→1 cycle.
+  // .ducked swaps between the two embedded SVG bird poses; auto-removed after
+  // SQUAT_MS so it always springs back. mouseenter covers desktop hover;
+  // touchstart covers mobile tap (preventDefault kills the synthetic click).
   (function setupLogoTap() {
     const logo = document.querySelector('.home-logo');
     if (!logo) return;
@@ -904,13 +900,11 @@
         cycleTimer = null;
       }, SQUAT_MS);
     };
-    // preventDefault on touchstart suppresses the synthetic click that
-    // would otherwise re-fire the cycle ~300ms later.
+    logo.addEventListener('mouseenter', squatAndSpring);
     logo.addEventListener('touchstart', function(e) {
       e.preventDefault();
       squatAndSpring();
     }, { passive: false });
-    logo.addEventListener('click', squatAndSpring);
   })();
 
   /* ─── Init ───────────────────────────────────────────── */
