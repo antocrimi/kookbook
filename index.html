@@ -119,8 +119,8 @@
     .menu-btn span { display: block; width: 20px; height: 1.5px; background: var(--ink); border-radius: 2px; }
     .home-logo { height: 26px; display: block; cursor: pointer; }
     /* Bird groups: crisp swap, no whole-logo motion */
-    .home-logo .bird-1 { transition: opacity 140ms ease; }
-    .home-logo .bird-2 { opacity: 0; transition: opacity 140ms ease; }
+    .home-logo .bird-1 { transition: opacity 220ms ease; }
+    .home-logo .bird-2 { opacity: 0; transition: opacity 220ms ease; }
     .home-logo.ducked .bird-1 { opacity: 0; }
     .home-logo.ducked .bird-2 { opacity: 1; }
     /* + button: no width/center — right edge aligns with chevron naturally */
@@ -889,7 +889,7 @@
   (function setupLogoTap() {
     const logo = document.querySelector('.home-logo');
     if (!logo) return;
-    const SQUAT_MS = 180;
+    const SQUAT_MS = 380;
     let cycleTimer = null;
     let recentTouch = false;
     const squatAndSpring = () => {
