@@ -1,0 +1,17 @@
+{
+  "name": "Kookbook",
+  "short_name": "Kookbook",
+  "description": "Every recipe you love, beautifully in one place.",
+  "start_url": "/kookbook/",
+  "display": "standalone",
+  "background_color": "#faf5ef",
+  "theme_color": "#1a3a2a",
+  "icons": [
+    {
+      "src": "packages/ui/assets/kookoo-iOS-Default-1024x1024@1x.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
