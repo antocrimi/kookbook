@@ -113,7 +113,7 @@
     ═══════════════════════════════════════════════════════════ */
     .home-header {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 18px 16px 16px;
+      padding: calc(18px + env(safe-area-inset-top, 0px)) 16px 16px;
       background: #ffffff;
       box-shadow: 0 4px 20px rgba(0,0,0,0.05);
       position: relative; z-index: 1;
@@ -144,7 +144,7 @@
     .saved-chevron { background: none; border: none; cursor: pointer; color: var(--stone); padding: 4px 0; display: flex; align-items: center; }
     .saved-divider { border: none; border-top: 1px solid rgba(0,0,0,0.12); margin-bottom: 16px; }
 
-    .recipe-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px 12px; padding: 0 16px 48px; }
+    .recipe-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px 12px; padding: 0 16px calc(48px + env(safe-area-inset-bottom, 0px)); }
     .r-card { cursor: pointer; }
     .r-card:active { opacity: 0.78; }
     .r-card-photo-wrap {
@@ -175,7 +175,7 @@
       overflow: hidden; background: #d4c8b4; flex-shrink: 0;
     }
     .recipe-hero-img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .back-btn { position: absolute; top: 16px; left: 16px; z-index: 2; display: block; cursor: pointer; width: 36px; height: 36px; }
+    .back-btn { position: absolute; top: calc(16px + env(safe-area-inset-top, 0px)); left: 16px; z-index: 2; display: block; cursor: pointer; width: 36px; height: 36px; }
 
     .recipe-content { max-width: 680px; width: 100%; margin: 0 auto; padding: 28px 20px 0; }
     .recipe-title { font-family: var(--serif); font-weight: 400; font-size: 42px; line-height: 45px; color: var(--ink); margin-bottom: 20px; }
@@ -254,7 +254,7 @@
     .cook-top {
       flex-shrink: 0;
       display: flex; align-items: center; justify-content: space-between;
-      padding: 20px 16px 0;
+      padding: calc(20px + env(safe-area-inset-top, 0px)) 16px 0;
     }
     .cook-icon-btn {
       width: 44px; height: 44px; background: none; border: none; cursor: pointer;
