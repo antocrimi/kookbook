@@ -39,6 +39,7 @@ export default function RecipesPage() {
       const { data, error } = await supabase
         .from("recipes")
         .select("id, title, time_min, updated_at, original_photo_path")
+        .eq("is_draft", false)
         .order("updated_at", { ascending: false });
 
       if (cancelled) return;
@@ -83,6 +84,7 @@ export default function RecipesPage() {
           </Link>
           {menuOpen && (
             <div className="menu-dropdown" role="menu">
+              <Link href="/drafts" onClick={() => setMenuOpen(false)}>Drafts</Link>
               <Link href="/settings" onClick={() => setMenuOpen(false)}>Settings</Link>
               <SeedRecipe />
               <SignOut />
